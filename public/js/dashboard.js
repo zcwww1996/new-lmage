@@ -14,9 +14,20 @@ let currentSortMethod = 'newest'; // 默认排序方式
 let currentTagFilter = ''; // 当前标签过滤器
 let selectedImages = new Set(); // 存储选中的图片ID
 let isSelectionMode = false; // 是否处于选择模式
+let currentViewMode = 'grid'; // 默认视图模式：grid, list, timeline
+let favoriteImages = new Set(); // 存储收藏的图片ID
+let showOnlyFavorites = false; // 是否只显示收藏的图片
+let customOrder = []; // 存储用户自定义排序顺序
+let isDraggable = false; // 是否启用拖拽排序
 
 // 初始化仪表盘
 function initDashboard() {
+    // 从本地存储加载收藏的图片
+    loadFavorites();
+
+    // 从本地存储加载自定义排序
+    loadCustomOrder();
+
     // 加载用户图片
     loadUserImages();
 
@@ -35,6 +46,18 @@ function initDashboard() {
     // 初始化批量操作功能
     initBatchOperations();
 
+    // 初始化数据可视化图表
+    initCharts();
+
+    // 初始化视图模式切换
+    initViewModes();
+
+    // 初始化收藏功能
+    initFavorites();
+
+    // 初始化拖拽排序功能
+    initDragSort();
+
     // 初始化复制链接功能
     new ClipboardJS('#copyEditLink').on('success', function(e) {
         const button = e.trigger;
@@ -50,6 +73,460 @@ function initDashboard() {
             button.innerHTML = originalHTML;
         }, 2000);
     });
+}
+
+// 从本地存储加载自定义排序
+function loadCustomOrder() {
+    const savedOrder = localStorage.getItem('customImageOrder');
+    if (savedOrder) {
+        customOrder = JSON.parse(savedOrder);
+    }
+}
+
+// 保存自定义排序到本地存储
+function saveCustomOrder() {
+    localStorage.setItem('customImageOrder', JSON.stringify(customOrder));
+}
+
+// 从本地存储加载收藏的图片
+function loadFavorites() {
+    const savedFavorites = localStorage.getItem('favoriteImages');
+    if (savedFavorites) {
+        const favoritesArray = JSON.parse(savedFavorites);
+        favoriteImages = new Set(favoritesArray);
+    }
+}
+
+// 保存收藏的图片到本地存储
+function saveFavorites() {
+    const favoritesArray = Array.from(favoriteImages);
+    localStorage.setItem('favoriteImages', JSON.stringify(favoritesArray));
+}
+
+// 初始化收藏功能
+function initFavorites() {
+    // 收藏过滤器切换
+    const favoriteToggle = document.getElementById('favoriteToggle');
+    favoriteToggle.addEventListener('change', () => {
+        showOnlyFavorites = favoriteToggle.checked;
+
+        // 重新渲染图片
+        if (currentViewMode === 'timeline') {
+            renderTimelineView();
+        } else {
+            // 如果只显示收藏，过滤图片
+            const imagesToRender = showOnlyFavorites
+                ? currentImages.filter(img => favoriteImages.has(img.id))
+                : currentImages;
+
+            renderImages(imagesToRender);
+        }
+    });
+}
+
+// 初始化视图模式切换
+function initViewModes() {
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const timelineViewBtn = document.getElementById('timelineViewBtn');
+    const imageGrid = document.getElementById('imageGrid');
+
+    // 从本地存储中恢复上次的视图模式
+    const savedViewMode = localStorage.getItem('viewMode');
+    if (savedViewMode) {
+        currentViewMode = savedViewMode;
+        updateViewMode();
+    }
+
+    // 网格视图按钮点击事件
+    gridViewBtn.addEventListener('click', () => {
+        if (currentViewMode !== 'grid') {
+            currentViewMode = 'grid';
+            updateViewMode();
+            localStorage.setItem('viewMode', 'grid');
+        }
+    });
+
+    // 列表视图按钮点击事件
+    listViewBtn.addEventListener('click', () => {
+        if (currentViewMode !== 'list') {
+            currentViewMode = 'list';
+            updateViewMode();
+            localStorage.setItem('viewMode', 'list');
+        }
+    });
+
+    // 时间线视图按钮点击事件
+    timelineViewBtn.addEventListener('click', () => {
+        if (currentViewMode !== 'timeline') {
+            currentViewMode = 'timeline';
+            updateViewMode();
+            localStorage.setItem('viewMode', 'timeline');
+        }
+    });
+}
+
+// 更新视图模式
+function updateViewMode() {
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const timelineViewBtn = document.getElementById('timelineViewBtn');
+    const imageGrid = document.getElementById('imageGrid');
+
+    // 更新按钮状态
+    gridViewBtn.classList.toggle('active', currentViewMode === 'grid');
+    listViewBtn.classList.toggle('active', currentViewMode === 'list');
+    timelineViewBtn.classList.toggle('active', currentViewMode === 'timeline');
+
+    // 更新图片网格类名
+    imageGrid.className = 'image-grid';
+    if (currentViewMode === 'list') {
+        imageGrid.classList.add('list-view');
+    } else if (currentViewMode === 'timeline') {
+        imageGrid.classList.add('timeline-view');
+        renderTimelineView();
+    } else {
+        // 默认网格视图，重新渲染图片
+        renderImages(currentImages);
+    }
+}
+
+// 渲染时间线视图
+function renderTimelineView() {
+    const imageGrid = document.getElementById('imageGrid');
+    imageGrid.innerHTML = '';
+
+    // 如果只显示收藏，过滤图片
+    const imagesToRender = showOnlyFavorites
+        ? currentImages.filter(img => favoriteImages.has(img.id))
+        : currentImages;
+
+    if (imagesToRender.length === 0) {
+        // 显示空状态
+        imageGrid.innerHTML = `
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <h3>${showOnlyFavorites ? '没有收藏的图片' : '没有图片'}</h3>
+                <p>${showOnlyFavorites ? '您还没有收藏任何图片，点击图片右上角的星标收藏图片。' : '上传一些图片开始使用吧！'}</p>
+            </div>
+        `;
+        return;
+    }
+
+    // 按日期分组图片
+    const dateGroups = groupImagesByDate(imagesToRender);
+
+    // 按日期降序排序
+    const sortedDates = Object.keys(dateGroups).sort((a, b) => new Date(b) - new Date(a));
+
+    // 渲染每个日期组
+    sortedDates.forEach(date => {
+        const images = dateGroups[date];
+        const dateObj = new Date(date);
+
+        // 格式化日期显示
+        const formattedDate = dateObj.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long'
+        });
+
+        // 创建日期组容器
+        const dateGroup = document.createElement('div');
+        dateGroup.className = 'timeline-date-group';
+
+        // 创建日期标题
+        const dateTitle = document.createElement('h3');
+        dateTitle.className = 'timeline-date';
+        dateTitle.textContent = formattedDate;
+        dateGroup.appendChild(dateTitle);
+
+        // 创建图片网格
+        const imagesGrid = document.createElement('div');
+        imagesGrid.className = 'timeline-images';
+
+        // 渲染该日期下的图片
+        images.forEach(image => {
+            const card = createImageCard(image);
+            imagesGrid.appendChild(card);
+        });
+
+        dateGroup.appendChild(imagesGrid);
+        imageGrid.appendChild(dateGroup);
+    });
+
+    // 初始化事件监听器
+    initImageCardEvents();
+}
+
+// 按日期分组图片
+function groupImagesByDate(images) {
+    const groups = {};
+
+    images.forEach(image => {
+        const date = new Date(image.uploadTime);
+        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        if (!groups[dateStr]) {
+            groups[dateStr] = [];
+        }
+
+        groups[dateStr].push(image);
+    });
+
+    return groups;
+}
+
+// 创建图片卡片
+function createImageCard(image) {
+    const card = document.createElement('div');
+    card.className = 'image-card';
+    card.dataset.id = image.id;
+
+    // 如果图片被选中，添加选中样式
+    if (selectedImages.has(image.id)) {
+        card.classList.add('selected');
+    }
+
+    // 检查是否是收藏的图片
+    const isFavorite = favoriteImages.has(image.id);
+    if (isFavorite) {
+        card.classList.add('favorite');
+    }
+
+    // 如果启用了拖拽排序，添加相关类和属性
+    if (isDraggable) {
+        card.classList.add('draggable');
+    }
+
+    // 格式化文件大小
+    const fileSize = formatFileSize(image.fileSize);
+
+    // 格式化上传时间
+    const uploadDate = new Date(image.uploadTime).toLocaleDateString();
+    const uploadTime = new Date(image.uploadTime).toLocaleTimeString();
+
+    // 创建标签HTML
+    const tagsHtml = image.tags && image.tags.length > 0
+        ? `<div class="image-tags">
+            ${image.tags.map(tag => `<span class="image-tag" data-tag="${tag}">${tag}</span>`).join('')}
+           </div>`
+        : '';
+
+    card.innerHTML = `
+        ${isSelectionMode ? `
+        <div class="image-select">
+            <input type="checkbox" class="image-checkbox" id="check-${image.id}" ${selectedImages.has(image.id) ? 'checked' : ''}>
+            <label for="check-${image.id}" class="image-checkbox-label"></label>
+        </div>
+        ` : ''}
+        <div class="image-preview" data-id="${image.id}" data-url="${image.url}">
+            <img src="${image.url}" alt="${image.fileName}" loading="lazy">
+            <div class="image-zoom-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                </svg>
+            </div>
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${image.id}" title="${isFavorite ? '取消收藏' : '收藏图片'}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${isFavorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </button>
+            <div class="drag-handle" title="拖拽排序">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="5" r="1"></circle>
+                    <circle cx="9" cy="12" r="1"></circle>
+                    <circle cx="9" cy="19" r="1"></circle>
+                    <circle cx="15" cy="5" r="1"></circle>
+                    <circle cx="15" cy="12" r="1"></circle>
+                    <circle cx="15" cy="19" r="1"></circle>
+                </svg>
+            </div>
+        </div>
+        <div class="image-info">
+            <div class="image-name" title="${image.fileName}">${image.fileName}</div>
+            <div class="image-meta">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                    ${fileSize}
+                </span>
+                <span title="${uploadDate} ${uploadTime}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    ${uploadTime}
+                </span>
+            </div>
+            ${tagsHtml}
+        </div>
+        <div class="image-actions">
+            <button class="image-btn copy-btn" data-clipboard-text="${window.location.origin}${image.url}" title="复制图片链接">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                复制
+            </button>
+            <button class="image-btn edit-btn" data-id="${image.id}" title="编辑图片信息">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                编辑
+            </button>
+            <button class="image-btn delete-btn" data-id="${image.id}" title="删除图片">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                删除
+            </button>
+        </div>
+    `;
+
+    return card;
+}
+
+// 初始化图片卡片事件
+function initImageCardEvents() {
+    // 初始化复制按钮
+    new ClipboardJS('.copy-btn').on('success', function(e) {
+        const originalText = e.trigger.innerHTML;
+        e.trigger.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            已复制!
+        `;
+        setTimeout(() => {
+            e.trigger.innerHTML = originalText;
+        }, 2000);
+    });
+
+    // 添加编辑按钮事件
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止触发卡片选择
+            const imageId = btn.dataset.id;
+            openEditModal(imageId);
+        });
+    });
+
+    // 添加删除按钮事件
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止触发卡片选择
+            const imageId = btn.dataset.id;
+            confirmDeleteImage(imageId);
+        });
+    });
+
+    // 添加收藏按钮事件
+    document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止触发卡片选择或预览
+            const imageId = btn.dataset.id;
+            toggleFavorite(imageId, btn);
+        });
+    });
+
+    // 添加图片预览点击事件
+    document.querySelectorAll('.image-preview').forEach(preview => {
+        preview.addEventListener('click', (e) => {
+            // 如果点击的是收藏按钮，不打开查看器
+            if (e.target.closest('.favorite-btn')) {
+                return;
+            }
+
+            if (isSelectionMode) {
+                e.stopPropagation(); // 在选择模式下，点击预览不打开查看器
+                return;
+            }
+            const imageId = preview.dataset.id;
+            const imageUrl = preview.dataset.url;
+            openImageViewer(imageId, imageUrl);
+        });
+    });
+
+    // 添加标签点击事件
+    document.querySelectorAll('.image-tag').forEach(tag => {
+        tag.addEventListener('click', (e) => {
+            e.stopPropagation(); // 防止触发父元素的点击事件
+            const tagName = tag.dataset.tag;
+            filterByTag(tagName);
+        });
+    });
+
+    // 添加图片卡片选择事件
+    if (isSelectionMode) {
+        document.querySelectorAll('.image-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const imageId = card.dataset.id;
+                toggleImageSelection(imageId, card);
+            });
+        });
+
+        document.querySelectorAll('.image-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                e.stopPropagation(); // 防止触发卡片点击事件
+                const imageId = checkbox.id.replace('check-', '');
+                const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
+                toggleImageSelection(imageId, card, checkbox.checked);
+            });
+        });
+    }
+}
+
+// 切换收藏状态
+function toggleFavorite(imageId, button) {
+    const isFavorite = favoriteImages.has(imageId);
+    const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
+
+    if (isFavorite) {
+        // 取消收藏
+        favoriteImages.delete(imageId);
+        button.classList.remove('active');
+        button.title = '收藏图片';
+        button.querySelector('svg').setAttribute('fill', 'none');
+        card.classList.remove('favorite');
+    } else {
+        // 添加收藏
+        favoriteImages.add(imageId);
+        button.classList.add('active');
+        button.title = '取消收藏';
+        button.querySelector('svg').setAttribute('fill', 'currentColor');
+        card.classList.add('favorite');
+    }
+
+    // 保存收藏状态
+    saveFavorites();
+
+    // 如果当前是只显示收藏，且取消了收藏，则需要移除该卡片
+    if (showOnlyFavorites && !isFavorite) {
+        // 重新渲染图片
+        if (currentViewMode === 'timeline') {
+            renderTimelineView();
+        } else {
+            const imagesToRender = currentImages.filter(img => favoriteImages.has(img.id));
+            renderImages(imagesToRender);
+        }
+    }
 }
 
 // 加载用户图片
@@ -119,8 +596,12 @@ async function loadUserImages(page = 1, query = '', tag = '') {
         // 隐藏空状态
         emptyState.style.display = 'none';
 
-        // 渲染图片
-        renderImages(currentImages);
+        // 根据当前视图模式渲染图片
+        if (currentViewMode === 'timeline') {
+            renderTimelineView();
+        } else {
+            renderImages(currentImages);
+        }
 
         // 渲染分页
         renderPagination();
@@ -167,6 +648,205 @@ function updateStatistics(data) {
     const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
     const recentCount = currentImages.filter(img => img.uploadTime > oneWeekAgo).length;
     recentUploads.textContent = recentCount;
+
+    // 平均文件大小
+    const avgFileSize = document.getElementById('avgFileSize');
+    const avgSize = currentImages.length > 0 ? sizeSum / currentImages.length : 0;
+    avgFileSize.textContent = formatFileSize(avgSize);
+
+    // 更新图表数据
+    updateCharts();
+}
+
+// 初始化图表
+let uploadTrendChart = null;
+let storageUsageChart = null;
+
+function initCharts() {
+    // 设置Chart.js全局配置
+    Chart.defaults.color = document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937';
+    Chart.defaults.borderColor = document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb';
+
+    // 初始化上传趋势图表
+    const uploadTrendCtx = document.getElementById('uploadTrendChart').getContext('2d');
+    uploadTrendChart = new Chart(uploadTrendCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: '上传数量',
+                data: [],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: document.body.classList.contains('dark-mode') ? '#1f2937' : 'rgba(255, 255, 255, 0.9)',
+                    titleColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
+                    bodyColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
+                    borderColor: document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+
+    // 初始化存储使用情况图表
+    const storageUsageCtx = document.getElementById('storageUsageChart').getContext('2d');
+    storageUsageChart = new Chart(storageUsageCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['图片', '其他文件'],
+            datasets: [{
+                data: [0, 0],
+                backgroundColor: [
+                    '#3b82f6',
+                    '#8b5cf6'
+                ],
+                borderColor: document.body.classList.contains('dark-mode') ? '#1f2937' : '#ffffff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    backgroundColor: document.body.classList.contains('dark-mode') ? '#1f2937' : 'rgba(255, 255, 255, 0.9)',
+                    titleColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
+                    bodyColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
+                    borderColor: document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb',
+                    borderWidth: 1,
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            return context.label + ': ' + formatFileSize(value);
+                        }
+                    }
+                }
+            },
+            cutout: '70%'
+        }
+    });
+
+    // 监听主题变化，更新图表样式
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('change', () => {
+            setTimeout(() => {
+                updateChartsTheme();
+            }, 100);
+        });
+    }
+}
+
+// 更新图表数据
+function updateCharts() {
+    if (!uploadTrendChart || !storageUsageChart || currentImages.length === 0) return;
+
+    // 处理上传趋势数据
+    const dateMap = new Map();
+    const now = new Date();
+
+    // 创建过去30天的日期标签
+    const labels = [];
+    const data = [];
+
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        labels.push(dateStr.substring(5)); // 只显示月-日
+        dateMap.set(dateStr, 0);
+    }
+
+    // 统计每天的上传数量
+    currentImages.forEach(img => {
+        const date = new Date(img.uploadTime);
+        const dateStr = date.toISOString().split('T')[0];
+
+        if (dateMap.has(dateStr)) {
+            dateMap.set(dateStr, dateMap.get(dateStr) + 1);
+        }
+    });
+
+    // 填充数据数组
+    labels.forEach(label => {
+        const fullDate = new Date().getFullYear() + '-' + label;
+        data.push(dateMap.get(fullDate) || 0);
+    });
+
+    // 更新上传趋势图表
+    uploadTrendChart.data.labels = labels;
+    uploadTrendChart.data.datasets[0].data = data;
+    uploadTrendChart.update();
+
+    // 更新存储使用情况图表
+    let imageSize = 0;
+    currentImages.forEach(img => {
+        imageSize += img.fileSize || 0;
+    });
+
+    // 假设总存储空间为1GB，或者从API获取
+    const totalStorage = 1024 * 1024 * 1024; // 1GB
+    const otherSize = Math.max(0, totalStorage - imageSize);
+
+    storageUsageChart.data.datasets[0].data = [imageSize, otherSize];
+    storageUsageChart.update();
+}
+
+// 更新图表主题
+function updateChartsTheme() {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+
+    // 更新Chart.js全局配置
+    Chart.defaults.color = isDarkMode ? '#f3f4f6' : '#1f2937';
+    Chart.defaults.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+
+    // 更新上传趋势图表
+    if (uploadTrendChart) {
+        uploadTrendChart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.9)';
+        uploadTrendChart.options.plugins.tooltip.titleColor = isDarkMode ? '#f3f4f6' : '#1f2937';
+        uploadTrendChart.options.plugins.tooltip.bodyColor = isDarkMode ? '#f3f4f6' : '#1f2937';
+        uploadTrendChart.options.plugins.tooltip.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+        uploadTrendChart.update();
+    }
+
+    // 更新存储使用情况图表
+    if (storageUsageChart) {
+        storageUsageChart.data.datasets[0].borderColor = isDarkMode ? '#1f2937' : '#ffffff';
+        storageUsageChart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.9)';
+        storageUsageChart.options.plugins.tooltip.titleColor = isDarkMode ? '#f3f4f6' : '#1f2937';
+        storageUsageChart.options.plugins.tooltip.bodyColor = isDarkMode ? '#f3f4f6' : '#1f2937';
+        storageUsageChart.options.plugins.tooltip.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+        storageUsageChart.update();
+    }
 }
 
 // 排序图片
@@ -186,6 +866,25 @@ function sortImages(images, method) {
         case 'size':
             sortedImages.sort((a, b) => b.fileSize - a.fileSize);
             break;
+        case 'custom':
+            // 如果有自定义排序顺序，按照自定义顺序排序
+            if (customOrder.length > 0) {
+                sortedImages.sort((a, b) => {
+                    const indexA = customOrder.indexOf(a.id);
+                    const indexB = customOrder.indexOf(b.id);
+
+                    // 如果某个ID不在自定义顺序中，将其放在末尾
+                    if (indexA === -1) return 1;
+                    if (indexB === -1) return -1;
+
+                    return indexA - indexB;
+                });
+            } else {
+                // 如果没有自定义顺序，使用当前顺序作为初始自定义顺序
+                customOrder = sortedImages.map(img => img.id);
+                saveCustomOrder();
+            }
+            break;
         default:
             // 默认按最新上传排序
             sortedImages.sort((a, b) => b.uploadTime - a.uploadTime);
@@ -199,172 +898,20 @@ function renderImages(images) {
     const imageGrid = document.getElementById('imageGrid');
     imageGrid.innerHTML = '';
 
+    // 如果是时间线视图，使用专门的渲染函数
+    if (currentViewMode === 'timeline') {
+        renderTimelineView();
+        return;
+    }
+
+    // 网格视图和列表视图使用相同的渲染逻辑，但CSS样式不同
     images.forEach(image => {
-        const card = document.createElement('div');
-        card.className = 'image-card';
-        card.dataset.id = image.id;
-
-        // 如果图片被选中，添加选中样式
-        if (selectedImages.has(image.id)) {
-            card.classList.add('selected');
-        }
-
-        // 格式化文件大小
-        const fileSize = formatFileSize(image.fileSize);
-
-        // 格式化上传时间
-        const uploadDate = new Date(image.uploadTime).toLocaleDateString();
-        const uploadTime = new Date(image.uploadTime).toLocaleTimeString();
-
-        // 创建标签HTML
-        const tagsHtml = image.tags && image.tags.length > 0
-            ? `<div class="image-tags">
-                ${image.tags.map(tag => `<span class="image-tag" data-tag="${tag}">${tag}</span>`).join('')}
-               </div>`
-            : '';
-
-        card.innerHTML = `
-            ${isSelectionMode ? `
-            <div class="image-select">
-                <input type="checkbox" class="image-checkbox" id="check-${image.id}" ${selectedImages.has(image.id) ? 'checked' : ''}>
-                <label for="check-${image.id}" class="image-checkbox-label"></label>
-            </div>
-            ` : ''}
-            <div class="image-preview" data-id="${image.id}" data-url="${image.url}">
-                <img src="${image.url}" alt="${image.fileName}" loading="lazy">
-                <div class="image-zoom-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        <line x1="11" y1="8" x2="11" y2="14"></line>
-                        <line x1="8" y1="11" x2="14" y2="11"></line>
-                    </svg>
-                </div>
-            </div>
-            <div class="image-info">
-                <div class="image-name" title="${image.fileName}">${image.fileName}</div>
-                <div class="image-meta">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                            <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                            <line x1="6" y1="18" x2="6.01" y2="18"></line>
-                        </svg>
-                        ${fileSize}
-                    </span>
-                    <span title="${uploadDate} ${uploadTime}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        ${uploadDate}
-                    </span>
-                </div>
-                ${tagsHtml}
-            </div>
-            <div class="image-actions">
-                <button class="image-btn copy-btn" data-clipboard-text="${window.location.origin}${image.url}" title="复制图片链接">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    复制
-                </button>
-                <button class="image-btn edit-btn" data-id="${image.id}" title="编辑图片信息">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                    编辑
-                </button>
-                <button class="image-btn delete-btn" data-id="${image.id}" title="删除图片">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                    删除
-                </button>
-            </div>
-        `;
-
+        const card = createImageCard(image);
         imageGrid.appendChild(card);
     });
 
-    // 初始化复制按钮
-    new ClipboardJS('.copy-btn').on('success', function(e) {
-        const originalText = e.trigger.innerHTML;
-        e.trigger.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            已复制!
-        `;
-        setTimeout(() => {
-            e.trigger.innerHTML = originalText;
-        }, 2000);
-    });
-
-    // 添加编辑按钮事件
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 防止触发卡片选择
-            const imageId = btn.dataset.id;
-            openEditModal(imageId);
-        });
-    });
-
-    // 添加删除按钮事件
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 防止触发卡片选择
-            const imageId = btn.dataset.id;
-            confirmDeleteImage(imageId);
-        });
-    });
-
-    // 添加图片预览点击事件
-    document.querySelectorAll('.image-preview').forEach(preview => {
-        preview.addEventListener('click', (e) => {
-            if (isSelectionMode) {
-                e.stopPropagation(); // 在选择模式下，点击预览不打开查看器
-                return;
-            }
-            const imageId = preview.dataset.id;
-            const imageUrl = preview.dataset.url;
-            openImageViewer(imageId, imageUrl);
-        });
-    });
-
-    // 添加标签点击事件
-    document.querySelectorAll('.image-tag').forEach(tag => {
-        tag.addEventListener('click', (e) => {
-            e.stopPropagation(); // 防止触发父元素的点击事件
-            const tagName = tag.dataset.tag;
-            filterByTag(tagName);
-        });
-    });
-
-    // 添加图片卡片选择事件
-    if (isSelectionMode) {
-        document.querySelectorAll('.image-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const imageId = card.dataset.id;
-                toggleImageSelection(imageId, card);
-            });
-        });
-
-        document.querySelectorAll('.image-checkbox').forEach(checkbox => {
-            checkbox.addEventListener('change', (e) => {
-                e.stopPropagation(); // 防止触发卡片点击事件
-                const imageId = checkbox.id.replace('check-', '');
-                const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
-                toggleImageSelection(imageId, card, checkbox.checked);
-            });
-        });
-    }
+    // 初始化事件监听器
+    initImageCardEvents();
 }
 
 // 切换图片选择状态
@@ -487,11 +1034,104 @@ function initSortFilter() {
     sortSelect.addEventListener('change', () => {
         currentSortMethod = sortSelect.value;
 
+        // 如果选择了自定义排序，启用拖拽功能
+        if (currentSortMethod === 'custom') {
+            if (!isDraggable) {
+                const dragToggle = document.getElementById('dragToggle');
+                dragToggle.checked = true;
+                toggleDragMode(true);
+            }
+        }
+
         // 重新排序当前图片并渲染
         const sortedImages = sortImages(currentImages, currentSortMethod);
         currentImages = sortedImages;
         renderImages(currentImages);
     });
+}
+
+// 初始化拖拽排序功能
+function initDragSort() {
+    const dragToggle = document.getElementById('dragToggle');
+
+    // 从本地存储恢复拖拽状态
+    const savedDragMode = localStorage.getItem('dragMode');
+    if (savedDragMode === 'true') {
+        isDraggable = true;
+        dragToggle.checked = true;
+
+        // 如果启用了拖拽，自动切换到自定义排序
+        const sortSelect = document.getElementById('sortSelect');
+        sortSelect.value = 'custom';
+        currentSortMethod = 'custom';
+    }
+
+    // 添加拖拽模式切换事件
+    dragToggle.addEventListener('change', () => {
+        toggleDragMode(dragToggle.checked);
+    });
+
+    // 初始化Sortable
+    initSortable();
+}
+
+// 切换拖拽模式
+function toggleDragMode(enable) {
+    isDraggable = enable;
+    localStorage.setItem('dragMode', enable);
+
+    // 如果启用拖拽，切换到自定义排序
+    if (enable) {
+        const sortSelect = document.getElementById('sortSelect');
+        sortSelect.value = 'custom';
+        currentSortMethod = 'custom';
+    }
+
+    // 重新渲染图片以应用拖拽样式
+    if (currentViewMode === 'timeline') {
+        renderTimelineView();
+    } else {
+        renderImages(currentImages);
+    }
+
+    // 重新初始化Sortable
+    initSortable();
+}
+
+// 初始化Sortable拖拽库
+function initSortable() {
+    const imageGrid = document.getElementById('imageGrid');
+
+    // 销毁现有的Sortable实例
+    if (imageGrid.sortableInstance) {
+        imageGrid.sortableInstance.destroy();
+        imageGrid.sortableInstance = null;
+    }
+
+    // 如果不是网格或列表视图，或者没有启用拖拽，则不初始化Sortable
+    if (currentViewMode === 'timeline' || !isDraggable) {
+        return;
+    }
+
+    // 创建新的Sortable实例
+    imageGrid.sortableInstance = new Sortable(imageGrid, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: function(evt) {
+            // 更新自定义排序顺序
+            updateCustomOrder();
+        }
+    });
+}
+
+// 更新自定义排序顺序
+function updateCustomOrder() {
+    const imageCards = document.querySelectorAll('.image-card');
+    customOrder = Array.from(imageCards).map(card => card.dataset.id);
+    saveCustomOrder();
 }
 
 // 渲染标签过滤器

@@ -115,6 +115,56 @@
             color: var(--dark-text-light);
         }
 
+        /* 图表容器样式 */
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+            border-top: 3px solid var(--accent-color);
+            height: 300px;
+        }
+
+        body.dark-mode .chart-container {
+            background: var(--dark-card-bg);
+        }
+
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        body.dark-mode .chart-title {
+            color: var(--dark-text);
+        }
+
+        .chart-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
         .search-bar {
             display: flex;
             margin-bottom: 1.5rem;
@@ -194,6 +244,219 @@
             color: var(--text-light);
         }
 
+        /* 收藏过滤器样式 */
+        .favorite-filter {
+            margin-left: auto;
+        }
+
+        .favorite-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .favorite-toggle:hover {
+            background: rgba(var(--primary-light-rgb), 0.1);
+        }
+
+        .favorite-toggle input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .favorite-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            color: var(--text-light);
+            transition: all var(--transition-fast);
+        }
+
+        .favorite-toggle input:checked ~ .favorite-icon {
+            color: #f59e0b;
+        }
+
+        .favorite-toggle input:checked ~ .favorite-icon svg {
+            fill: #f59e0b;
+        }
+
+        .favorite-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .favorite-toggle {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        body.dark-mode .favorite-label {
+            color: var(--dark-text);
+        }
+
+        /* 拖拽排序切换按钮样式 */
+        .drag-toggle {
+            margin-left: 0.5rem;
+        }
+
+        .drag-mode-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .drag-mode-toggle:hover {
+            background: rgba(var(--primary-light-rgb), 0.1);
+        }
+
+        .drag-mode-toggle input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .drag-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.5rem;
+            color: var(--text-light);
+            transition: all var(--transition-fast);
+        }
+
+        .drag-mode-toggle input:checked ~ .drag-icon {
+            color: var(--primary-color);
+        }
+
+        .drag-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .drag-mode-toggle {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        body.dark-mode .drag-label {
+            color: var(--dark-text);
+        }
+
+        /* 拖拽排序样式 */
+        .image-card.sortable-drag {
+            opacity: 0.8;
+            transform: scale(0.95);
+            z-index: 10;
+        }
+
+        .image-card.sortable-ghost {
+            opacity: 0.4;
+            background: var(--primary-light);
+        }
+
+        .image-card.sortable-chosen {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .image-card.draggable {
+            cursor: grab;
+        }
+
+        .image-card.draggable:active {
+            cursor: grabbing;
+        }
+
+        .image-card.draggable .drag-handle {
+            display: flex;
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            cursor: grab;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .view-mode-toggle {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .view-mode-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-left: 0.25rem;
+        }
+
+        .view-mode-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        .view-mode-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        body.dark-mode .view-mode-btn {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text-light);
+        }
+
+        body.dark-mode .view-mode-btn:hover {
+            background: var(--primary-light);
+            color: white;
+            border-color: var(--primary-light);
+        }
+
+        body.dark-mode .view-mode-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
         .sort-select {
             padding: 0.5rem;
             border-radius: var(--radius-sm);
@@ -214,6 +477,121 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
+        }
+
+        /* 列表视图样式 */
+        .image-grid.list-view {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .image-grid.list-view .image-card {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            grid-template-rows: 1fr;
+            height: 120px;
+        }
+
+        .image-grid.list-view .image-preview {
+            height: 100%;
+            width: 120px;
+            grid-row: 1;
+        }
+
+        .image-grid.list-view .image-info {
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .image-grid.list-view .image-actions {
+            display: flex;
+            flex-direction: column;
+            padding: 0.5rem;
+            border-top: none;
+            border-left: 1px solid var(--border-color);
+            background: none;
+            justify-content: center;
+        }
+
+        body.dark-mode .image-grid.list-view .image-actions {
+            border-color: var(--dark-border);
+        }
+
+        .image-grid.list-view .image-btn {
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        /* 时间线视图样式 */
+        .image-grid.timeline-view {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .timeline-date-group {
+            margin-bottom: 1rem;
+        }
+
+        .timeline-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-light);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .timeline-date {
+            color: var(--dark-text);
+        }
+
+        .timeline-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* 空状态样式 */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            color: var(--text-light);
+            border: 1px dashed var(--border-color);
+        }
+
+        .empty-state svg {
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            max-width: 400px;
+        }
+
+        body.dark-mode .empty-state {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        body.dark-mode .empty-state h3 {
+            color: var(--dark-text);
         }
 
         .image-card {
@@ -348,6 +726,46 @@
 
         .image-card:hover .image-zoom-icon {
             opacity: 1;
+        }
+
+        /* 收藏按钮样式 */
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: all var(--transition);
+            z-index: 2;
+        }
+
+        .image-card:hover .favorite-btn,
+        .favorite-btn.active {
+            opacity: 1;
+        }
+
+        .favorite-btn.active {
+            background: rgba(0,0,0,0.7);
+            color: #f59e0b;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+            background: rgba(0,0,0,0.7);
+        }
+
+        .image-card.favorite {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
         }
 
         .image-info {
@@ -1095,14 +1513,26 @@
             .dashboard-stats {
                 margin: 1rem 0;
                 gap: 1rem;
+                flex-wrap: wrap;
             }
 
             .stat-card {
                 padding: 1rem;
+                min-width: calc(50% - 0.5rem);
             }
 
             .stat-value {
                 font-size: 1.5rem;
+            }
+
+            .dashboard-charts {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chart-container {
+                padding: 1rem;
+                height: 250px;
             }
 
             .search-bar {
@@ -1288,6 +1718,22 @@
                         <div class="stat-value" id="recentUploads">0</div>
                         <div class="stat-label">最近上传(7天)</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgFileSize">0 MB</div>
+                        <div class="stat-label">平均大小</div>
+                    </div>
+                </div>
+
+                <!-- 数据可视化面板 -->
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3 class="chart-title">上传趋势</h3>
+                        <canvas id="uploadTrendChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3 class="chart-title">存储使用情况</h3>
+                        <canvas id="storageUsageChart"></canvas>
+                    </div>
                 </div>
 
                 <div class="search-bar">
@@ -1313,10 +1759,62 @@
                             <option value="oldest">最早上传</option>
                             <option value="name">文件名</option>
                             <option value="size">文件大小</option>
+                            <option value="custom">自定义排序</option>
                         </select>
                     </div>
                     <div class="filter-group" id="tagFilters">
                         <!-- 标签过滤器将通过JavaScript动态生成 -->
+                    </div>
+                    <div class="filter-group favorite-filter">
+                        <label class="favorite-toggle" title="只显示收藏">
+                            <input type="checkbox" id="favoriteToggle">
+                            <span class="favorite-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </span>
+                            <span class="favorite-label">收藏</span>
+                        </label>
+                    </div>
+                    <div class="filter-group drag-toggle">
+                        <label class="drag-mode-toggle" title="启用拖拽排序">
+                            <input type="checkbox" id="dragToggle">
+                            <span class="drag-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                                </svg>
+                            </span>
+                            <span class="drag-label">拖拽排序</span>
+                        </label>
+                    </div>
+                    <div class="filter-group view-mode-toggle">
+                        <span class="filter-label">视图:</span>
+                        <button id="gridViewBtn" class="view-mode-btn active" title="网格视图">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button id="listViewBtn" class="view-mode-btn" title="列表视图">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </button>
+                        <button id="timelineViewBtn" class="view-mode-btn" title="时间线视图">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
@@ -1506,6 +2004,8 @@
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/dashboard.js"></script>
