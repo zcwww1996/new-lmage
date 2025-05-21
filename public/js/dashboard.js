@@ -1249,9 +1249,6 @@ function initEditModal() {
     const tagInput = document.getElementById('tagInput');
     const tagsInput = document.getElementById('tagsInput');
     const tagsSuggestions = document.getElementById('tagsSuggestions');
-    const accessControl = document.getElementById('accessControl');
-    const shareOptionsGroup = document.getElementById('shareOptionsGroup');
-    const createShareLink = document.getElementById('createShareLink');
 
     // 关闭模态框
     function closeEditModal() {
@@ -1271,32 +1268,11 @@ function initEditModal() {
             document.getElementById('editUploadTime').textContent = '-';
             document.getElementById('editFileSize').textContent = '-';
             document.getElementById('editImageLink').value = '';
-            document.getElementById('accessControl').value = 'public';
-            document.getElementById('shareOptionsGroup').style.display = 'none';
-            document.getElementById('shareLinks').innerHTML = '';
 
             // 隐藏标签建议
             tagsSuggestions.style.display = 'none';
         }, 300);
     }
-
-    // 访问控制变更事件
-    accessControl.addEventListener('change', () => {
-        // 如果选择了"分享"，显示分享选项
-        if (accessControl.value === 'shared') {
-            shareOptionsGroup.style.display = 'block';
-            // 加载现有的分享链接
-            loadShareLinks(currentEditingImageId);
-        } else {
-            shareOptionsGroup.style.display = 'none';
-        }
-    });
-
-    // 创建分享链接按钮点击事件
-    createShareLink.addEventListener('click', () => {
-        if (!currentEditingImageId) return;
-        openShareModal(currentEditingImageId);
-    });
 
     // 关闭按钮
     closeModal.addEventListener('click', closeEditModal);
@@ -1368,7 +1344,6 @@ function initEditModal() {
         if (!currentEditingImageId) return;
 
         const fileName = document.getElementById('editFileName').value.trim();
-        const accessControl = document.getElementById('accessControl').value;
 
         if (!fileName) {
             alert('文件名不能为空');
@@ -1384,8 +1359,7 @@ function initEditModal() {
                 },
                 body: JSON.stringify({
                     fileName,
-                    tags: currentTags,
-                    accessControl
+                    tags: currentTags
                 })
             });
 
@@ -1431,8 +1405,6 @@ function openEditModal(imageId) {
     const editImageLink = document.getElementById('editImageLink');
     const tagsInput = document.getElementById('tagsInput');
     const tagInput = document.getElementById('tagInput');
-    const accessControl = document.getElementById('accessControl');
-    const shareOptionsGroup = document.getElementById('shareOptionsGroup');
 
     // 查找图片
     const image = currentImages.find(img => img.id === imageId);
@@ -1458,17 +1430,6 @@ function openEditModal(imageId) {
 
     // 设置图片链接
     editImageLink.value = `${window.location.origin}${image.url}`;
-
-    // 设置访问控制
-    accessControl.value = image.accessControl || 'public';
-
-    // 如果是分享模式，显示分享选项并加载分享链接
-    if (accessControl.value === 'shared') {
-        shareOptionsGroup.style.display = 'block';
-        loadShareLinks(imageId);
-    } else {
-        shareOptionsGroup.style.display = 'none';
-    }
 
     // 清空标签
     const tagElements = tagsInput.querySelectorAll('.tag');
@@ -1781,359 +1742,6 @@ async function batchDeleteImages() {
 
     // 退出选择模式
     toggleSelectionMode(false);
-}
-
-// 加载分享链接
-async function loadShareLinks(imageId) {
-    if (!imageId) return;
-
-    try {
-        const response = await fetch('/api/shares', {
-            headers: getAuthHeader()
-        });
-
-        if (!response.ok) {
-            throw new Error('获取分享链接失败');
-        }
-
-        const data = await response.json();
-        const shareLinks = data.shares || [];
-
-        // 过滤出当前图片的分享链接
-        const imageShares = shareLinks.filter(share => share.imageId === imageId);
-
-        // 渲染分享链接
-        renderShareLinks(imageShares);
-    } catch (error) {
-        console.error('加载分享链接错误:', error);
-    }
-}
-
-// 渲染分享链接
-function renderShareLinks(shares) {
-    const shareLinksContainer = document.getElementById('shareLinks');
-    shareLinksContainer.innerHTML = '';
-
-    if (shares.length === 0) {
-        shareLinksContainer.innerHTML = '<p class="no-shares">暂无分享链接</p>';
-        return;
-    }
-
-    shares.forEach(share => {
-        const shareItem = document.createElement('div');
-        shareItem.className = 'share-link-item';
-
-        // 格式化分享类型
-        let shareTypeText = '公开分享';
-        let shareTypeClass = 'public';
-
-        if (share.shareType === 'password') {
-            shareTypeText = '密码保护';
-            shareTypeClass = 'password';
-        } else if (share.shareType === 'specific_users') {
-            shareTypeText = '特定用户';
-            shareTypeClass = 'specific_users';
-        }
-
-        // 格式化创建时间
-        const createTime = new Date(share.createdAt).toLocaleString();
-
-        // 格式化过期时间
-        let expireTime = '永不过期';
-        if (share.expiresAt) {
-            expireTime = new Date(share.expiresAt).toLocaleString();
-        }
-
-        // 构建分享链接URL
-        const shareUrl = `${window.location.origin}/share/${share.id}`;
-
-        shareItem.innerHTML = `
-            <div class="share-link-info">
-                <span class="share-link-type ${shareTypeClass}">${shareTypeText}</span>
-                <div class="share-link-url" title="${shareUrl}">${shareUrl}</div>
-                <div class="share-link-meta">
-                    创建于: ${createTime} | 过期时间: ${expireTime}
-                </div>
-            </div>
-            <div class="share-link-actions">
-                <button class="share-link-btn copy" data-clipboard-text="${shareUrl}" title="复制链接">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                </button>
-                <button class="share-link-btn open" data-url="${shareUrl}" title="打开链接">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </button>
-                <button class="share-link-btn delete" data-id="${share.id}" title="删除链接">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                </button>
-            </div>
-        `;
-
-        shareLinksContainer.appendChild(shareItem);
-    });
-
-    // 初始化复制按钮
-    new ClipboardJS('.share-link-btn.copy').on('success', function(e) {
-        const button = e.trigger;
-        const originalHTML = button.innerHTML;
-
-        button.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        `;
-
-        setTimeout(() => {
-            button.innerHTML = originalHTML;
-        }, 2000);
-    });
-
-    // 初始化打开链接按钮
-    document.querySelectorAll('.share-link-btn.open').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const url = btn.dataset.url;
-            window.open(url, '_blank');
-        });
-    });
-
-    // 初始化删除链接按钮
-    document.querySelectorAll('.share-link-btn.delete').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const shareId = btn.dataset.id;
-            if (confirm('确定要删除此分享链接吗？')) {
-                deleteShareLink(shareId);
-            }
-        });
-    });
-}
-
-// 删除分享链接
-async function deleteShareLink(shareId) {
-    try {
-        const response = await fetch(`/api/shares/${shareId}`, {
-            method: 'DELETE',
-            headers: getAuthHeader()
-        });
-
-        if (!response.ok) {
-            throw new Error('删除分享链接失败');
-        }
-
-        // 重新加载分享链接
-        loadShareLinks(currentEditingImageId);
-    } catch (error) {
-        console.error('删除分享链接错误:', error);
-        alert(`删除失败: ${error.message}`);
-    }
-}
-
-// 打开分享模态框
-function openShareModal(imageId) {
-    const shareModal = document.getElementById('shareModal');
-    const shareType = document.getElementById('shareType');
-    const passwordGroup = document.getElementById('passwordGroup');
-    const usersGroup = document.getElementById('usersGroup');
-    const shareExpiration = document.getElementById('shareExpiration');
-    const customExpirationGroup = document.getElementById('customExpirationGroup');
-
-    // 重置表单
-    shareType.value = 'public';
-    passwordGroup.style.display = 'none';
-    usersGroup.style.display = 'none';
-    shareExpiration.value = 'never';
-    customExpirationGroup.style.display = 'none';
-    document.getElementById('sharePassword').value = '';
-    document.getElementById('allowedUsers').value = '';
-    document.getElementById('customExpiration').value = '';
-
-    // 分享类型变更事件
-    shareType.addEventListener('change', () => {
-        passwordGroup.style.display = shareType.value === 'password' ? 'block' : 'none';
-        usersGroup.style.display = shareType.value === 'specific_users' ? 'block' : 'none';
-    });
-
-    // 过期时间变更事件
-    shareExpiration.addEventListener('change', () => {
-        customExpirationGroup.style.display = shareExpiration.value === 'custom' ? 'block' : 'none';
-    });
-
-    // 关闭模态框
-    const closeShareModal = document.getElementById('closeShareModal');
-    const cancelShare = document.getElementById('cancelShare');
-
-    function closeModal() {
-        shareModal.style.display = 'none';
-    }
-
-    closeShareModal.addEventListener('click', closeModal);
-    cancelShare.addEventListener('click', closeModal);
-
-    // 创建分享链接
-    const createShare = document.getElementById('createShare');
-    createShare.addEventListener('click', () => {
-        createShareLink(imageId);
-    });
-
-    // 显示模态框
-    shareModal.style.display = 'block';
-}
-
-// 创建分享链接
-async function createShareLink(imageId) {
-    const shareType = document.getElementById('shareType').value;
-    const password = document.getElementById('sharePassword').value;
-    const allowedUsers = document.getElementById('allowedUsers').value.split(',').map(user => user.trim()).filter(user => user);
-    const expirationType = document.getElementById('shareExpiration').value;
-    const customExpiration = document.getElementById('customExpiration').value;
-
-    // 验证输入
-    if (shareType === 'password' && !password) {
-        alert('请输入访问密码');
-        return;
-    }
-
-    if (shareType === 'specific_users' && allowedUsers.length === 0) {
-        alert('请输入至少一个允许访问的用户');
-        return;
-    }
-
-    // 计算过期时间
-    let expiresAt = null;
-
-    if (expirationType !== 'never') {
-        const now = new Date();
-
-        switch (expirationType) {
-            case '1h':
-                expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
-                break;
-            case '1d':
-                expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-                break;
-            case '7d':
-                expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-                break;
-            case '30d':
-                expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-                break;
-            case 'custom':
-                if (!customExpiration) {
-                    alert('请选择自定义过期时间');
-                    return;
-                }
-                expiresAt = new Date(customExpiration);
-                break;
-        }
-    }
-
-    try {
-        const response = await fetch('/api/shares', {
-            method: 'POST',
-            headers: {
-                ...getAuthHeader(),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                imageId,
-                shareType,
-                password: shareType === 'password' ? password : null,
-                allowedUsers: shareType === 'specific_users' ? allowedUsers : null,
-                expiresAt: expiresAt ? expiresAt.getTime() : null
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('创建分享链接失败');
-        }
-
-        const data = await response.json();
-
-        // 关闭分享模态框
-        document.getElementById('shareModal').style.display = 'none';
-
-        // 显示分享结果
-        showShareResult(data);
-
-        // 重新加载分享链接
-        loadShareLinks(imageId);
-    } catch (error) {
-        console.error('创建分享链接错误:', error);
-        alert(`创建失败: ${error.message}`);
-    }
-}
-
-// 显示分享结果
-function showShareResult(data) {
-    const shareResultModal = document.getElementById('shareResultModal');
-    const shareLink = document.getElementById('shareLink');
-    const shareTypeInfo = document.getElementById('shareTypeInfo');
-    const shareCreateTime = document.getElementById('shareCreateTime');
-    const shareExpireTime = document.getElementById('shareExpireTime');
-    const openShareLink = document.getElementById('openShareLink');
-
-    // 设置分享链接
-    shareLink.value = data.shareUrl;
-
-    // 设置分享类型
-    let shareTypeText = '公开分享';
-    if (data.shareRecord.shareType === 'password') {
-        shareTypeText = '密码保护';
-    } else if (data.shareRecord.shareType === 'specific_users') {
-        shareTypeText = '特定用户';
-    }
-    shareTypeInfo.textContent = shareTypeText;
-
-    // 设置创建时间
-    shareCreateTime.textContent = new Date(data.shareRecord.createdAt).toLocaleString();
-
-    // 设置过期时间
-    shareExpireTime.textContent = data.shareRecord.expiresAt ? new Date(data.shareRecord.expiresAt).toLocaleString() : '永不过期';
-
-    // 打开链接按钮
-    openShareLink.addEventListener('click', () => {
-        window.open(data.shareUrl, '_blank');
-    });
-
-    // 关闭按钮
-    const closeShareResultModal = document.getElementById('closeShareResultModal');
-    const closeShareResult = document.getElementById('closeShareResult');
-
-    function closeModal() {
-        shareResultModal.style.display = 'none';
-    }
-
-    closeShareResultModal.addEventListener('click', closeModal);
-    closeShareResult.addEventListener('click', closeModal);
-
-    // 初始化复制链接功能
-    new ClipboardJS('#copyShareLink').on('success', function(e) {
-        const button = e.trigger;
-        const originalHTML = button.innerHTML;
-
-        button.innerHTML = `
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        `;
-
-        setTimeout(() => {
-            button.innerHTML = originalHTML;
-        }, 2000);
-    });
-
-    // 显示模态框
-    shareResultModal.style.display = 'block';
 }
 
 // 页面加载时初始化
