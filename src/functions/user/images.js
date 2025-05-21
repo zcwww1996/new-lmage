@@ -112,7 +112,7 @@ export async function updateImageInfo(c) {
     const user = c.get('user');
     const userId = user.id;
     const fileId = c.req.param('id');
-    const { fileName, tags } = await c.req.json();
+    const { fileName, tags, accessControl } = await c.req.json();
 
     if (!fileId) {
       return c.json({ error: '文件ID不能为空' }, 400);
@@ -131,11 +131,21 @@ export async function updateImageInfo(c) {
       return c.json({ error: '无权修改此文件' }, 403);
     }
 
+    // 验证访问控制设置
+    let validAccessControl = fileData.metadata.accessControl || 'public';
+    if (accessControl) {
+      const validAccessTypes = ['public', 'private', 'shared'];
+      if (validAccessTypes.includes(accessControl)) {
+        validAccessControl = accessControl;
+      }
+    }
+
     // 更新元数据
     const updatedMetadata = {
       ...fileData.metadata,
       fileName: fileName || fileData.metadata.fileName,
       tags: tags || fileData.metadata.tags,
+      accessControl: validAccessControl,
       updatedAt: Date.now()
     };
 
@@ -151,7 +161,8 @@ export async function updateImageInfo(c) {
         return {
           ...file,
           fileName: fileName || file.fileName,
-          tags: tags || file.tags
+          tags: tags || file.tags,
+          accessControl: validAccessControl
         };
       }
       return file;

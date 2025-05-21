@@ -1419,6 +1419,129 @@
             color: var(--dark-text);
         }
 
+        /* 分享选项样式 */
+        .share-options {
+            margin-top: 0.5rem;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .share-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .share-links-list {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .share-link-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background-color: rgba(var(--primary-light-rgb), 0.05);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+
+        body.dark-mode .share-link-item {
+            background-color: rgba(var(--primary-light-rgb), 0.1);
+        }
+
+        .share-link-info {
+            flex: 1;
+        }
+
+        .share-link-type {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            background-color: var(--primary-light);
+            color: white;
+            display: inline-block;
+            margin-bottom: 0.25rem;
+        }
+
+        .share-link-type.password {
+            background-color: var(--warning-color);
+        }
+
+        .share-link-type.specific_users {
+            background-color: var(--accent-color);
+        }
+
+        .share-link-url {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            word-break: break-all;
+        }
+
+        body.dark-mode .share-link-url {
+            color: var(--dark-text-light);
+        }
+
+        .share-link-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .share-link-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .share-link-btn:hover {
+            background-color: rgba(var(--primary-light-rgb), 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .share-link-btn.delete {
+            color: var(--error-color);
+        }
+
+        .share-link-btn.delete:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: var(--error-color);
+        }
+
+        body.dark-mode .share-link-btn {
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        body.dark-mode .form-hint {
+            color: var(--dark-text-light);
+        }
+
         /* 图片查看器 */
         .image-viewer {
             position: fixed;
@@ -1925,6 +2048,46 @@
                         <div class="info-text" id="editFileSize">-</div>
                     </div>
                     <div class="form-group">
+                        <label for="accessControl">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            访问控制
+                        </label>
+                        <select id="accessControl" class="form-control">
+                            <option value="public">公开 - 所有人可访问</option>
+                            <option value="private">私有 - 仅自己可访问</option>
+                            <option value="shared">分享 - 通过链接访问</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="shareOptionsGroup" style="display: none;">
+                        <label>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            分享选项
+                        </label>
+                        <div class="share-options">
+                            <button id="createShareLink" class="share-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                创建分享链接
+                            </button>
+                            <div id="shareLinks" class="share-links-list">
+                                <!-- 分享链接将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -2002,6 +2165,107 @@
 
     <!-- 移动端菜单遮罩 -->
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+    <!-- 创建分享链接模态框 -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">创建分享链接</h3>
+                <button class="modal-close" id="closeShareModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="shareType">分享类型</label>
+                    <select id="shareType" class="form-control">
+                        <option value="public">公开分享 - 任何人都可以访问</option>
+                        <option value="password">密码保护 - 需要密码才能访问</option>
+                        <option value="specific_users">特定用户 - 仅允许特定用户访问</option>
+                    </select>
+                </div>
+
+                <div id="passwordGroup" class="form-group" style="display: none;">
+                    <label for="sharePassword">访问密码</label>
+                    <input type="password" id="sharePassword" class="form-control" placeholder="设置访问密码...">
+                </div>
+
+                <div id="usersGroup" class="form-group" style="display: none;">
+                    <label for="allowedUsers">允许访问的用户</label>
+                    <input type="text" id="allowedUsers" class="form-control" placeholder="输入用户名，多个用户用逗号分隔">
+                    <p class="form-hint">注意：用户必须在本站注册才能被授权访问</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="shareExpiration">过期时间</label>
+                    <select id="shareExpiration" class="form-control">
+                        <option value="never">永不过期</option>
+                        <option value="1h">1小时后</option>
+                        <option value="1d">1天后</option>
+                        <option value="7d">7天后</option>
+                        <option value="30d">30天后</option>
+                        <option value="custom">自定义...</option>
+                    </select>
+                </div>
+
+                <div id="customExpirationGroup" class="form-group" style="display: none;">
+                    <label for="customExpiration">自定义过期时间</label>
+                    <input type="datetime-local" id="customExpiration" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelShare" class="modal-btn modal-btn-secondary">取消</button>
+                <button id="createShare" class="modal-btn modal-btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    创建分享链接
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享链接结果模态框 -->
+    <div id="shareResultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">分享链接已创建</h3>
+                <button class="modal-close" id="closeShareResultModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>分享链接</label>
+                    <div class="copy-link-container">
+                        <input type="text" id="shareLink" class="form-control" readonly>
+                        <button id="copyShareLink" class="copy-link-btn" data-clipboard-target="#shareLink">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>分享信息</label>
+                    <div class="info-text" id="shareInfo">
+                        <p><strong>分享类型:</strong> <span id="shareTypeInfo">-</span></p>
+                        <p><strong>创建时间:</strong> <span id="shareCreateTime">-</span></p>
+                        <p><strong>过期时间:</strong> <span id="shareExpireTime">-</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeShareResult" class="modal-btn modal-btn-secondary">关闭</button>
+                <button id="openShareLink" class="modal-btn modal-btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    打开链接
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
