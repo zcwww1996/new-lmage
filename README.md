@@ -48,6 +48,26 @@
     <td>支持图片列表、标签和搜索</td>
     <td>完美适配各种设备尺寸</td>
   </tr>
+  <tr>
+    <td align="center"><h3>📊 数据可视化</h3></td>
+    <td align="center"><h3>⭐ 收藏功能</h3></td>
+    <td align="center"><h3>🔀 多视图模式</h3></td>
+  </tr>
+  <tr>
+    <td>直观图表展示上传趋势和存储使用</td>
+    <td>标记和筛选您喜爱的图片</td>
+    <td>网格、列表和时间线多种视图</td>
+  </tr>
+  <tr>
+    <td align="center"><h3>↕️ 拖拽排序</h3></td>
+    <td align="center"><h3>🔍 高级搜索</h3></td>
+    <td align="center"><h3>🎭 自定义主题</h3></td>
+  </tr>
+  <tr>
+    <td>自由调整图片顺序和排列方式</td>
+    <td>按日期、大小、标签等多维度搜索</td>
+    <td>个性化界面外观和布局</td>
+  </tr>
 </table>
 
 ## 🚀 部署
@@ -97,16 +117,21 @@ npm run setup
 
 - 查看和管理您上传的所有图片
 - 为图片添加标签，方便分类
-- 搜索您的图片
+- 搜索您的图片（支持按文件名、标签、大小等多维度搜索）
 - 批量上传多张图片
 - 删除不需要的图片
+- 收藏喜爱的图片并快速筛选
+- 在网格、列表和时间线三种视图模式间切换
+- 通过拖拽自定义图片排序
+- 查看数据统计和使用趋势图表
+- 自定义界面外观和布局
 
 ## 🖥️ 技术栈
 
 <table>
   <tr>
     <td align="right"><strong>前端：</strong></td>
-    <td>HTML5, CSS3, JavaScript</td>
+    <td>HTML5, CSS3, JavaScript, Chart.js, SortableJS</td>
   </tr>
   <tr>
     <td align="right"><strong>后端：</strong></td>
@@ -114,11 +139,19 @@ npm run setup
   </tr>
   <tr>
     <td align="right"><strong>存储：</strong></td>
-    <td>Telegram API, Cloudflare KV</td>
+    <td>Telegram API, Cloudflare KV, LocalStorage</td>
   </tr>
   <tr>
     <td align="right"><strong>部署：</strong></td>
     <td>Wrangler CLI, Cloudflare Pages</td>
+  </tr>
+  <tr>
+    <td align="right"><strong>数据可视化：</strong></td>
+    <td>Chart.js, 自定义统计算法</td>
+  </tr>
+  <tr>
+    <td align="right"><strong>UI/UX：</strong></td>
+    <td>响应式设计, 暗色模式, 动画效果</td>
   </tr>
 </table>
 
@@ -136,6 +169,14 @@ npm run deploy
 ```
 
 ## 📝 更新日志
+
+### 2025.05.21
+- 📊 添加数据可视化功能（上传趋势和存储使用图表）
+- 🔀 新增多视图模式（网格、列表、时间线三种视图）
+- ⭐ 添加图片收藏功能和收藏过滤器
+- ↕️ 实现拖拽排序功能和自定义排序
+- 🎨 全面优化用户界面和交互体验
+- 📱 增强移动端适配和响应式设计
 
 ### 2025.05.18
 - 🌾 新增四个模块的美化
