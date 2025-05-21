@@ -285,7 +285,7 @@ function groupImagesByDate(images) {
 // 创建图片卡片
 function createImageCard(image) {
     const card = document.createElement('div');
-    card.className = 'image-card';
+    card.className = 'image-card-enhanced';
     card.dataset.id = image.id;
 
     // 如果图片被选中，添加选中样式
@@ -325,10 +325,11 @@ function createImageCard(image) {
             <label for="check-${image.id}" class="image-checkbox-label"></label>
         </div>
         ` : ''}
-        <div class="image-preview" data-id="${image.id}" data-url="${image.url}">
+        <div class="image-preview-enhanced" data-id="${image.id}" data-url="${image.url}">
             <img src="${image.url}" alt="${image.fileName}" loading="lazy">
+            <div class="image-overlay"></div>
             <div class="image-zoom-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     <line x1="11" y1="8" x2="11" y2="14"></line>
@@ -447,7 +448,7 @@ function initImageCardEvents() {
     });
 
     // 添加图片预览点击事件
-    document.querySelectorAll('.image-preview').forEach(preview => {
+    document.querySelectorAll('.image-preview-enhanced').forEach(preview => {
         preview.addEventListener('click', (e) => {
             // 如果点击的是收藏按钮，不打开查看器
             if (e.target.closest('.favorite-btn')) {
@@ -461,6 +462,21 @@ function initImageCardEvents() {
             const imageId = preview.dataset.id;
             const imageUrl = preview.dataset.url;
             openImageViewer(imageId, imageUrl);
+
+            // 添加点击动画效果
+            preview.classList.add('clicked');
+            setTimeout(() => {
+                preview.classList.remove('clicked');
+            }, 300);
+        });
+
+        // 添加鼠标悬停效果
+        preview.addEventListener('mouseenter', () => {
+            preview.querySelector('.image-overlay').style.opacity = '1';
+        });
+
+        preview.addEventListener('mouseleave', () => {
+            preview.querySelector('.image-overlay').style.opacity = '0';
         });
     });
 
@@ -475,7 +491,7 @@ function initImageCardEvents() {
 
     // 添加图片卡片选择事件
     if (isSelectionMode) {
-        document.querySelectorAll('.image-card').forEach(card => {
+        document.querySelectorAll('.image-card-enhanced').forEach(card => {
             card.addEventListener('click', () => {
                 const imageId = card.dataset.id;
                 toggleImageSelection(imageId, card);
@@ -486,7 +502,7 @@ function initImageCardEvents() {
             checkbox.addEventListener('change', (e) => {
                 e.stopPropagation(); // 防止触发卡片点击事件
                 const imageId = checkbox.id.replace('check-', '');
-                const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
+                const card = document.querySelector(`.image-card-enhanced[data-id="${imageId}"]`);
                 toggleImageSelection(imageId, card, checkbox.checked);
             });
         });
@@ -664,11 +680,17 @@ let storageUsageChart = null;
 
 function initCharts() {
     // 设置Chart.js全局配置
-    Chart.defaults.color = document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937';
-    Chart.defaults.borderColor = document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb';
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    Chart.defaults.color = isDarkMode ? '#f3f4f6' : '#1f2937';
+    Chart.defaults.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+
+    // 渐变背景色
+    const uploadTrendCtx = document.getElementById('uploadTrendChart').getContext('2d');
+    const gradientFill = uploadTrendCtx.createLinearGradient(0, 0, 0, 350);
+    gradientFill.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+    gradientFill.addColorStop(1, 'rgba(59, 130, 246, 0.02)');
 
     // 初始化上传趋势图表
-    const uploadTrendCtx = document.getElementById('uploadTrendChart').getContext('2d');
     uploadTrendChart = new Chart(uploadTrendCtx, {
         type: 'line',
         data: {
@@ -677,15 +699,27 @@ function initCharts() {
                 label: '上传数量',
                 data: [],
                 borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 2,
+                backgroundColor: gradientFill,
+                borderWidth: 3,
                 tension: 0.4,
-                fill: true
+                fill: true,
+                pointBackgroundColor: '#3b82f6',
+                pointBorderColor: isDarkMode ? '#1f2937' : '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#3b82f6',
+                pointHoverBorderColor: isDarkMode ? '#1f2937' : '#ffffff',
+                pointHoverBorderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                duration: 1500,
+                easing: 'easeOutQuart'
+            },
             plugins: {
                 legend: {
                     display: false
@@ -693,20 +727,50 @@ function initCharts() {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: document.body.classList.contains('dark-mode') ? '#1f2937' : 'rgba(255, 255, 255, 0.9)',
-                    titleColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
-                    bodyColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
-                    borderColor: document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb',
+                    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                    titleColor: isDarkMode ? '#f3f4f6' : '#1f2937',
+                    bodyColor: isDarkMode ? '#f3f4f6' : '#1f2937',
+                    borderColor: isDarkMode ? '#374151' : '#e5e7eb',
                     borderWidth: 1,
-                    padding: 10,
-                    displayColors: false
+                    padding: 12,
+                    displayColors: false,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
+                    cornerRadius: 8,
+                    caretSize: 6
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        precision: 0
+                        precision: 0,
+                        font: {
+                            size: 12
+                        },
+                        padding: 8
+                    },
+                    grid: {
+                        display: true,
+                        drawBorder: false,
+                        color: isDarkMode ? 'rgba(55, 65, 81, 0.3)' : 'rgba(229, 231, 235, 0.7)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12
+                        },
+                        padding: 8
+                    },
+                    grid: {
+                        display: false,
+                        drawBorder: false
                     }
                 }
             }
@@ -725,24 +789,48 @@ function initCharts() {
                     '#3b82f6',
                     '#8b5cf6'
                 ],
-                borderColor: document.body.classList.contains('dark-mode') ? '#1f2937' : '#ffffff',
-                borderWidth: 2
+                borderColor: isDarkMode ? '#1f2937' : '#ffffff',
+                borderWidth: 3,
+                hoverOffset: 10,
+                borderRadius: 5
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1500,
+                easing: 'easeOutQuart'
+            },
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 13
+                        }
+                    }
                 },
                 tooltip: {
-                    backgroundColor: document.body.classList.contains('dark-mode') ? '#1f2937' : 'rgba(255, 255, 255, 0.9)',
-                    titleColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
-                    bodyColor: document.body.classList.contains('dark-mode') ? '#f3f4f6' : '#1f2937',
-                    borderColor: document.body.classList.contains('dark-mode') ? '#374151' : '#e5e7eb',
+                    backgroundColor: isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                    titleColor: isDarkMode ? '#f3f4f6' : '#1f2937',
+                    bodyColor: isDarkMode ? '#f3f4f6' : '#1f2937',
+                    borderColor: isDarkMode ? '#374151' : '#e5e7eb',
                     borderWidth: 1,
-                    padding: 10,
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    },
                     callbacks: {
                         label: function(context) {
                             const value = context.raw;
@@ -751,7 +839,7 @@ function initCharts() {
                     }
                 }
             },
-            cutout: '70%'
+            cutout: '75%'
         }
     });
 
@@ -831,20 +919,33 @@ function updateChartsTheme() {
 
     // 更新上传趋势图表
     if (uploadTrendChart) {
-        uploadTrendChart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.9)';
+        // 更新点样式
+        uploadTrendChart.data.datasets[0].pointBorderColor = isDarkMode ? '#1f2937' : '#ffffff';
+        uploadTrendChart.data.datasets[0].pointHoverBorderColor = isDarkMode ? '#1f2937' : '#ffffff';
+
+        // 更新网格颜色
+        uploadTrendChart.options.scales.y.grid.color = isDarkMode ? 'rgba(55, 65, 81, 0.3)' : 'rgba(229, 231, 235, 0.7)';
+
+        // 更新工具提示样式
+        uploadTrendChart.options.plugins.tooltip.backgroundColor = isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)';
         uploadTrendChart.options.plugins.tooltip.titleColor = isDarkMode ? '#f3f4f6' : '#1f2937';
         uploadTrendChart.options.plugins.tooltip.bodyColor = isDarkMode ? '#f3f4f6' : '#1f2937';
         uploadTrendChart.options.plugins.tooltip.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+
         uploadTrendChart.update();
     }
 
     // 更新存储使用情况图表
     if (storageUsageChart) {
+        // 更新边框颜色
         storageUsageChart.data.datasets[0].borderColor = isDarkMode ? '#1f2937' : '#ffffff';
-        storageUsageChart.options.plugins.tooltip.backgroundColor = isDarkMode ? '#1f2937' : 'rgba(255, 255, 255, 0.9)';
+
+        // 更新工具提示样式
+        storageUsageChart.options.plugins.tooltip.backgroundColor = isDarkMode ? 'rgba(31, 41, 55, 0.9)' : 'rgba(255, 255, 255, 0.9)';
         storageUsageChart.options.plugins.tooltip.titleColor = isDarkMode ? '#f3f4f6' : '#1f2937';
         storageUsageChart.options.plugins.tooltip.bodyColor = isDarkMode ? '#f3f4f6' : '#1f2937';
         storageUsageChart.options.plugins.tooltip.borderColor = isDarkMode ? '#374151' : '#e5e7eb';
+
         storageUsageChart.update();
     }
 }
@@ -923,6 +1024,12 @@ function toggleImageSelection(imageId, card, forceState) {
         card.classList.add('selected');
         const checkbox = document.getElementById(`check-${imageId}`);
         if (checkbox) checkbox.checked = true;
+
+        // 添加选中动画效果
+        card.style.animation = 'pulse 0.3s ease-in-out';
+        setTimeout(() => {
+            card.style.animation = '';
+        }, 300);
     } else {
         selectedImages.delete(imageId);
         card.classList.remove('selected');

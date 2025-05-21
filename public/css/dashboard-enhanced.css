@@ -1,0 +1,362 @@
+/* 仪表盘增强样式 - 现代设计系统 3.0 */
+
+/* ===== CSS变量 ===== */
+:root {
+  /* 主色调 */
+  --primary-color: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --primary-dark-rgb: 37, 99, 235;
+
+  /* 强调色 */
+  --accent-color: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-dark: #7c3aed;
+
+  /* 卡片背景 */
+  --card-bg: #ffffff;
+  --dark-card-bg: #1f2937;
+
+  /* 文本颜色 */
+  --text-color: #1f2937;
+  --text-light: #6b7280;
+  --dark-text: #f3f4f6;
+  --dark-text-light: #9ca3af;
+
+  /* 渐变 */
+  --primary-gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+
+  /* 圆角 */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+}
+
+/* ===== 统计卡片增强 ===== */
+.stat-card-enhanced {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+
+body.dark-mode .stat-card-enhanced {
+  background: var(--dark-card-bg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card-enhanced:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--primary-gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.stat-card-enhanced:hover:before {
+  transform: scaleX(1);
+}
+
+.stat-card-enhanced:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .stat-card-enhanced:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  background: var(--primary-gradient);
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 5px 15px rgba(var(--primary-dark-rgb), 0.3);
+  transition: all 0.3s ease;
+}
+
+.stat-card-enhanced:hover .stat-icon {
+  transform: scale(1.1) rotate(10deg);
+}
+
+.stat-value-enhanced {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.stat-card-enhanced:hover .stat-value-enhanced {
+  transform: scale(1.1);
+}
+
+.stat-label-enhanced {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-light);
+  text-align: center;
+}
+
+body.dark-mode .stat-label-enhanced {
+  color: var(--dark-text-light);
+}
+
+/* ===== 图表容器增强 ===== */
+.chart-container-enhanced {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  height: 320px;
+}
+
+body.dark-mode .chart-container-enhanced {
+  background: var(--dark-card-bg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.chart-container-enhanced:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .chart-container-enhanced:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  background: var(--accent-color);
+  color: white;
+  font-size: 1.2rem;
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+.chart-container-enhanced:hover .chart-icon {
+  transform: rotate(10deg);
+}
+
+.chart-title-enhanced {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+body.dark-mode .chart-title-enhanced {
+  color: var(--dark-text);
+}
+
+/* ===== 图片卡片增强 ===== */
+.image-card-enhanced {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+body.dark-mode .image-card-enhanced {
+  background: var(--dark-card-bg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.image-card-enhanced:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-light);
+}
+
+body.dark-mode .image-card-enhanced:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.image-preview-enhanced {
+  position: relative;
+  overflow: hidden;
+  height: 180px;
+}
+
+.image-preview-enhanced img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.image-card-enhanced:hover .image-preview-enhanced img {
+  transform: scale(1.1);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-card-enhanced:hover .image-overlay {
+  opacity: 1;
+}
+
+/* ===== 动画效果 ===== */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* 应用动画 */
+.stat-card-enhanced {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.chart-container-enhanced {
+  animation: fadeIn 0.7s ease-out;
+}
+
+.image-card-enhanced {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.stat-icon {
+  animation: bounce 1s ease-out;
+}
+
+.image-preview-enhanced.clicked img {
+  animation: pulse 0.3s ease-in-out;
+}
+
+/* ===== 响应式调整 ===== */
+@media (max-width: 768px) {
+  .stat-card-enhanced {
+    padding: 1.25rem;
+    min-height: 140px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .stat-value-enhanced {
+    font-size: 2rem;
+  }
+
+  .chart-container-enhanced {
+    height: 280px;
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .stat-card-enhanced {
+    padding: 1rem;
+    min-height: 120px;
+  }
+
+  .stat-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .stat-value-enhanced {
+    font-size: 1.75rem;
+  }
+
+  .chart-container-enhanced {
+    height: 250px;
+    padding: 1rem;
+  }
+}
