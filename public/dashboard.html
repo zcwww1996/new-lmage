@@ -11,6 +11,14 @@
     <meta name="theme-color" content="#4361ee">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/dashboard-enhanced.css">
+    <link rel="stylesheet" href="./css/animations-premium.css">
+    <link rel="stylesheet" href="./css/advanced-cards.css">
+    <link rel="stylesheet" href="./css/buttons-premium.css">
+    <link rel="stylesheet" href="./css/forms-premium.css">
+    <link rel="stylesheet" href="./css/images-premium.css">
+    <link rel="stylesheet" href="./css/loaders-premium.css">
+    <link rel="stylesheet" href="./css/modals-premium.css">
+    <link rel="stylesheet" href="./css/mobile-nav-enhance.css">
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -703,6 +711,8 @@
             height: 100%;
             object-fit: cover;
             transition: transform var(--transition);
+            /* 应用高级图像类 */
+            class: premium-img premium-img-cover;
         }
 
         .image-card:hover .image-preview img {
@@ -866,21 +876,29 @@
             align-items: center;
             justify-content: center;
             gap: 0.25rem;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-sm;
         }
 
         .copy-btn {
             background-color: var(--primary-light);
             color: white;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-primary premium-btn-sm;
         }
 
         .edit-btn {
             background-color: #4cc9f0;
             color: white;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-accent premium-btn-sm;
         }
 
         .delete-btn {
             background-color: #f72585;
             color: white;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-error premium-btn-sm;
         }
 
         .image-btn:hover {
@@ -912,6 +930,8 @@
             align-items: center;
             justify-content: center;
             font-weight: 500;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-outline-primary premium-btn-sm;
         }
 
         body.dark-mode .page-btn {
@@ -925,6 +945,8 @@
             color: white;
             border-color: transparent;
             box-shadow: 0 3px 8px rgba(var(--primary-dark-rgb), 0.3);
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-primary premium-btn-sm;
         }
 
         .page-btn:hover:not(.active):not(.disabled) {
@@ -989,8 +1011,8 @@
             font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all var(--transition-fast);
-            text-decoration: none;
+            /* 应用高级按钮类 */
+            class: premium-btn premium-btn-primary;
         }
 
         .upload-btn:hover {
@@ -1696,7 +1718,7 @@
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">我的图片</h2>
                     <div class="dashboard-actions">
-                        <a href="/" class="upload-btn">
+                        <a href="/" class="upload-btn premium-btn premium-btn-primary premium-btn-icon-left">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="17 8 12 3 7 8"></polyline>
@@ -1878,7 +1900,7 @@
                     </div>
                     <h3>还没有上传图片</h3>
                     <p>上传您的第一张图片，开始使用TG-Image图床服务。您可以随时管理、分享和删除您的图片。</p>
-                    <a href="/" class="upload-btn">
+                    <a href="/" class="upload-btn premium-btn premium-btn-primary premium-btn-icon-left">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="17 8 12 3 7 8"></polyline>
@@ -1991,8 +2013,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancelEdit" class="modal-btn modal-btn-secondary">取消</button>
-                <button id="saveEdit" class="modal-btn modal-btn-primary">
+                <button id="cancelEdit" class="modal-btn modal-btn-secondary premium-btn premium-btn-outline-primary">取消</button>
+                <button id="saveEdit" class="modal-btn modal-btn-primary premium-btn premium-btn-primary premium-btn-icon-left">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                         <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -2008,28 +2030,28 @@
     <div id="batchToolbar" class="batch-toolbar">
         <div class="batch-info">已选择 <span id="selectedCount">0</span> 张图片</div>
         <div class="batch-actions">
-            <button id="batchCopy" class="batch-btn" title="复制所有选中图片链接">
+            <button id="batchCopy" class="batch-btn premium-btn premium-btn-outline-primary premium-btn-sm premium-btn-icon-left" title="复制所有选中图片链接">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>
                 复制链接
             </button>
-            <button id="batchAddTag" class="batch-btn" title="为所有选中图片添加标签">
+            <button id="batchAddTag" class="batch-btn premium-btn premium-btn-outline-accent premium-btn-sm premium-btn-icon-left" title="为所有选中图片添加标签">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                     <line x1="7" y1="7" x2="7.01" y2="7"></line>
                 </svg>
                 添加标签
             </button>
-            <button id="batchDelete" class="batch-btn batch-btn-danger" title="删除所有选中图片">
+            <button id="batchDelete" class="batch-btn batch-btn-danger premium-btn premium-btn-error premium-btn-sm premium-btn-icon-left" title="删除所有选中图片">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
                 删除
             </button>
-            <button id="batchCancel" class="batch-btn" title="取消选择">
+            <button id="batchCancel" class="batch-btn premium-btn premium-btn-outline-secondary premium-btn-sm premium-btn-icon-left" title="取消选择">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>

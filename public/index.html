@@ -16,6 +16,14 @@
     <link rel="stylesheet" href="./css/beautiful-card.css">
     <link rel="stylesheet" href="./css/card-style.css">
     <link rel="stylesheet" href="./css/taiji-card.css">
+    <link rel="stylesheet" href="./css/animations-premium.css">
+    <link rel="stylesheet" href="./css/advanced-cards.css">
+    <link rel="stylesheet" href="./css/buttons-premium.css">
+    <link rel="stylesheet" href="./css/forms-premium.css">
+    <link rel="stylesheet" href="./css/images-premium.css">
+    <link rel="stylesheet" href="./css/loaders-premium.css">
+    <link rel="stylesheet" href="./css/mobile-nav-enhance.css">
+    <link rel="stylesheet" href="./css/modals-premium.css">
 </head>
 <body class="dark-mode-transition">
     <!-- 页面加载动画 -->
@@ -125,38 +133,38 @@
 
                 <div class="result-container" id="resultContainer" style="display: none;">
                     <h3>上传成功！</h3>
-                    <div class="image-preview">
-                        <img id="previewImage" src="" alt="上传的图片">
+                    <div class="image-preview premium-img-container">
+                        <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
                     </div>
                     <div class="link-group">
                         <div class="link-item">
                             <label>直接链接:</label>
                             <div class="copy-container">
-                                <input type="text" id="directLink" readonly>
-                                <button class="copy-btn" data-clipboard-target="#directLink">复制</button>
+                                <input type="text" id="directLink" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
                             </div>
                         </div>
                         <div class="link-item">
                             <label>HTML 代码:</label>
                             <div class="copy-container">
-                                <input type="text" id="htmlCode" readonly>
-                                <button class="copy-btn" data-clipboard-target="#htmlCode">复制</button>
+                                <input type="text" id="htmlCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
                             </div>
                         </div>
                         <div class="link-item">
                             <label>Markdown 代码:</label>
                             <div class="copy-container">
-                                <input type="text" id="mdCode" readonly>
-                                <button class="copy-btn" data-clipboard-target="#mdCode">复制</button>
+                                <input type="text" id="mdCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
                             </div>
                         </div>
                     </div>
-                    <button class="upload-again-btn" id="uploadAgainBtn">再次上传</button>
+                    <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
                 </div>
             </section>
 
             <section class="features">
-                <div class="card" id="card1">
+                <div class="card advanced-card advanced-card-hover" id="card1">
                     <div class="card-content">
                         <div class="feature-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -164,8 +172,8 @@
                                 <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
                             </svg>
                         </div>
-                        <h3>快速上传与全球加速</h3>
-                        <p>优化的上传流程，使用CDN加速全球访问，快速响应，即时处理</p>
+                        <h3 class="advanced-card-title">快速上传与全球加速</h3>
+                        <p class="advanced-card-content">优化的上传流程，使用CDN加速全球访问，快速响应，即时处理</p>
                     </div>
                 </div>
                 <div class="taiji-card" id="taiji-card">
@@ -201,7 +209,7 @@
                       </div>
                     </div>
                 </div>
-                <div class="card" id="card2">
+                <div class="card advanced-card advanced-card-hover" id="card2">
                     <div class="card-content">
                         <div class="feature-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -210,8 +218,8 @@
                                 <line x1="12" y1="22.08" x2="12" y2="12"></line>
                             </svg>
                         </div>
-                        <h3>原图保真</h3>
-                        <p>保持原始质量，不压缩，确保图片完美呈现</p>
+                        <h3 class="advanced-card-title">原图保真</h3>
+                        <p class="advanced-card-content">保持原始质量，不压缩，确保图片完美呈现</p>
                     </div>
                 </div>
             </section>
