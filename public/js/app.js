@@ -1,4 +1,4 @@
-// 页面加载动画
+// 页面加载动画 - 增强版
 window.addEventListener('load', () => {
     const pageLoader = document.getElementById('pageLoader');
 
@@ -10,10 +10,48 @@ window.addEventListener('load', () => {
         document.querySelectorAll('.fade-in-element').forEach((el, index) => {
             setTimeout(() => {
                 el.classList.add('visible');
-            }, 100 * index);
+            }, 120 * index);
         });
-    }, 1500);
+
+        // 交错动画元素
+        document.querySelectorAll('.stagger-animation').forEach(container => {
+            setTimeout(() => {
+                container.classList.add('visible');
+            }, 300);
+        });
+
+        // 滚动动画初始化
+        initScrollAnimations();
+    }, 1200);
 });
+
+// 滚动动画初始化
+function initScrollAnimations() {
+    const scrollAnimations = document.querySelectorAll('.scroll-animation');
+
+    // 如果没有滚动动画元素，直接返回
+    if (scrollAnimations.length === 0) return;
+
+    // 创建Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // 元素显示后，不再观察它
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        root: null, // 相对于视口
+        rootMargin: '0px',
+        threshold: 0.1 // 当元素10%可见时触发
+    });
+
+    // 观察所有滚动动画元素
+    scrollAnimations.forEach(animation => {
+        observer.observe(animation);
+    });
+}
 
 // 获取认证头
 function getAuthHeader() {
@@ -30,6 +68,21 @@ function getAuthHeader() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 检查是否有保存的滚动位置
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition) {
+        // 清除保存的滚动位置
+        sessionStorage.removeItem('scrollPosition');
+
+        // 延迟一下再滚动，确保页面已完全加载
+        setTimeout(() => {
+            window.scrollTo({
+                top: parseInt(savedScrollPosition),
+                behavior: 'auto'
+            });
+        }, 100);
+    }
+
     // 初始化页面加载动画
     initPageLoader();
 
@@ -51,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化平滑滚动
     initSmoothScroll();
 
-
-
     // 初始化3D卡片效果
     init3DCards();
 
@@ -67,6 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 初始化粘贴上传功能
     initPasteUpload();
+
+    // 移除页面退出动画类
+    document.body.classList.remove('page-exit');
 });
 
 // 粘贴上传功能
@@ -808,27 +862,33 @@ function initBackToTop() {
     window.addEventListener('scroll', toggleBackToTopButton);
 }
 
-// 平滑页面跳转函数
+// 平滑页面跳转函数 - 增强版
 function smoothPageTransition(url) {
     // 获取页面加载动画元素
     const pageLoader = document.getElementById('pageLoader');
     const pageTransition = document.getElementById('pageTransition');
 
-    if (pageLoader) {
-        // 先显示页面过渡动画
-        if (pageTransition) {
-            pageTransition.classList.add('active');
-        }
+    // 保存当前滚动位置
+    const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+    sessionStorage.setItem('scrollPosition', scrollPosition);
 
-        // 显示加载动画
-        pageLoader.classList.remove('loaded');
+    // 保存当前页面URL，用于返回按钮
+    const currentUrl = window.location.href;
+    sessionStorage.setItem('previousPage', currentUrl);
+
+    if (pageLoader && pageTransition) {
+        // 先显示页面过渡动画
+        pageTransition.classList.add('active');
+
+        // 添加页面退出动画类
+        document.body.classList.add('page-exit');
 
         // 延迟一小段时间再跳转，让动画显示一段时间
         setTimeout(() => {
             window.location.href = url;
         }, 500);
     } else {
-        // 如果找不到加载动画元素，直接跳转
+        // 如果找不到动画元素，直接跳转
         window.location.href = url;
     }
 }

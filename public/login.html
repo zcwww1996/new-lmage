@@ -123,13 +123,13 @@
     <!-- 页面加载动画 -->
     <div id="pageLoader" class="page-loader">
         <div class="loader-content">
-            <section class="loader">
-                <div class="loader-slider" style="--i:0"></div>
-                <div class="loader-slider" style="--i:1"></div>
-                <div class="loader-slider" style="--i:2"></div>
-                <div class="loader-slider" style="--i:3"></div>
-                <div class="loader-slider" style="--i:4"></div>
-            </section>
+            <div class="loader">
+                <div class="loader-circle"></div>
+                <div class="loader-circle"></div>
+                <div class="loader-circle"></div>
+                <div class="loader-dot"></div>
+            </div>
+            <div class="loader-brand">TG-Image</div>
         </div>
     </div>
 
@@ -216,7 +216,7 @@
                           </div>
                        </div>
                     </label>
-                </div>   
+                </div>
             </div>
         </main>
 
@@ -241,15 +241,15 @@
         // 登录/注册卡片切换初始化
         document.addEventListener('DOMContentLoaded', function() {
             const authToggle = document.getElementById('authToggle');
-            
+
             // 根据URL参数决定显示登录还是注册表单
             const urlParams = new URLSearchParams(window.location.search);
             const action = urlParams.get('action');
-            
+
             if (action === 'register') {
                 authToggle.checked = true;
             }
-            
+
             // 初始化表单处理
             initLoginForm();
             initRegisterForm();
