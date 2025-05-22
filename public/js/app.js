@@ -722,7 +722,7 @@ function initImagePreview() {
 
 // 3D卡片效果初始化
 function init3DCards() {
-    const cards = document.querySelectorAll('.feature-card, .feature-card-3d');
+    const cards = document.querySelectorAll('.card');
 
     cards.forEach(card => {
         // 鼠标移动效果
@@ -735,7 +735,7 @@ function init3DCards() {
     function handleCardMove(e) {
         const card = this;
         const cardRect = card.getBoundingClientRect();
-        const cardInner = card.querySelector('.feature-card-inner, .feature-card-3d-inner');
+        const cardContent = card.querySelector('.card-content');
         const icon = card.querySelector('.feature-icon');
         const title = card.querySelector('h3');
         const description = card.querySelector('p');
@@ -748,28 +748,17 @@ function init3DCards() {
         const rotateY = x * 10;
         const rotateX = -y * 10;
 
-        // 应用不同的3D变换效果，取决于卡片类型
-        if (card.classList.contains('feature-card-3d')) {
-            // 3D卡片特殊效果
-            card.style.transform = `perspective(1000px) rotateX(${rotateX * 0.7}deg) rotateY(${rotateY * 0.7}deg) translateZ(10px)`;
-
-            // 内部元素的3D效果
-            if (icon) icon.style.transform = `translateZ(60px) translateX(${rotateY * 0.5}px) translateY(${-rotateX * 0.5}px)`;
-            if (title) title.style.transform = `translateZ(50px) translateX(${rotateY * 0.3}px) translateY(${-rotateX * 0.3}px)`;
-            if (description) description.style.transform = `translateZ(40px) translateX(${rotateY * 0.2}px) translateY(${-rotateX * 0.2}px)`;
+        // 普通卡片效果
+        if (cardContent) {
+            cardContent.style.transform = `perspective(1000px) rotateX(${rotateX * 0.5}deg) rotateY(${rotateY * 0.5}deg)`;
         } else {
-            // 普通卡片效果
-            if (cardInner) {
-                cardInner.style.transform = `perspective(1000px) rotateX(${rotateX * 0.5}deg) rotateY(${rotateY * 0.5}deg)`;
-            } else {
-                card.style.transform = `perspective(1000px) rotateX(${rotateX * 0.5}deg) rotateY(${rotateY * 0.5}deg)`;
-            }
-
-            // 内部元素的3D效果
-            if (icon) icon.style.transform = `translateZ(40px) translateX(${rotateY * 0.3}px) translateY(${-rotateX * 0.3}px)`;
-            if (title) title.style.transform = `translateZ(30px) translateX(${rotateY * 0.2}px) translateY(${-rotateX * 0.2}px)`;
-            if (description) description.style.transform = `translateZ(20px) translateX(${rotateY * 0.1}px) translateY(${-rotateX * 0.1}px)`;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX * 0.5}deg) rotateY(${rotateY * 0.5}deg)`;
         }
+
+        // 内部元素的3D效果
+        if (icon) icon.style.transform = `translateZ(40px) translateX(${rotateY * 0.3}px) translateY(${-rotateX * 0.3}px)`;
+        if (title) title.style.transform = `translateZ(30px) translateX(${rotateY * 0.2}px) translateY(${-rotateX * 0.2}px)`;
+        if (description) description.style.transform = `translateZ(20px) translateX(${rotateY * 0.1}px) translateY(${-rotateX * 0.1}px)`;
 
         // 动态光影效果
         const glare = card.querySelector('.card-glare') || createGlare(card);
@@ -785,7 +774,7 @@ function init3DCards() {
     // 处理卡片离开
     function handleCardLeave() {
         const card = this;
-        const cardInner = card.querySelector('.feature-card-inner, .feature-card-3d-inner');
+        const cardContent = card.querySelector('.card-content');
         const icon = card.querySelector('.feature-icon');
         const title = card.querySelector('h3');
         const description = card.querySelector('p');
@@ -793,7 +782,7 @@ function init3DCards() {
         // 重置所有变换
         card.style.transform = '';
 
-        if (cardInner) cardInner.style.transform = '';
+        if (cardContent) cardContent.style.transform = '';
         if (icon) icon.style.transform = '';
         if (title) title.style.transform = '';
         if (description) description.style.transform = '';

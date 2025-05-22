@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="./css/beautiful-card.css">
+    <link rel="stylesheet" href="./css/card-style.css">
+    <link rel="stylesheet" href="./css/taiji-card.css">
 </head>
 <body class="dark-mode-transition">
     <!-- 页面加载动画 -->
@@ -154,8 +156,8 @@
             </section>
 
             <section class="features">
-                <div class="feature-card" id="card1">
-                    <div class="feature-card-inner">
+                <div class="card" id="card1">
+                    <div class="card-content">
                         <div class="feature-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M22 2L11 13"></path>
@@ -166,7 +168,7 @@
                         <p>优化的上传流程，使用CDN加速全球访问，快速响应，即时处理</p>
                     </div>
                 </div>
-                <div class="beautiful-card" id="beautiful-card">
+                <div class="taiji-card" id="taiji-card">
                     <div class="grid">
                       <div class="area"></div>
                       <div class="area"></div>
@@ -185,235 +187,22 @@
                       <div class="area"></div>
                       <div class="wrap">
                         <div class="card">
-                          <div class="glow-out1"></div>
-                          <div class="glow-out2"></div>
-                          <div class="glow"></div>
                           <div class="card-bg"></div>
                           <div class="card-content">
                             <div class="glare"></div>
-                            <div class="glow-in1"></div>
-                            <div class="glow-in2"></div>
-                            <header>
-                              <p class="title">Post views</p>
-                              <div class="views">
-                                <div class="number">
-                                  <div style="--num: 2">
-                                    <span>2</span>
-                                    <span>0</span>
-                                    <span>1</span>
-                                    <span>2</span>
-                                  </div>
-                                  <div style="--num: 6">
-                                    <span>6</span>
-                                    <span>0</span>
-                                    <span>1</span>
-                                    <span>2</span>
-                                    <span>3</span>
-                                    <span>4</span>
-                                    <span>5</span>
-                                    <span>6</span>
-                                  </div>
-                                  <div style="--num: 7">
-                                    <span>7</span>
-                                    <span>0</span>
-                                    <span>1</span>
-                                    <span>2</span>
-                                    <span>3</span>
-                                    <span>4</span>
-                                    <span>5</span>
-                                    <span>6</span>
-                                    <span>7</span>
-                                  </div>
-                                  <div>
-                                    <span>0</span>
-                                  </div>
-                                </div>
-                                <span data-label="views"></span>
-                              </div>
-
-                              <div class="icon">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="currentColor"
-                                  width="1em"
-                                  height="1em"
-                                >
-                                  <defs>
-                                    <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-                                      <stop offset="0%" stop-color="#ffd867"></stop>
-                                      <stop offset="70%" stop-color="#ec526b"></stop>
-                                    </linearGradient>
-                                  </defs>
-                                  <path
-                                    fill="url(#gradient)"
-                                    d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z"
-                                  ></path>
-                                </svg>
-                              </div>
-                            </header>
-                            <div class="chart">
-                              <svg
-                                width="389"
-                                height="145"
-                                viewBox="0 0 389 175"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <defs>
-                                  <linearGradient
-                                    id="gradientPath1"
-                                    x1="0%"
-                                    x2="100%"
-                                    y1="0%"
-                                    y2="0%"
-                                  >
-                                    <stop offset="1%" stop-color="#ffc800"></stop>
-                                    <stop offset="7%" stop-color="#ff694a"></stop>
-                                    <stop offset="40%" stop-color="orange"></stop>
-                                    <stop offset="60%" stop-color="#fa874b"></stop>
-                                    <stop offset="70%" stop-color="#e8a2ab"></stop>
-                                    <stop offset="90%" stop-color="#ff495c"></stop>
-                                  </linearGradient>
-                                  <linearGradient
-                                    id="gradientPath1b"
-                                    x1="0%"
-                                    x2="100%"
-                                    y1="0%"
-                                    y2="0%"
-                                  >
-                                    <stop offset="0%" stop-color="white"></stop>
-                                    <stop offset="10%" stop-color="#fa4b5b"></stop>
-                                    <stop offset="20%" stop-color="white"></stop>
-                                    <stop offset="70%" stop-color="orange"></stop>
-                                    <stop offset="80%" stop-color="#ffe7e1"></stop>
-                                  </linearGradient>
-
-                                  <linearGradient id="gradientPath2" x2="100%" y1="0%" y2="0%">
-                                    <stop offset="0%" stop-color="#c78484"></stop>
-                                    <stop offset="50%" stop-color="#ab959b"></stop>
-                                    <stop offset="70%" stop-color="#c78484"></stop>
-                                    <stop offset="80%" stop-color="#e8a2ab"></stop>
-                                    <stop offset="100%" stop-color="#4a3b44"></stop>
-                                  </linearGradient>
-                                  <linearGradient id="gradientPath2b" x2="100%" y1="0%" y2="0%">
-                                    <stop offset="0%" stop-color="#482948"></stop>
-                                    <stop offset="5%" stop-color="#9f3737"></stop>
-                                    <stop offset="15%" stop-color="#c78484"></stop>
-                                    <stop offset="30%" stop-color="#332a38"></stop>
-                                    <stop offset="50%" stop-color="#332a38"></stop>
-                                    <stop offset="70%" stop-color="#da4847"></stop>
-                                    <stop offset="85%" stop-color="#372c37"></stop>
-                                    <stop offset="100%" stop-color="#442b35"></stop>
-                                  </linearGradient>
-                                </defs>
-                                <line
-                                  style="--i: 1"
-                                  x1="3"
-                                  y1="162.5"
-                                  x2="389"
-                                  y2="162.5"
-                                  stroke-opacity="0.9"
-                                ></line>
-                                <line
-                                  style="--i: 2"
-                                  x1="3"
-                                  y1="125.5"
-                                  x2="389"
-                                  y2="125.5"
-                                  stroke-opacity="0.8"
-                                ></line>
-                                <line
-                                  style="--i: 3"
-                                  x1="3"
-                                  y1="88.5"
-                                  x2="389"
-                                  y2="88.5"
-                                  stroke-opacity="0.7"
-                                ></line>
-                                <line
-                                  style="--i: 4"
-                                  x1="3"
-                                  y1="51.5"
-                                  x2="389"
-                                  y2="51.5"
-                                  stroke-opacity="0.6"
-                                ></line>
-                                <line
-                                  style="--i: 5"
-                                  x1="3"
-                                  y1="14.5"
-                                  x2="389"
-                                  y2="14.5"
-                                  stroke-opacity="0.5"
-                                ></line>
-                                <g filter="url('#goo')" class="path1-g">
-                                  <path
-                                    class="path1"
-                                    d="M5.5 174.5C20.0137 109.586 20 54.9643 49.5 36C79 17.0357 140.5 101 179 93C217.5 85 230.438 40.7006 274.5 36.5C318.562 32.2994 334.5 33 372.5 21"
-                                    stroke="url(#gradientPath1b)"
-                                    stroke-width="11"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-
-                                  <path
-                                    class="path1"
-                                    d="M5.5 174.5C20.0137 109.586 20 54.9643 49.5 36C79 17.0357 140.5 101 179 93C217.5 85 230.438 40.7006 274.5 36.5C318.562 32.2994 334.5 33 372.5 21"
-                                    stroke="url(#gradientPath1)"
-                                    stroke-width="11"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  ></path>
-                                </g>
-
-                                <g filter="url('#goo')">
-                                  <path
-                                    class="path2"
-                                    stroke="url(#gradientPath2)"
-                                    d="M21.5 6C57.8366 66.5908 89.5 112.167 124.5 108C159.5 103.833 182.5 49 226 38.5C269.5 28 286.5 52.5 323.5 52.5C331.5 52.5 339 52 350 46.5"
-                                    stroke-width="11"
-                                    stroke-linecap="round"
-                                  ></path>
-
-                                  <path
-                                    class="path2"
-                                    stroke="url(#gradientPath2b)"
-                                    d="M21.5 6C57.8366 66.5908 89.5 112.167 124.5 108C159.5 103.833 182.5 49 226 38.5C269.5 28 286.5 52.5 323.5 52.5C331.5 52.5 339 52 350 46.5"
-                                    stroke-width="11"
-                                    stroke-linecap="round"
-                                  ></path>
-                                </g>
-                                <filter id="goo">
-                                  <feGaussianBlur
-                                    stdDeviation="2"
-                                    result="blur"
-                                    in="SourceGraphic"
-                                  ></feGaussianBlur>
-                                  <feColorMatrix
-                                    result="goo"
-                                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-                                    mode="matrix"
-                                    in="blur"
-                                  ></feColorMatrix>
-                                </filter>
-                              </svg>
+                            <div class="taiji-symbol">
+                              <div class="taiji-dot-white"></div>
+                              <div class="taiji-dot-black"></div>
                             </div>
-                            <footer>
-                              <span style="--i: 1" data-label="8am"></span>
-                              <span style="--i: 2" data-label="10am"></span>
-                              <span style="--i: 3" data-label="12pm"></span>
-                              <span style="--i: 4" data-label="2pm"></span>
-                              <span style="--i: 5" data-label="4pm"></span>
-                              <span style="--i: 6" data-label="6pm"></span>
-                            </footer>
+                            <div class="card-title">和谐平衡</div>
+                            <div class="card-description">阴阳相济，刚柔并济，天人合一</div>
                           </div>
                         </div>
                       </div>
                     </div>
                 </div>
-                <div class="feature-card-3d" id="card2">
-                    <div class="feature-card-3d-inner">
+                <div class="card" id="card2">
+                    <div class="card-content">
                         <div class="feature-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
