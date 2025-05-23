@@ -1,0 +1,529 @@
+/* 上传区域增强样式 */
+.upload-container {
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%),
+        linear-gradient(45deg, 
+            rgba(var(--primary-light-rgb), 0.03) 0%, 
+            rgba(var(--accent-color), 0.03) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.05),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .upload-container {
+    background: 
+        linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%),
+        linear-gradient(45deg, 
+            rgba(var(--primary-light-rgb), 0.05) 0%, 
+            rgba(var(--accent-color), 0.05) 100%);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 上传区域动态背景 */
+.upload-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(var(--primary-light-rgb), 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(var(--accent-color), 0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.upload-container:hover::before {
+    opacity: 1;
+}
+
+/* 增强的上传区域 */
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3xl);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.02) 0%, 
+            rgba(var(--accent-color), 0.02) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    z-index: 2;
+}
+
+body.dark-mode .upload-area {
+    border-color: var(--dark-border);
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.03) 0%, 
+            rgba(var(--accent-color), 0.03) 100%);
+}
+
+/* 上传区域动画效果 */
+.upload-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at center, 
+            rgba(var(--primary-light-rgb), 0.1) 0%, 
+            transparent 70%);
+    opacity: 0;
+    transition: all var(--transition);
+    z-index: -1;
+    transform: scale(0);
+}
+
+.upload-area::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent);
+    transform: skewX(-15deg);
+    transition: all 0.8s;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.upload-area:hover::before,
+.upload-area.drag-over::before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.upload-area:hover::after {
+    left: 100%;
+}
+
+.upload-area:hover,
+.upload-area.drag-over {
+    border-color: var(--primary-light);
+    transform: translateY(-6px);
+    box-shadow: 
+        0 25px 50px rgba(var(--primary-light-rgb), 0.25),
+        0 0 0 1px rgba(var(--primary-light-rgb), 0.1),
+        0 0 30px rgba(var(--primary-light-rgb), 0.1);
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.08) 0%, 
+            rgba(var(--accent-color), 0.08) 100%);
+}
+
+/* 上传图标增强 */
+.upload-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--spacing-lg);
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    position: relative;
+    z-index: 2;
+    box-shadow: 
+        0 10px 20px rgba(var(--primary-light-rgb), 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.upload-icon::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    background: conic-gradient(
+        from 0deg,
+        var(--primary-light),
+        var(--accent-color),
+        var(--primary-light)
+    );
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: -1;
+    animation: rotate 3s linear infinite;
+}
+
+.upload-area:hover .upload-icon::before,
+.upload-area.drag-over .upload-icon::before {
+    opacity: 1;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.upload-icon svg {
+    color: white;
+    transition: all var(--transition);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.upload-area:hover .upload-icon {
+    transform: scale(1.1) rotateY(10deg);
+    box-shadow: 
+        0 15px 30px rgba(var(--primary-light-rgb), 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.upload-area:hover .upload-icon svg {
+    transform: translateY(-2px);
+}
+
+/* 上传文本增强 */
+.upload-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition);
+}
+
+body.dark-mode .upload-text {
+    color: var(--dark-text);
+}
+
+.upload-area:hover .upload-text {
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.browse-text {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+    position: relative;
+    text-decoration: underline;
+    text-decoration-color: var(--primary-light);
+    transition: all var(--transition-fast);
+}
+
+.browse-text:hover {
+    text-decoration-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.upload-hint {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+    opacity: 0.8;
+    transition: all var(--transition);
+}
+
+body.dark-mode .upload-hint {
+    color: var(--dark-text-light);
+}
+
+.upload-area:hover .upload-hint {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+/* kbd 标签增强 */
+kbd {
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+    color: #333;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    margin: 0 2px;
+    transition: all var(--transition-fast);
+}
+
+body.dark-mode kbd {
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    color: #e0e0e0;
+    border-color: #555;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.upload-area:hover kbd {
+    transform: scale(1.05);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* 上传状态增强 */
+.upload-status {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    text-align: center;
+    font-weight: 500;
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition);
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.upload-status.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.upload-status.success {
+    background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.1), 
+        rgba(16, 185, 129, 0.05));
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.upload-status.error {
+    background: linear-gradient(135deg, 
+        rgba(239, 68, 68, 0.1), 
+        rgba(239, 68, 68, 0.05));
+    color: var(--error-color);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* 进度条增强 */
+.upload-progress {
+    margin-top: var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+}
+
+.progress-container {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-full);
+    height: 8px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: var(--spacing-sm);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .progress-container {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 2px 4px rgba(var(--primary-light-rgb), 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    text-align: center;
+    font-weight: 500;
+}
+
+body.dark-mode .progress-text {
+    color: var(--dark-text-light);
+}
+
+/* 拖拽状态增强 */
+.upload-area.drag-over {
+    border-color: var(--primary-color);
+    background: 
+        radial-gradient(circle at center, 
+            rgba(var(--primary-light-rgb), 0.15) 0%, 
+            rgba(var(--primary-light-rgb), 0.05) 70%);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 
+            0 25px 50px rgba(var(--primary-light-rgb), 0.25),
+            0 0 0 1px rgba(var(--primary-light-rgb), 0.1),
+            0 0 30px rgba(var(--primary-light-rgb), 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 30px 60px rgba(var(--primary-light-rgb), 0.35),
+            0 0 0 1px rgba(var(--primary-light-rgb), 0.2),
+            0 0 40px rgba(var(--primary-light-rgb), 0.2);
+    }
+}
+
+/* 响应式增强 */
+@media (max-width: 768px) {
+    .upload-container {
+        padding: var(--spacing-xl);
+        border-radius: var(--radius-lg);
+    }
+    
+    .upload-area {
+        min-height: 280px;
+        padding: var(--spacing-xl);
+    }
+    
+    .upload-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .upload-text {
+        font-size: 1.125rem;
+    }
+    
+    .upload-hint {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .upload-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .upload-area {
+        min-height: 240px;
+        padding: var(--spacing-lg);
+    }
+    
+    .upload-icon {
+        width: 50px;
+        height: 50px;
+        margin-bottom: var(--spacing);
+    }
+    
+    .upload-text {
+        font-size: 1rem;
+    }
+    
+    .upload-hint {
+        font-size: 0.8rem;
+    }
+}
+
+/* 微交互效果 */
+.upload-area {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 文件类型指示器 */
+.file-types {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing);
+    opacity: 0.6;
+    transition: opacity var(--transition);
+}
+
+.upload-area:hover .file-types {
+    opacity: 1;
+}
+
+.file-type {
+    background: rgba(var(--primary-light-rgb), 0.1);
+    color: var(--primary-color);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid rgba(var(--primary-light-rgb), 0.2);
+    transition: all var(--transition-fast);
+}
+
+.file-type:hover {
+    background: rgba(var(--primary-light-rgb), 0.2);
+    transform: translateY(-2px);
+}
+
+body.dark-mode .file-type {
+    background: rgba(var(--primary-light-rgb), 0.15);
+    border-color: rgba(var(--primary-light-rgb), 0.3);
+} 

@@ -1,0 +1,583 @@
+/* 结果容器增强样式 */
+.result-container {
+    background: 
+        linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.95) 0%, 
+            rgba(255, 255, 255, 0.9) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2xl);
+    margin-top: var(--spacing-xl);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    transform: translateY(30px);
+    opacity: 0;
+    animation: slideInUp 0.8s ease-out forwards;
+}
+
+body.dark-mode .result-container {
+    background: 
+        linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.08) 0%, 
+            rgba(255, 255, 255, 0.05) 100%);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* 结果容器背景效果 */
+.result-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(var(--success-color), 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(var(--primary-light-rgb), 0.1) 0%, transparent 50%);
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.result-container::after {
+    content: '✨';
+    position: absolute;
+    top: var(--spacing);
+    right: var(--spacing);
+    font-size: 1.5rem;
+    animation: sparkle 2s ease-in-out infinite;
+    z-index: 2;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 1;
+    }
+}
+
+/* 成功标题增强 */
+.result-container h3 {
+    color: var(--success-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, var(--success-color), var(--success-light));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: fadeInScale 0.6s ease-out 0.2s both;
+}
+
+.result-container h3::before {
+    content: '🎉';
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    animation: bounce 1s ease-in-out infinite;
+}
+
+.result-container h3::after {
+    content: '🎉';
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    animation: bounce 1s ease-in-out infinite 0.5s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        transform: translateY(-60%) scale(1.1);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 图片预览增强 */
+.image-preview {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.05), 
+            rgba(var(--accent-color), 0.05));
+    padding: var(--spacing);
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all var(--transition);
+    z-index: 2;
+    animation: zoomIn 0.6s ease-out 0.4s both;
+}
+
+body.dark-mode .image-preview {
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.08), 
+            rgba(var(--accent-color), 0.08));
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.image-preview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at center, 
+            rgba(var(--primary-light-rgb), 0.1) 0%, 
+            transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: 1;
+}
+
+.image-preview:hover::before {
+    opacity: 1;
+}
+
+.image-preview:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.image-preview img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: var(--radius);
+    transition: all var(--transition);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.image-preview:hover img {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 链接组增强 */
+.link-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    position: relative;
+    z-index: 2;
+    animation: slideInUp 0.6s ease-out 0.6s both;
+}
+
+.link-item {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .link-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.link-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(var(--primary-light-rgb), 0.1),
+        transparent);
+    transition: left 0.6s ease;
+    z-index: 1;
+}
+
+.link-item:hover::before {
+    left: 100%;
+}
+
+.link-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(var(--primary-light-rgb), 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .link-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.link-item label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition-fast);
+}
+
+body.dark-mode .link-item label {
+    color: var(--dark-text);
+}
+
+.link-item label::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    margin-right: var(--spacing-xs);
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(var(--primary-light-rgb), 0.3);
+}
+
+.link-item:nth-child(1) label::before {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.link-item:nth-child(2) label::before {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.link-item:nth-child(3) label::before {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* 复制容器增强 */
+.copy-container {
+    display: flex;
+    gap: var(--spacing-sm);
+    position: relative;
+    z-index: 2;
+}
+
+.copy-container input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius);
+    padding: var(--spacing) var(--spacing-md);
+    font-size: 0.875rem;
+    font-family: 'Courier New', monospace;
+    color: var(--text-color);
+    transition: all var(--transition-fast);
+    backdrop-filter: blur(5px);
+}
+
+body.dark-mode .copy-container input {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--dark-text);
+}
+
+.copy-container input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+        0 0 0 2px rgba(var(--primary-light-rgb), 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+body.dark-mode .copy-container input:focus {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* 复制按钮增强 */
+.copy-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: var(--spacing) var(--spacing-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(var(--primary-light-rgb), 0.3);
+    min-width: 80px;
+}
+
+.copy-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.copy-btn:hover::before {
+    left: 100%;
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(var(--primary-light-rgb), 0.4);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+/* 复制成功状态 */
+.copy-btn.success {
+    background: linear-gradient(135deg, var(--success-color), var(--success-light));
+    animation: successPulse 0.6s ease-out;
+}
+
+.copy-btn.success::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 再次上传按钮增强 */
+.upload-again-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: var(--spacing-xl);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+    z-index: 2;
+    animation: slideInUp 0.6s ease-out 0.8s both;
+}
+
+.upload-again-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.upload-again-btn:hover::before {
+    left: 100%;
+}
+
+.upload-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
+    background: var(--accent-light);
+}
+
+.upload-again-btn:active {
+    transform: translateY(-1px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .result-container {
+        padding: var(--spacing-xl);
+        margin-top: var(--spacing-lg);
+    }
+    
+    .result-container h3::before,
+    .result-container h3::after {
+        display: none;
+    }
+    
+    .image-preview {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .link-group {
+        gap: var(--spacing);
+    }
+    
+    .link-item {
+        padding: var(--spacing);
+    }
+    
+    .copy-container {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .copy-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .result-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .result-container h3 {
+        font-size: 1.25rem;
+    }
+    
+    .link-item {
+        padding: var(--spacing-sm);
+    }
+    
+    .link-item label {
+        font-size: 0.875rem;
+    }
+    
+    .copy-container input {
+        font-size: 0.8rem;
+        padding: var(--spacing-sm);
+    }
+}
+
+/* 出现动画 */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 微交互细节 */
+.result-container * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.copy-container input {
+    -webkit-user-select: all;
+    -moz-user-select: all;
+    -ms-user-select: all;
+    user-select: all;
+}
+
+/* 工具提示 */
+.copy-btn[title] {
+    position: relative;
+}
+
+.copy-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-color);
+    color: var(--bg-color);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-xs);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+} 

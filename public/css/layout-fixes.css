@@ -1,0 +1,435 @@
+/* 布局修复和样式冲突解决 */
+
+/* 重写基础布局以确保新系统优先级 */
+.app-container {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* 确保header布局正确 */
+.header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.header-inner {
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 72px !important;
+    position: relative !important;
+}
+
+/* 主内容区域修复 */
+main {
+    flex: 1 !important;
+    width: 100% !important;
+    position: relative !important;
+    z-index: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* 英雄区域修复 */
+.hero {
+    padding: 6rem 0 4rem !important;
+    margin: 0 !important;
+    width: 100% !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.hero-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4rem !important;
+    align-items: center !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+.hero-text {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+/* 上传区域修复 */
+.upload-section {
+    padding: 4rem 0 !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+.upload-container {
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* 修复上传区域背景重复问题 */
+.upload-area {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 2px dashed #e2e8f0 !important;
+    border-radius: 1rem !important;
+    padding: 3rem 2rem !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    backdrop-filter: blur(10px) !important;
+    min-height: 280px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1rem !important;
+    box-shadow: none !important;
+    transform: none !important;
+    margin: 0 !important;
+}
+
+body.dark-mode .upload-area {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 功能特性区域修复 */
+.features {
+    padding: 6rem 0 !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+body.dark-mode .features {
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.features-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    width: 100% !important;
+}
+
+.features-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+    gap: 2rem !important;
+    margin-top: 3rem !important;
+}
+
+/* 修复特性卡片样式冲突 */
+.feature-card {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    backdrop-filter: blur(10px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+    transform: none !important;
+    margin: 0 !important;
+}
+
+body.dark-mode .feature-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Footer修复 */
+.footer {
+    background: rgba(255, 255, 255, 0.8) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 3rem 0 2rem !important;
+    margin-top: auto !important;
+    backdrop-filter: blur(20px) !important;
+    position: relative !important;
+    width: 100% !important;
+}
+
+body.dark-mode .footer {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.footer-content {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 2rem !important;
+    text-align: center !important;
+}
+
+/* 结果容器修复 */
+.result-container {
+    max-width: 800px !important;
+    margin: 3rem auto 0 !important;
+    padding: 2rem !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+}
+
+body.dark-mode .result-container {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 响应式修复 */
+@media (max-width: 1024px) {
+    .header-inner {
+        padding: 0 1.5rem !important;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr !important;
+        gap: 3rem !important;
+        text-align: center !important;
+        padding: 0 1.5rem !important;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+        gap: 1.5rem !important;
+    }
+    
+    .features-container {
+        padding: 0 1.5rem !important;
+    }
+    
+    .upload-container {
+        padding: 0 1.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-inner {
+        height: 60px !important;
+        padding: 0 1rem !important;
+    }
+    
+    .nav {
+        display: none !important;
+    }
+    
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+    
+    .hero {
+        padding: 4rem 0 3rem !important;
+    }
+    
+    .hero-content {
+        padding: 0 1rem !important;
+        gap: 2rem !important;
+    }
+    
+    .upload-section {
+        padding: 3rem 0 !important;
+    }
+    
+    .upload-container {
+        padding: 0 1rem !important;
+    }
+    
+    .upload-area {
+        padding: 2rem 1rem !important;
+        min-height: 240px !important;
+    }
+    
+    .features {
+        padding: 4rem 0 !important;
+    }
+    
+    .features-container {
+        padding: 0 1rem !important;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    .feature-card {
+        padding: 1.5rem !important;
+    }
+    
+    .result-container {
+        margin: 2rem auto 0 !important;
+        padding: 1.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-inner {
+        padding: 0 0.75rem !important;
+    }
+    
+    .hero-content {
+        padding: 0 0.75rem !important;
+    }
+    
+    .upload-container {
+        padding: 0 0.75rem !important;
+    }
+    
+    .upload-area {
+        padding: 1.5rem 0.75rem !important;
+        min-height: 200px !important;
+    }
+    
+    .features-container {
+        padding: 0 0.75rem !important;
+    }
+    
+    .feature-card {
+        padding: 1rem !important;
+    }
+    
+    .result-container {
+        padding: 1rem !important;
+    }
+    
+    .footer-content {
+        padding: 0 0.75rem !important;
+    }
+}
+
+/* 确保所有动画效果正常工作 */
+.transition {
+    transition: all 0.3s ease !important;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px) !important;
+}
+
+/* 修复字体和文本样式 */
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+}
+
+.section-title {
+    font-size: clamp(2rem, 4vw, 3rem) !important;
+    font-weight: 700 !important;
+    margin-bottom: 1rem !important;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+
+/* 确保图标正确显示 */
+.feature-icon {
+    width: 60px !important;
+    height: 60px !important;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    border-radius: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 0.5rem !important;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3) !important;
+}
+
+.feature-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    color: white !important;
+}
+
+/* 上传图标修复 */
+.upload-icon {
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.upload-icon svg {
+    width: 32px !important;
+    height: 32px !important;
+    color: white !important;
+}
+
+/* 清除可能的冲突样式 */
+.upload-area::before,
+.upload-area::after {
+    display: none !important;
+}
+
+.feature-card::before,
+.feature-card::after {
+    display: none !important;
+}
+
+/* 确保浮动卡片正常显示 */
+.hero-visual {
+    position: relative !important;
+    height: 400px !important;
+}
+
+.floating-cards {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.floating-card {
+    position: absolute !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 0.75rem !important;
+    padding: 1rem !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    min-width: 120px !important;
+}
+
+body.dark-mode .floating-card {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+} 

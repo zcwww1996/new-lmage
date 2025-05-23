@@ -1,0 +1,344 @@
+/* Footer 增强样式 */
+.footer {
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.03) 0%, 
+            rgba(var(--accent-color), 0.03) 100%),
+        linear-gradient(to right, 
+            rgba(255, 255, 255, 0.8) 0%, 
+            rgba(255, 255, 255, 0.9) 100%);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: var(--spacing-3xl);
+    backdrop-filter: blur(10px);
+}
+
+body.dark-mode .footer {
+    background: 
+        linear-gradient(135deg, 
+            rgba(var(--primary-light-rgb), 0.05) 0%, 
+            rgba(var(--accent-color), 0.05) 100%),
+        linear-gradient(to right, 
+            rgba(255, 255, 255, 0.05) 0%, 
+            rgba(255, 255, 255, 0.08) 100%);
+    border-top-color: var(--dark-border);
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 25% 50%, rgba(var(--primary-light-rgb), 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 50%, rgba(var(--accent-color), 0.1) 0%, transparent 50%);
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.footer p {
+    position: relative;
+    z-index: 2;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.6;
+    transition: all var(--transition);
+}
+
+body.dark-mode .footer p {
+    color: var(--dark-text-light);
+}
+
+.footer a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    transition: all var(--transition-fast);
+    padding: 2px 4px;
+    border-radius: var(--radius-xs);
+}
+
+.footer a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, 
+        rgba(var(--primary-light-rgb), 0.1), 
+        rgba(var(--accent-color), 0.1));
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    border-radius: var(--radius-xs);
+    z-index: -1;
+}
+
+.footer a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-gradient);
+    transition: all var(--transition-fast);
+    transform: translateX(-50%);
+    border-radius: 1px;
+}
+
+.footer a:hover::before {
+    opacity: 1;
+}
+
+.footer a:hover::after {
+    width: 100%;
+}
+
+.footer a:hover {
+    color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+/* 添加心跳动画 */
+.footer::after {
+    content: '💙';
+    position: absolute;
+    top: 50%;
+    right: var(--spacing-lg);
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    animation: heartbeat 2s ease-in-out infinite;
+    z-index: 2;
+    opacity: 0.7;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+    }
+}
+
+/* 版权信息增强 */
+.footer-content {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    position: relative;
+    z-index: 2;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing);
+    flex-wrap: wrap;
+}
+
+.footer-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    position: relative;
+}
+
+body.dark-mode .footer-link {
+    color: var(--dark-text-light);
+}
+
+.footer-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(var(--primary-light-rgb), 0.1);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    border-radius: var(--radius-sm);
+    z-index: -1;
+}
+
+.footer-link:hover::before {
+    opacity: 1;
+}
+
+.footer-link:hover {
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* 社交媒体图标 */
+.footer-social {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing-lg);
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.social-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%) rotate(45deg);
+    transition: transform 0.6s ease;
+}
+
+.social-link:hover::before {
+    transform: translateX(100%) rotate(45deg);
+}
+
+.social-link:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(var(--primary-light-rgb), 0.4);
+}
+
+.social-link svg {
+    width: 20px;
+    height: 20px;
+    transition: all var(--transition);
+}
+
+.social-link:hover svg {
+    transform: scale(1.1);
+}
+
+/* 波浪动画背景 */
+.footer-waves {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.1;
+}
+
+.wave {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(var(--primary-light-rgb), 0.3), 
+        transparent);
+    animation: wave 8s ease-in-out infinite;
+}
+
+.wave:nth-child(2) {
+    animation-delay: -2s;
+    animation-duration: 10s;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(var(--accent-color), 0.3), 
+        transparent);
+}
+
+@keyframes wave {
+    0%, 100% {
+        transform: translateX(-50%);
+    }
+    50% {
+        transform: translateX(-25%);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .footer {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .footer::after {
+        display: none;
+    }
+    
+    .footer-links {
+        gap: var(--spacing);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .footer-link {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+    
+    .footer-social {
+        margin-bottom: var(--spacing);
+    }
+    
+    .social-link {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .social-link svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .footer p {
+        font-size: 0.875rem;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xs);
+    }
+}
+
+/* 滚动到底部时的动画 */
+.footer.in-view {
+    animation: slideInUp 0.8s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

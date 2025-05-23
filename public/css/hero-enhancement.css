@@ -1,0 +1,574 @@
+/* 英雄区域增强样式 */
+.hero {
+    padding: var(--spacing-3xl) 0;
+    background: linear-gradient(135deg, 
+        rgba(var(--primary-light-rgb), 0.05) 0%, 
+        rgba(var(--accent-color), 0.05) 100%);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(var(--primary-light-rgb), 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(var(--accent-color), 0.1) 0%, transparent 50%);
+    z-index: 1;
+}
+
+body.dark-mode .hero {
+    background: linear-gradient(135deg, 
+        rgba(var(--primary-light-rgb), 0.08) 0%, 
+        rgba(var(--accent-color), 0.08) 100%);
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3xl);
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-badge {
+    display: inline-block;
+    margin-bottom: var(--spacing-md);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.badge-text {
+    background: var(--primary-gradient);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-colored);
+    --shadow-color: rgba(var(--primary-light-rgb), 0.3);
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-text::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 1.5s ease-in-out;
+}
+
+.hero-badge:hover .badge-text::before {
+    left: 100%;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-md);
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.gradient-text {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-light);
+    opacity: 0.9;
+}
+
+body.dark-mode .hero-subtitle {
+    color: var(--dark-text-light);
+}
+
+.hero-description {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-xl);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+body.dark-mode .hero-description {
+    color: var(--dark-text-light);
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+body.dark-mode .stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(var(--primary-light-rgb), 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.stat-item:hover::before {
+    transform: translateX(100%);
+}
+
+.stat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+body.dark-mode .stat-label {
+    color: var(--dark-text-light);
+}
+
+/* 浮动卡片动画 */
+.hero-visual {
+    position: relative;
+    height: 400px;
+    animation: fadeIn 1s ease-out 0.8s both;
+}
+
+.floating-cards {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all var(--transition);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    min-width: 120px;
+}
+
+body.dark-mode .floating-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.floating-card:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: var(--shadow-xl);
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.card-text {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+body.dark-mode .card-text {
+    color: var(--dark-text);
+}
+
+/* 浮动卡片位置和动画 */
+.card-1 {
+    top: 10%;
+    left: 10%;
+    animation: float 6s ease-in-out infinite;
+}
+
+.card-2 {
+    top: 20%;
+    right: 15%;
+    animation: float 6s ease-in-out infinite 1.5s;
+}
+
+.card-3 {
+    bottom: 30%;
+    left: 20%;
+    animation: float 6s ease-in-out infinite 3s;
+}
+
+.card-4 {
+    bottom: 10%;
+    right: 10%;
+    animation: float 6s ease-in-out infinite 4.5s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-10px) rotate(1deg);
+    }
+    50% {
+        transform: translateY(-5px) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-8px) rotate(-1deg);
+    }
+}
+
+/* 功能特性区域 */
+.features {
+    padding: var(--spacing-3xl) 0;
+    position: relative;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: var(--spacing);
+    position: relative;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+body.dark-mode .section-subtitle {
+    color: var(--dark-text-light);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+/* 增强的功能卡片样式 */
+.feature-card-3d {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    box-shadow: var(--shadow);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transform-style: preserve-3d;
+}
+
+body.dark-mode .feature-card-3d {
+    background: var(--dark-card-bg);
+    border-color: var(--dark-border);
+}
+
+.feature-card-3d::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(var(--primary-light-rgb), 0.05), 
+        rgba(var(--accent-color), 0.05));
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: 1;
+}
+
+.feature-card-3d:hover::before {
+    opacity: 1;
+}
+
+.feature-card-3d:hover {
+    transform: translateY(-12px) rotateX(5deg);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(var(--primary-light-rgb), 0.1),
+        0 0 50px rgba(var(--primary-light-rgb), 0.1);
+}
+
+body.dark-mode .feature-card-3d:hover {
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(var(--primary-light-rgb), 0.2),
+        0 0 50px rgba(var(--primary-light-rgb), 0.15);
+}
+
+.feature-card-3d .feature-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-gradient);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition);
+}
+
+.feature-card-3d .feature-icon svg {
+    color: white;
+    width: 24px;
+    height: 24px;
+}
+
+.feature-card-3d:hover .feature-icon {
+    transform: scale(1.1) rotateY(10deg);
+    box-shadow: var(--shadow-colored-lg);
+    --shadow-color: rgba(var(--primary-light-rgb), 0.4);
+}
+
+.feature-card-3d h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    position: relative;
+    z-index: 2;
+    transition: all var(--transition);
+}
+
+body.dark-mode .feature-card-3d h3 {
+    color: var(--dark-text);
+}
+
+.feature-card-3d:hover h3 {
+    color: var(--primary-color);
+}
+
+.feature-card-3d p {
+    color: var(--text-light);
+    line-height: 1.6;
+    position: relative;
+    z-index: 2;
+}
+
+body.dark-mode .feature-card-3d p {
+    color: var(--dark-text-light);
+}
+
+/* 动画关键帧 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+        text-align: center;
+    }
+    
+    .hero-visual {
+        height: 300px;
+        margin-top: var(--spacing-xl);
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: var(--spacing-2xl) 0;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-stats {
+        grid-template-columns: 1fr;
+        gap: var(--spacing);
+    }
+    
+    .stat-item {
+        padding: var(--spacing);
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing);
+    }
+    
+    .feature-card-3d {
+        padding: var(--spacing-lg);
+    }
+    
+    .floating-card {
+        min-width: 100px;
+        padding: var(--spacing-sm);
+    }
+    
+    .card-text {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .hero-visual {
+        height: 250px;
+    }
+    
+    .floating-card {
+        min-width: 80px;
+        padding: var(--spacing-xs);
+    }
+    
+    .card-icon {
+        font-size: 1.25rem;
+    }
+    
+    .card-text {
+        font-size: 0.7rem;
+    }
+}
+
+/* 高级动画效果 */
+.hero-content > * {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+.hero-content > *:nth-child(2) { animation-delay: 0.3s; }
+.hero-content > *:nth-child(3) { animation-delay: 0.5s; }
+.hero-content > *:nth-child(4) { animation-delay: 0.7s; }
+
+.features-grid .feature-card-3d {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.features-grid .feature-card-3d:nth-child(1) { animation-delay: 0.1s; }
+.features-grid .feature-card-3d:nth-child(2) { animation-delay: 0.2s; }
+.features-grid .feature-card-3d:nth-child(3) { animation-delay: 0.3s; }
+.features-grid .feature-card-3d:nth-child(4) { animation-delay: 0.4s; }
+.features-grid .feature-card-3d:nth-child(5) { animation-delay: 0.5s; }
+.features-grid .feature-card-3d:nth-child(6) { animation-delay: 0.6s; }
+
+/* 粒子效果背景 */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(var(--primary-light-rgb), 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, rgba(var(--accent-color), 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    opacity: 0.3;
+    animation: particles 20s linear infinite;
+    z-index: 1;
+}
+
+@keyframes particles {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    100% {
+        transform: translateX(-50px) translateY(-50px);
+    }
+} 
