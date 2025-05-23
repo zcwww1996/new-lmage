@@ -120,26 +120,21 @@
                     <h1>TG-Image</h1>
                 </div>
             </div>
+            <!-- 移除搜索框 -->
             <div class="header-center">
-                <div class="search-container">
-                    <i class="ri-search-line search-icon"></i>
-                    <input type="text" class="search-input" placeholder="搜索图片...">
-                </div>
             </div>
             <div class="header-right">
                 <div class="header-actions">
                     <button class="header-action-btn" id="uploadBtn" title="上传图片">
                         <i class="ri-upload-cloud-2-line"></i>
                     </button>
-                    <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
+                    <label class="theme-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
                         <input id="switch" type="checkbox">
-                        <label class="love-heart" for="switch">
-                            <i class="left"></i>
-                            <i class="right"></i>
-                            <i class="bottom"></i>
-                            <div class="round"></div>
-                        </label>
-                    </div>
+                        <div class="theme-toggle-icon">
+                            <i class="ri-sun-line"></i>
+                            <i class="ri-moon-line"></i>
+                        </div>
+                    </label>
                     <div id="userDropdown" class="user-dropdown" style="display: none;">
                         <button id="userDropdownBtn" class="user-dropdown-btn">
                             <div class="user-avatar">
