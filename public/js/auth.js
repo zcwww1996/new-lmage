@@ -430,6 +430,11 @@ async function uploadAvatar(file) {
 
 // 初始化头像上传功能
 function initAvatarUpload() {
+    // 检查是否已经初始化过，避免重复初始化
+    if (document.getElementById('avatarInput')) {
+        return;
+    }
+
     // 创建隐藏的文件输入元素
     const avatarInput = document.createElement('input');
     avatarInput.type = 'file';
@@ -439,17 +444,31 @@ function initAvatarUpload() {
     document.body.appendChild(avatarInput);
     
     // 为所有用户头像添加点击事件
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('.user-avatar') && checkAuth()) {
+    function handleAvatarClick(e) {
+        // 检查用户是否已登录
+        if (!checkAuth()) {
+            return;
+        }
+
+        // 检查点击的元素是否是头像
+        const avatarElement = e.target.closest('.user-avatar');
+        if (avatarElement) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('头像被点击，打开文件选择器');
             avatarInput.click();
         }
-    });
+    }
+
+    // 使用事件委托绑定点击事件
+    document.addEventListener('click', handleAvatarClick);
     
     // 处理文件选择
     avatarInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        
+        console.log('文件被选择:', file.name);
         
         // 验证文件类型
         if (!file.type.startsWith('image/')) {
@@ -465,6 +484,7 @@ function initAvatarUpload() {
         
         try {
             // 显示加载状态
+            console.log('开始上传头像...');
             const userAvatars = document.querySelectorAll('.user-avatar');
             userAvatars.forEach(avatar => {
                 avatar.innerHTML = '<i class="ri-loader-4-line rotating"></i>';
@@ -473,13 +493,11 @@ function initAvatarUpload() {
             await uploadAvatar(file);
             
             // 显示成功消息
+            console.log('头像上传成功');
             showSuccessMessage('头像更新成功');
             
-            // 刷新用户资料信息（如果在仪表盘页面）
-            if (typeof window.refreshUserProfile === 'function') {
-                window.refreshUserProfile();
-            }
         } catch (error) {
+            console.error('头像上传失败:', error);
             // 恢复头像显示
             updateUserAvatar();
             alert('头像更新失败: ' + error.message);
