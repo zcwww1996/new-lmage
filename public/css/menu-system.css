@@ -362,6 +362,16 @@ body.dark-mode .menu-footer {
     transform: translateX(0);
   }
   
+  /* 移动端时强制移除折叠状态，避免冲突 */
+  .side-menu.collapsed {
+    transform: translateX(-100%); /* 移动端折叠状态也是隐藏 */
+    width: 320px; /* 保持移动端宽度 */
+  }
+  
+  .side-menu.collapsed.mobile-visible {
+    transform: translateX(0); /* 移动端显示时正常显示 */
+  }
+  
   .app-container.menu-expanded,
   .app-container.menu-collapsed {
     padding-left: 0;
@@ -420,6 +430,18 @@ body.dark-mode .menu-footer {
   .menu-overlay.active {
     opacity: 1;
     visibility: visible;
+  }
+}
+
+/* 桌面端确保折叠状态正常 */
+@media (min-width: 769px) {
+  .side-menu {
+    transform: translateX(0) !important; /* 桌面端始终可见 */
+  }
+  
+  .side-menu.collapsed {
+    width: var(--menu-collapsed-width);
+    transform: translateX(0) !important; /* 确保折叠时仍然可见 */
   }
 }
 
@@ -560,6 +582,28 @@ body.dark-mode .menu-footer {
 
 .side-menu.collapsed .menu-item {
   margin: 8px 6px;
-  padding: 12px;
+  padding: 16px 12px;
   justify-content: center;
+  min-height: 48px;
+}
+
+/* 折叠状态下的图标样式优化 */
+.side-menu.collapsed .menu-item-icon {
+  margin-right: 0;
+  transform: none;
+}
+
+/* 折叠状态下悬停效果调整 */
+.side-menu.collapsed .menu-item:hover {
+  transform: translateX(0);
+  box-shadow: 0 4px 20px rgba(67, 97, 238, 0.12), 
+              0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.side-menu.collapsed .menu-item:hover .menu-item-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.side-menu.collapsed .menu-item.active .menu-item-icon {
+  transform: scale(1.15) rotate(-5deg);
 }
