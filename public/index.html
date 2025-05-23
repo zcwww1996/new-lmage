@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="./css/header-modern.css">
     <link rel="stylesheet" href="./css/upload-modern.css">
     <link rel="stylesheet" href="./css/share.css">
+    <link rel="stylesheet" href="./css/ultimate-beauty.css">
     <!-- 图像编辑器样式 -->
     <link rel="stylesheet" href="./css/image-editor.css">
     <!-- 批量处理器样式 -->
@@ -106,7 +107,8 @@
             </a>
         </div>
         <div class="menu-footer">
-            &copy; 2024 TG-Image
+            <i class="ri-copyright-line"></i>
+            <span>2025 TG-Image</span>
         </div>
     </div>
 
@@ -209,8 +211,8 @@
                         <div class="link-item">
                             <label><i class="ri-link"></i> 直接链接:</label>
                             <div class="copy-container">
-                                <input type="text" id="directLink" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">
+                                <input type="text" id="directLink" class="premium-input input-beauty" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm btn-beauty" data-clipboard-target="#directLink">
                                     <i class="ri-file-copy-line"></i> 复制
                                 </button>
                             </div>
@@ -218,8 +220,8 @@
                         <div class="link-item">
                             <label><i class="ri-code-s-slash-line"></i> HTML 代码:</label>
                             <div class="copy-container">
-                                <input type="text" id="htmlCode" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">
+                                <input type="text" id="htmlCode" class="premium-input input-beauty" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm btn-beauty" data-clipboard-target="#htmlCode">
                                     <i class="ri-file-copy-line"></i> 复制
                                 </button>
                             </div>
@@ -227,8 +229,8 @@
                         <div class="link-item">
                             <label><i class="ri-markdown-line"></i> Markdown 代码:</label>
                             <div class="copy-container">
-                                <input type="text" id="mdCode" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">
+                                <input type="text" id="mdCode" class="premium-input input-beauty" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm btn-beauty" data-clipboard-target="#mdCode">
                                     <i class="ri-file-copy-line"></i> 复制
                                 </button>
                             </div>
@@ -236,19 +238,19 @@
                     </div>
 
                     <div class="result-actions">
-                        <button class="action-btn action-btn-primary" id="editImageBtn">
+                        <button class="action-btn action-btn-primary btn-beauty-accent" id="editImageBtn">
                             <i class="ri-image-edit-line"></i>
                             <span>编辑图片</span>
                         </button>
-                        <button class="action-btn action-btn-secondary" id="batchProcessBtn" style="display: none;">
+                        <button class="action-btn action-btn-secondary btn-beauty-secondary" id="batchProcessBtn" style="display: none;">
                             <i class="ri-stack-line"></i>
                             <span>批量处理</span>
                         </button>
-                        <button class="action-btn action-btn-accent" id="uploadAgainBtn">
+                        <button class="action-btn action-btn-accent btn-beauty" id="uploadAgainBtn">
                             <i class="ri-upload-2-line"></i>
                             <span>再次上传</span>
                         </button>
-                        <button class="action-btn action-btn-outline" id="shareBtn">
+                        <button class="action-btn action-btn-outline btn-beauty" id="shareBtn">
                             <i class="ri-share-line"></i>
                             <span>分享</span>
                         </button>
@@ -282,5 +284,6 @@
     <script src="./js/auth.js"></script>
     <script src="./js/menu-system.js"></script>
     <script src="./js/share.js"></script>
+    <script src="./js/beauty-effects.js"></script>
 </body>
 </html>

@@ -1,32 +1,35 @@
 /* 
  * 菜单管理系统 - TG-Image
- * 现代化侧边菜单设计
+ * 现代化侧边菜单设计 - 极致美化版
  */
 
 :root {
   --menu-width: 280px;
   --menu-collapsed-width: 70px;
   --menu-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --menu-bg: var(--card-bg);
+  --menu-bg: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
   --menu-border: var(--border-color);
-  --menu-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  --menu-item-hover: rgba(var(--primary-light-rgb), 0.08);
-  --menu-item-active: rgba(var(--primary-light-rgb), 0.15);
+  --menu-shadow: 0 0 40px rgba(67, 97, 238, 0.08), 0 0 20px rgba(0, 0, 0, 0.05);
+  --menu-item-hover: linear-gradient(135deg, rgba(67, 97, 238, 0.08) 0%, rgba(139, 92, 246, 0.06) 100%);
+  --menu-item-active: linear-gradient(135deg, rgba(67, 97, 238, 0.15) 0%, rgba(139, 92, 246, 0.12) 100%);
   --menu-icon-size: 22px;
   --menu-text-color: var(--text-color);
   --menu-text-muted: var(--text-light);
-  --menu-header-height: 60px;
-  --menu-footer-height: 50px;
+  --menu-header-height: 70px;
+  --menu-footer-height: 60px;
+  --menu-glow: 0 0 30px rgba(67, 97, 238, 0.15);
+  --menu-backdrop-blur: blur(10px);
 }
 
 body.dark-mode {
-  --menu-bg: var(--dark-card-bg);
+  --menu-bg: linear-gradient(145deg, #1a1b23 0%, #242530 100%);
   --menu-border: var(--dark-border);
-  --menu-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  --menu-item-hover: rgba(var(--primary-light-rgb), 0.1);
-  --menu-item-active: rgba(var(--primary-light-rgb), 0.2);
+  --menu-shadow: 0 0 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(67, 97, 238, 0.1);
+  --menu-item-hover: linear-gradient(135deg, rgba(67, 97, 238, 0.12) 0%, rgba(139, 92, 246, 0.08) 100%);
+  --menu-item-active: linear-gradient(135deg, rgba(67, 97, 238, 0.25) 0%, rgba(139, 92, 246, 0.18) 100%);
   --menu-text-color: var(--dark-text);
   --menu-text-muted: var(--dark-text-light);
+  --menu-glow: 0 0 30px rgba(67, 97, 238, 0.25);
 }
 
 /* 主容器布局调整 */
@@ -60,6 +63,21 @@ body.dark-mode {
   flex-direction: column;
   transition: width var(--menu-transition), transform var(--menu-transition);
   overflow: hidden;
+  backdrop-filter: var(--menu-backdrop-blur);
+}
+
+.side-menu:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, 
+    rgba(67, 97, 238, 0.02) 0%, 
+    rgba(139, 92, 246, 0.01) 50%, 
+    rgba(67, 97, 238, 0.02) 100%);
+  pointer-events: none;
 }
 
 .side-menu.collapsed {
@@ -71,35 +89,47 @@ body.dark-mode {
   height: var(--menu-header-height);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 25px;
   border-bottom: 1px solid var(--menu-border);
   position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%);
+}
+
+body.dark-mode .menu-header {
+  background: linear-gradient(135deg, rgba(26, 27, 35, 0.9) 0%, rgba(36, 37, 48, 0.7) 100%);
 }
 
 .menu-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   overflow: hidden;
   width: 100%;
 }
 
 .menu-logo img {
-  height: 32px;
-  min-width: 32px;
+  height: 36px;
+  min-width: 36px;
   object-fit: contain;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease, filter 0.3s ease;
+  filter: drop-shadow(0 2px 8px rgba(67, 97, 238, 0.2));
+}
+
+.menu-logo img:hover {
+  transform: scale(1.05) rotate(5deg);
+  filter: drop-shadow(0 4px 12px rgba(67, 97, 238, 0.3));
 }
 
 .menu-logo h1 {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   white-space: nowrap;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 50%, #06ffa5 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   transition: opacity var(--menu-transition), transform var(--menu-transition);
+  text-shadow: 0 2px 10px rgba(67, 97, 238, 0.2);
 }
 
 .side-menu.collapsed .menu-logo h1 {
@@ -115,19 +145,20 @@ body.dark-mode {
   transform: translateY(-50%);
   width: 24px;
   height: 24px;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .menu-toggle:hover {
-  transform: translateY(-50%) scale(1.1);
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: var(--menu-glow), 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .menu-toggle svg {
@@ -146,31 +177,63 @@ body.dark-mode {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 15px 0;
+  padding: 20px 0;
+  background: linear-gradient(180deg, 
+    rgba(255, 255, 255, 0.02) 0%, 
+    rgba(248, 250, 252, 0.01) 100%);
+}
+
+body.dark-mode .menu-content {
+  background: linear-gradient(180deg, 
+    rgba(26, 27, 35, 0.05) 0%, 
+    rgba(36, 37, 48, 0.02) 100%);
 }
 
 /* 菜单项 */
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 14px 25px;
   color: var(--menu-text-color);
   text-decoration: none;
   position: relative;
-  transition: background-color 0.2s ease;
-  margin: 4px 8px;
-  border-radius: 8px;
+  transition: all 0.3s ease;
+  margin: 6px 12px;
+  border-radius: 12px;
   overflow: hidden;
 }
 
+.menu-item:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 100%);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
 .menu-item:hover {
-  background-color: var(--menu-item-hover);
+  background: var(--menu-item-hover);
+  transform: translateX(8px);
+  box-shadow: 0 4px 15px rgba(67, 97, 238, 0.1);
+}
+
+.menu-item:hover:before {
+  transform: scaleY(1);
 }
 
 .menu-item.active {
-  background-color: var(--menu-item-active);
+  background: var(--menu-item-active);
   color: var(--primary-color);
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(67, 97, 238, 0.15);
+}
+
+.menu-item.active:before {
+  transform: scaleY(1);
 }
 
 .menu-item-icon {
@@ -179,22 +242,40 @@ body.dark-mode {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 15px;
+  margin-right: 18px;
   color: var(--menu-text-muted);
-  transition: color 0.2s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.menu-item-icon:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(139, 92, 246, 0.08) 100%);
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.menu-item:hover .menu-item-icon:after {
+  opacity: 1;
 }
 
 .menu-item.active .menu-item-icon {
   color: var(--primary-color);
+  transform: scale(1.1);
 }
 
 .menu-item:hover .menu-item-icon {
-  transform: translateX(3px);
+  transform: translateX(3px) scale(1.05);
 }
 
 .menu-item-text {
   white-space: nowrap;
   transition: opacity var(--menu-transition), transform var(--menu-transition);
+  font-weight: 500;
 }
 
 .side-menu.collapsed .menu-item-text {
@@ -204,14 +285,27 @@ body.dark-mode {
 
 /* 菜单分类 */
 .menu-category {
-  padding: 0 20px;
-  margin: 15px 0 8px;
+  padding: 0 25px;
+  margin: 25px 0 12px;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: var(--menu-text-muted);
   white-space: nowrap;
   transition: opacity var(--menu-transition);
+  position: relative;
+  font-weight: 600;
+}
+
+.menu-category:after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 25px;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 100%);
+  border-radius: 1px;
 }
 
 .side-menu.collapsed .menu-category {
@@ -224,12 +318,17 @@ body.dark-mode {
   border-top: 1px solid var(--menu-border);
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 25px;
   color: var(--menu-text-muted);
   font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   transition: opacity var(--menu-transition);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(248, 250, 252, 0.3) 100%);
+}
+
+body.dark-mode .menu-footer {
+  background: linear-gradient(135deg, rgba(26, 27, 35, 0.7) 0%, rgba(36, 37, 48, 0.5) 100%);
 }
 
 .side-menu.collapsed .menu-footer {
@@ -258,11 +357,12 @@ body.dark-mode {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 999;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(5px);
   }
   
   .menu-overlay.active {
@@ -273,19 +373,26 @@ body.dark-mode {
 
 /* 菜单项徽章 */
 .menu-badge {
-  min-width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  background: var(--primary-gradient);
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 100%);
   color: white;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: auto;
-  padding: 0 6px;
+  padding: 0 8px;
   transition: opacity var(--menu-transition), transform var(--menu-transition);
+  box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .side-menu.collapsed .menu-badge {
@@ -296,24 +403,55 @@ body.dark-mode {
 /* 菜单提示 */
 .menu-tooltip {
   position: absolute;
-  left: 100%;
+  left: calc(100% + 15px);
   top: 50%;
   transform: translateY(-50%);
-  background: var(--dark-card-bg);
-  color: var(--dark-text);
-  padding: 6px 10px;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #1a1b23 0%, #242530 100%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
   font-size: 12px;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 20px rgba(67, 97, 238, 0.1);
   pointer-events: none;
   z-index: 1001;
+  font-weight: 500;
+}
+
+.menu-tooltip:after {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1a1b23;
 }
 
 .side-menu.collapsed .menu-item:hover .menu-tooltip {
   opacity: 1;
   visibility: visible;
+  transform: translateY(-50%) translateX(5px);
+}
+
+/* 滚动条美化 */
+.menu-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menu-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.menu-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #4361ee 0%, #8b5cf6 100%);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.menu-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #3651d4 0%, #7c3aed 100%);
 }

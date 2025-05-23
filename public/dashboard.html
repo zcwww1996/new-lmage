@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="./css/header-modern.css">
     <link rel="stylesheet" href="./css/share.css">
     <link rel="stylesheet" href="./css/menu-stats.css">
+    <link rel="stylesheet" href="./css/ultimate-beauty.css">
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1681,6 +1682,7 @@
             <a href="/dashboard.html" class="menu-item active">
                 <div class="menu-item-icon"><i class="ri-image-2-line"></i></div>
                 <div class="menu-item-text">我的图片</div>
+                <div class="menu-badge" id="imageCountBadge">0</div>
                 <div class="menu-tooltip">我的图片</div>
             </a>
             <a href="#" class="menu-item" id="uploadMenuBtn">
@@ -1696,6 +1698,24 @@
                 <div class="menu-tooltip">统计信息</div>
             </a>
 
+            <div class="menu-category">图片管理</div>
+            <a href="#" class="menu-item" id="favoritesMenuItem">
+                <div class="menu-item-icon"><i class="ri-star-line"></i></div>
+                <div class="menu-item-text">收藏图片</div>
+                <div class="menu-badge" id="favoriteCountBadge">0</div>
+                <div class="menu-tooltip">收藏图片</div>
+            </a>
+            <a href="#" class="menu-item" id="recentMenuItem">
+                <div class="menu-item-icon"><i class="ri-time-line"></i></div>
+                <div class="menu-item-text">最近上传</div>
+                <div class="menu-tooltip">最近上传</div>
+            </a>
+            <a href="#" class="menu-item" id="tagsMenuItem">
+                <div class="menu-item-icon"><i class="ri-price-tag-3-line"></i></div>
+                <div class="menu-item-text">标签管理</div>
+                <div class="menu-tooltip">标签管理</div>
+            </a>
+
             <div class="menu-category">账户</div>
             <a href="/login.html" class="menu-item" id="loginMenuItem" style="display: none;">
                 <div class="menu-item-icon"><i class="ri-login-box-line"></i></div>
@@ -1706,6 +1726,11 @@
                 <div class="menu-item-icon"><i class="ri-user-settings-line"></i></div>
                 <div class="menu-item-text">用户资料</div>
                 <div class="menu-tooltip">用户资料</div>
+            </a>
+            <a href="#" class="menu-item" id="settingsMenuItem">
+                <div class="menu-item-icon"><i class="ri-settings-3-line"></i></div>
+                <div class="menu-item-text">系统设置</div>
+                <div class="menu-tooltip">系统设置</div>
             </a>
             <a href="#" class="menu-item" id="logoutMenuItem">
                 <div class="menu-item-icon"><i class="ri-logout-box-line"></i></div>
@@ -1719,6 +1744,11 @@
                 <div class="menu-item-text">GitHub</div>
                 <div class="menu-tooltip">GitHub</div>
             </a>
+            <a href="#" class="menu-item" id="helpMenuItem">
+                <div class="menu-item-icon"><i class="ri-question-line"></i></div>
+                <div class="menu-item-text">帮助文档</div>
+                <div class="menu-tooltip">帮助文档</div>
+            </a>
             <a href="#" class="menu-item" id="themeMenuItem">
                 <div class="menu-item-icon"><i class="ri-moon-line"></i></div>
                 <div class="menu-item-text">切换主题</div>
@@ -1726,7 +1756,8 @@
             </a>
         </div>
         <div class="menu-footer">
-            &copy; 2024 TG-Image
+            <i class="ri-copyright-line"></i>
+            <span>2025 TG-Image</span>
         </div>
     </div>
 
@@ -1787,11 +1818,11 @@
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">我的图片</h2>
                     <div class="dashboard-actions">
-                        <a href="/" class="upload-btn premium-btn premium-btn-primary premium-btn-icon-left">
+                        <a href="/" class="upload-btn premium-btn premium-btn-primary premium-btn-icon-left btn-beauty-accent">
                             <i class="ri-upload-cloud-2-line"></i>
                             上传新图片
                         </a>
-                        <button id="statsToggleBtn" class="stats-toggle-btn premium-btn premium-btn-outline-primary premium-btn-icon-left">
+                        <button id="statsToggleBtn" class="stats-toggle-btn premium-btn premium-btn-outline-primary premium-btn-icon-left btn-beauty-secondary">
                             <i class="ri-bar-chart-2-line"></i>
                             统计信息
                         </button>
@@ -1805,8 +1836,8 @@
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </div>
-                    <input type="text" id="searchInput" class="search-input" placeholder="搜索图片名称或标签...">
-                    <button id="searchBtn" class="search-btn">
+                    <input type="text" id="searchInput" class="search-input input-beauty" placeholder="搜索图片名称或标签...">
+                    <button id="searchBtn" class="search-btn btn-beauty">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
@@ -1944,7 +1975,7 @@
                             </svg>
                             文件名
                         </label>
-                        <input type="text" id="editFileName" class="form-control" placeholder="输入文件名...">
+                        <input type="text" id="editFileName" class="form-control input-beauty" placeholder="输入文件名...">
                     </div>
                     <div class="form-group">
                         <label for="editTags">
@@ -1955,7 +1986,7 @@
                             标签
                         </label>
                         <div class="tags-input-container">
-                            <div id="tagsInput" class="tags-input">
+                            <div id="tagsInput" class="tags-input input-beauty">
                                 <input type="text" id="tagInput" placeholder="输入标签后按回车...">
                             </div>
                             <div class="tags-suggestions" id="tagsSuggestions">
@@ -2007,8 +2038,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="cancelEdit" class="modal-btn modal-btn-secondary premium-btn premium-btn-outline-primary">取消</button>
-                <button id="saveEdit" class="modal-btn modal-btn-primary premium-btn premium-btn-primary premium-btn-icon-left">
+                <button id="cancelEdit" class="modal-btn modal-btn-secondary premium-btn premium-btn-outline-primary btn-beauty">取消</button>
+                <button id="saveEdit" class="modal-btn modal-btn-primary premium-btn premium-btn-primary premium-btn-icon-left btn-beauty-accent">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                         <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -2024,28 +2055,28 @@
     <div id="batchToolbar" class="batch-toolbar">
         <div class="batch-info">已选择 <span id="selectedCount">0</span> 张图片</div>
         <div class="batch-actions">
-            <button id="batchCopy" class="batch-btn premium-btn premium-btn-outline-primary premium-btn-sm premium-btn-icon-left" title="复制所有选中图片链接">
+            <button id="batchCopy" class="batch-btn premium-btn premium-btn-outline-primary premium-btn-sm premium-btn-icon-left btn-beauty" title="复制所有选中图片链接">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                 </svg>
                 复制链接
             </button>
-            <button id="batchAddTag" class="batch-btn premium-btn premium-btn-outline-accent premium-btn-sm premium-btn-icon-left" title="为所有选中图片添加标签">
+            <button id="batchAddTag" class="batch-btn premium-btn premium-btn-outline-accent premium-btn-sm premium-btn-icon-left btn-beauty-accent" title="为所有选中图片添加标签">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                     <line x1="7" y1="7" x2="7.01" y2="7"></line>
                 </svg>
                 添加标签
             </button>
-            <button id="batchDelete" class="batch-btn batch-btn-danger premium-btn premium-btn-error premium-btn-sm premium-btn-icon-left" title="删除所有选中图片">
+            <button id="batchDelete" class="batch-btn batch-btn-danger premium-btn premium-btn-error premium-btn-sm premium-btn-icon-left btn-beauty-secondary" title="删除所有选中图片">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
                 删除
             </button>
-            <button id="batchCancel" class="batch-btn premium-btn premium-btn-outline-secondary premium-btn-sm premium-btn-icon-left" title="取消选择">
+            <button id="batchCancel" class="batch-btn premium-btn premium-btn-outline-secondary premium-btn-sm premium-btn-icon-left btn-beauty" title="取消选择">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -2136,5 +2167,6 @@
     <script src="./js/dashboard.js"></script>
     <script src="./js/menu-system.js"></script>
     <script src="./js/share.js"></script>
+    <script src="./js/beauty-effects.js"></script>
 </body>
 </html>

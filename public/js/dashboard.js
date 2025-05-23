@@ -58,6 +58,9 @@ function initDashboard() {
     // 初始化拖拽排序功能
     initDragSort();
 
+    // 初始化菜单徽章
+    initMenuBadges();
+
     // 初始化复制链接功能
     new ClipboardJS('#copyEditLink').on('success', function(e) {
         const button = e.trigger;
@@ -73,6 +76,44 @@ function initDashboard() {
             button.innerHTML = originalHTML;
         }, 2000);
     });
+}
+
+// 初始化菜单徽章
+function initMenuBadges() {
+    updateMenuBadges();
+}
+
+// 更新菜单徽章
+function updateMenuBadges() {
+    // 更新图片数量徽章
+    const imageCountBadge = document.getElementById('imageCountBadge');
+    if (imageCountBadge) {
+        const totalImages = currentImages.length;
+        imageCountBadge.textContent = totalImages;
+        
+        // 添加数字增长动画
+        if (totalImages > 0) {
+            imageCountBadge.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                imageCountBadge.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
+
+    // 更新收藏数量徽章
+    const favoriteCountBadge = document.getElementById('favoriteCountBadge');
+    if (favoriteCountBadge) {
+        const favoriteCount = favoriteImages.size;
+        favoriteCountBadge.textContent = favoriteCount;
+        
+        // 添加数字增长动画
+        if (favoriteCount > 0) {
+            favoriteCountBadge.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                favoriteCountBadge.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
 }
 
 // 从本地存储加载自定义排序
@@ -512,7 +553,6 @@ function initImageCardEvents() {
 // 切换收藏状态
 function toggleFavorite(imageId, button) {
     const isFavorite = favoriteImages.has(imageId);
-    const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
 
     if (isFavorite) {
         // 取消收藏
@@ -520,22 +560,32 @@ function toggleFavorite(imageId, button) {
         button.classList.remove('active');
         button.title = '收藏图片';
         button.querySelector('svg').setAttribute('fill', 'none');
-        card.classList.remove('favorite');
+
+        // 触发美化通知
+        if (window.beautyEffects) {
+            window.beautyEffects.showNotification('已取消收藏', 'warning', 2000);
+        }
     } else {
         // 添加收藏
         favoriteImages.add(imageId);
         button.classList.add('active');
         button.title = '取消收藏';
         button.querySelector('svg').setAttribute('fill', 'currentColor');
-        card.classList.add('favorite');
+
+        // 触发美化通知
+        if (window.beautyEffects) {
+            window.beautyEffects.showNotification('已添加到收藏', 'success', 2000);
+        }
     }
 
-    // 保存收藏状态
+    // 保存到本地存储
     saveFavorites();
 
-    // 如果当前是只显示收藏，且取消了收藏，则需要移除该卡片
-    if (showOnlyFavorites && !isFavorite) {
-        // 重新渲染图片
+    // 更新菜单徽章
+    updateMenuBadges();
+
+    // 如果当前在显示收藏模式且取消了收藏，重新渲染
+    if (showOnlyFavorites && isFavorite) {
         if (currentViewMode === 'timeline') {
             renderTimelineView();
         } else {
@@ -647,31 +697,23 @@ function collectAllTags(images) {
 
 // 更新统计信息
 function updateStatistics(data) {
-    // 总图片数
-    const totalImages = document.getElementById('totalImages');
-    totalImages.textContent = data.pagination ? data.pagination.total : currentImages.length;
+    // 更新状态卡片
+    document.getElementById('totalImages').textContent = data.totalImages;
+    document.getElementById('totalSize').textContent = formatFileSize(data.totalSize);
+    document.getElementById('recentUploads').textContent = data.recentUploads;
+    document.getElementById('avgFileSize').textContent = formatFileSize(data.averageFileSize);
 
-    // 总存储空间
-    const totalSize = document.getElementById('totalSize');
-    let sizeSum = 0;
-    currentImages.forEach(img => {
-        sizeSum += img.fileSize || 0;
-    });
-    totalSize.textContent = formatFileSize(sizeSum);
+    // 更新图表数据 - 延迟初始化以确保DOM已加载
+    setTimeout(() => {
+        try {
+            updateCharts();
+        } catch (error) {
+            console.warn('Charts not available:', error);
+        }
+    }, 100);
 
-    // 最近上传数量（7天内）
-    const recentUploads = document.getElementById('recentUploads');
-    const oneWeekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-    const recentCount = currentImages.filter(img => img.uploadTime > oneWeekAgo).length;
-    recentUploads.textContent = recentCount;
-
-    // 平均文件大小
-    const avgFileSize = document.getElementById('avgFileSize');
-    const avgSize = currentImages.length > 0 ? sizeSum / currentImages.length : 0;
-    avgFileSize.textContent = formatFileSize(avgSize);
-
-    // 更新图表数据
-    updateCharts();
+    // 更新菜单徽章
+    updateMenuBadges();
 }
 
 // 初始化图表
@@ -2158,4 +2200,24 @@ function initStorageUsageChart() {
 
     // 创建图表
     new Chart(ctx, config);
+}
+
+function updateStatistics(data) {
+    // 更新状态卡片
+    document.getElementById('totalImages').textContent = data.totalImages;
+    document.getElementById('totalSize').textContent = formatFileSize(data.totalSize);
+    document.getElementById('recentUploads').textContent = data.recentUploads;
+    document.getElementById('avgFileSize').textContent = formatFileSize(data.averageFileSize);
+
+    // 更新图表数据 - 延迟初始化以确保DOM已加载
+    setTimeout(() => {
+        try {
+            updateCharts();
+        } catch (error) {
+            console.warn('Charts not available:', error);
+        }
+    }, 100);
+
+    // 更新菜单徽章
+    updateMenuBadges();
 }
