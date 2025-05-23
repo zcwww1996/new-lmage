@@ -27,8 +27,6 @@
     <link rel="stylesheet" href="./css/image-editor.css">
     <!-- 批量处理器样式 -->
     <link rel="stylesheet" href="./css/batch-processor.css">
-    <!-- 多功能工具菜单样式 -->
-    <link rel="stylesheet" href="./css/multi-tool-menu.css">
     <!-- 引入图标库 -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
@@ -257,131 +255,6 @@
                     </div>
                 </div>
             </section>
-
-            <!-- 多功能工具菜单 -->
-            <section class="multi-tool-menu" id="multiToolMenu">
-                <div class="tool-menu-header" id="toolMenuHeader">
-                    <div class="tool-menu-title">
-                        <i class="ri-tools-line"></i>
-                        <span>图片工具箱</span>
-                        <span class="tool-count">1个工具</span>
-                    </div>
-                    <button class="tool-menu-toggle" id="toolMenuToggle" aria-label="展开/折叠工具菜单">
-                        <i class="ri-arrow-down-s-line"></i>
-                    </button>
-                </div>
-
-                <div class="tool-menu-content" id="toolMenuContent">
-                    <!-- WebP 转换工具 -->
-                    <div class="tool-module webp-converter" id="webpConverterModule">
-                        <div class="tool-module-header">
-                            <div class="tool-icon">
-                                <i class="ri-image-2-line"></i>
-                            </div>
-                            <div class="tool-info">
-                                <h3>WebP 格式转换</h3>
-                                <p>将图片转换为更小体积的 WebP 格式，然后上传到图床</p>
-                            </div>
-                        </div>
-
-                        <div class="tool-upload-area" id="webpUploadArea">
-                            <div class="tool-upload-zone" id="webpDropZone">
-                                <div class="upload-icon">
-                                    <i class="ri-file-upload-line"></i>
-                                </div>
-                                <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
-                                <p class="upload-hint">支持 JPG、PNG、BMP、TIFF 等格式</p>
-                                <input type="file" id="webpFileInput" class="file-input" accept="image/*" multiple>
-                            </div>
-                        </div>
-
-                        <div class="tool-options" id="webpOptions" style="display: none;">
-                            <div class="options-header">
-                                <h4>转换设置</h4>
-                            </div>
-                            <div class="options-grid">
-                                <div class="option-group">
-                                    <label for="webpQuality">图片质量</label>
-                                    <div class="quality-control">
-                                        <input type="range" id="webpQuality" min="10" max="100" value="85" class="quality-slider">
-                                        <span id="webpQualityValue">85%</span>
-                                    </div>
-                                    <p class="option-hint">质量越高文件越大，建议85%-95%</p>
-                                </div>
-                                <div class="option-group">
-                                    <label>
-                                        <input type="checkbox" id="webpAutoUpload" checked>
-                                        转换后自动上传到图床
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tool-file-list" id="webpFileList" style="display: none;">
-                            <div class="file-list-header">
-                                <h4>待转换文件 (<span id="webpFileCount">0</span>)</h4>
-                                <button class="btn-clear-all" id="webpClearAll">
-                                    <i class="ri-delete-bin-line"></i>
-                                    清空全部
-                                </button>
-                            </div>
-                            <div class="file-items" id="webpFileItems">
-                                <!-- 文件项将动态插入这里 -->
-                            </div>
-                        </div>
-
-                        <div class="tool-actions" id="webpActions" style="display: none;">
-                            <button class="tool-btn tool-btn-primary" id="webpConvertBtn">
-                                <i class="ri-refresh-line"></i>
-                                <span>开始转换</span>
-                            </button>
-                            <button class="tool-btn tool-btn-secondary" id="webpDownloadBtn" style="display: none;">
-                                <i class="ri-download-line"></i>
-                                <span>下载转换结果</span>
-                            </button>
-                        </div>
-
-                        <div class="tool-progress" id="webpProgress" style="display: none;">
-                            <div class="progress-info">
-                                <span class="progress-text">正在转换...</span>
-                                <span class="progress-stats">
-                                    <span id="webpProgressCurrent">0</span> / <span id="webpProgressTotal">0</span>
-                                </span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="webpProgressFill"></div>
-                            </div>
-                        </div>
-
-                        <div class="tool-results" id="webpResults" style="display: none;">
-                            <div class="results-header">
-                                <h4>转换完成</h4>
-                                <div class="results-summary">
-                                    <span class="result-success">
-                                        <i class="ri-check-circle-line"></i>
-                                        成功: <strong id="webpSuccessCount">0</strong>
-                                    </span>
-                                    <span class="result-failed">
-                                        <i class="ri-error-warning-line"></i>
-                                        失败: <strong id="webpFailedCount">0</strong>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="results-content" id="webpResultsContent">
-                                <!-- 转换结果将显示在这里 -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 预留更多工具模块的位置 -->
-                    <div class="tool-placeholder">
-                        <div class="placeholder-content">
-                            <i class="ri-add-circle-line"></i>
-                            <span>更多工具即将推出...</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </main>
 
         <footer class="footer">
@@ -405,8 +278,6 @@
     <script src="./js/image-editor-main.js"></script>
     <!-- 批量处理器脚本 -->
     <script src="./js/batch-processor.js"></script>
-    <!-- 多功能工具菜单脚本 -->
-    <script src="./js/multi-tool-menu.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/menu-system.js"></script>
