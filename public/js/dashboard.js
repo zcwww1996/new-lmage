@@ -28,6 +28,9 @@ function initDashboard() {
     // 从本地存储加载自定义排序
     loadCustomOrder();
 
+    // 初始化用户资料卡片
+    initUserProfileCard();
+
     // 加载用户图片
     loadUserImages();
 
@@ -2159,3 +2162,185 @@ function initStorageUsageChart() {
     // 创建图表
     new Chart(ctx, config);
 }
+
+// 初始化用户资料卡片
+function initUserProfileCard() {
+    const profileCard = document.getElementById('userProfileCard');
+    const toggleBtn = document.getElementById('toggleProfileCard');
+    
+    if (!profileCard || !toggleBtn) return;
+
+    // 检查是否显示用户资料卡片的设置
+    const showProfile = localStorage.getItem('showUserProfile') !== 'false';
+    
+    // 设置初始状态
+    if (showProfile) {
+        profileCard.style.display = 'block';
+        profileCard.classList.remove('collapsed');
+    } else {
+        profileCard.style.display = 'none';
+    }
+
+    // 添加折叠/展开功能
+    toggleBtn.addEventListener('click', () => {
+        const isCollapsed = profileCard.classList.contains('collapsed');
+        
+        if (isCollapsed) {
+            profileCard.classList.remove('collapsed');
+            toggleBtn.classList.remove('collapsed');
+            localStorage.setItem('profileCardCollapsed', 'false');
+        } else {
+            profileCard.classList.add('collapsed');
+            toggleBtn.classList.add('collapsed');
+            localStorage.setItem('profileCardCollapsed', 'true');
+        }
+    });
+
+    // 从本地存储恢复折叠状态
+    const isCollapsed = localStorage.getItem('profileCardCollapsed') === 'true';
+    if (isCollapsed) {
+        profileCard.classList.add('collapsed');
+        toggleBtn.classList.add('collapsed');
+    }
+
+    // 加载用户资料信息
+    loadUserProfile();
+    
+    // 添加菜单项点击事件
+    const profileMenuItem = document.getElementById('profileMenuItem');
+    if (profileMenuItem) {
+        profileMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleUserProfileCard();
+        });
+    }
+}
+
+// 切换用户资料卡片显示状态
+function toggleUserProfileCard() {
+    const profileCard = document.getElementById('userProfileCard');
+    if (!profileCard) return;
+    
+    const isVisible = profileCard.style.display !== 'none';
+    
+    if (isVisible) {
+        profileCard.style.display = 'none';
+        localStorage.setItem('showUserProfile', 'false');
+    } else {
+        profileCard.style.display = 'block';
+        localStorage.setItem('showUserProfile', 'true');
+        
+        // 平滑滚动到用户资料卡片
+        profileCard.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
+    }
+}
+
+// 加载用户资料信息
+async function loadUserProfile() {
+    try {
+        const response = await fetch('/api/auth/profile', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('获取用户资料失败');
+        }
+
+        const data = await response.json();
+        const user = data.user;
+
+        // 更新用户信息显示
+        updateUserProfileDisplay(user);
+
+        // 显示用户资料卡片
+        const profileCard = document.getElementById('userProfileCard');
+        if (profileCard) {
+            profileCard.style.display = 'block';
+        }
+
+    } catch (error) {
+        console.error('加载用户资料错误:', error);
+        // 如果无法加载用户资料，隐藏资料卡片
+        const profileCard = document.getElementById('userProfileCard');
+        if (profileCard) {
+            profileCard.style.display = 'none';
+        }
+    }
+}
+
+// 更新用户资料显示
+function updateUserProfileDisplay(user) {
+    // 更新用户名
+    const usernameElement = document.getElementById('profileUsername');
+    if (usernameElement) {
+        usernameElement.textContent = user.username || '-';
+    }
+
+    // 更新邮箱
+    const emailElement = document.getElementById('profileEmail');
+    if (emailElement) {
+        emailElement.textContent = user.email || '-';
+    }
+
+    // 更新注册时间
+    const regTimeElement = document.getElementById('profileRegTime');
+    if (regTimeElement) {
+        const regDate = new Date(user.createdAt);
+        regTimeElement.textContent = regDate.toLocaleDateString('zh-CN') || '-';
+    }
+
+    // 更新统计信息
+    if (user.stats) {
+        const imageCountElement = document.getElementById('profileImageCount');
+        if (imageCountElement) {
+            imageCountElement.textContent = user.stats.totalImages || '0';
+        }
+
+        const storageUsedElement = document.getElementById('profileStorageUsed');
+        if (storageUsedElement) {
+            const sizeInMB = (user.stats.totalSize / (1024 * 1024)).toFixed(2);
+            storageUsedElement.textContent = `${sizeInMB} MB`;
+        }
+    }
+
+    // 更新头像
+    const avatarElement = document.querySelector('.user-avatar-large');
+    if (avatarElement && user.avatarUrl) {
+        avatarElement.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = user.avatarUrl;
+        img.alt = '用户头像';
+        img.className = 'user-avatar-img';
+        img.onerror = function() {
+            this.style.display = 'none';
+            avatarElement.innerHTML = '<i class="ri-user-3-line"></i>';
+        };
+        avatarElement.appendChild(img);
+    }
+}
+
+// 格式化文件大小
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+// 刷新用户资料信息
+function refreshUserProfile() {
+    loadUserProfile();
+}
+
+// 导出函数供其他模块使用
+window.refreshUserProfile = refreshUserProfile;

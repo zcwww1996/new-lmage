@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { serveStatic } from 'hono/cloudflare-workers';
 import { authenticatedUpload } from './functions/upload';
 import { fileHandler } from './functions/file/[id]';
-import { register, login, getCurrentUser } from './functions/user/auth';
+import { register, login, getCurrentUser, updateUserAvatar, getUserProfile } from './functions/user/auth';
 import { getUserImages, deleteUserImage, updateImageInfo, searchUserImages } from './functions/user/images';
 import { authMiddleware } from './functions/utils/auth';
 
@@ -24,6 +24,8 @@ app.get('/', (c) => c.redirect('/index.html'));
 app.post('/api/auth/register', register);
 app.post('/api/auth/login', login);
 app.get('/api/auth/user', authMiddleware, getCurrentUser);
+app.get('/api/auth/profile', authMiddleware, getUserProfile);
+app.put('/api/auth/avatar', authMiddleware, updateUserAvatar);
 
 // 用户图片管理相关API
 app.get('/api/images', authMiddleware, getUserImages);

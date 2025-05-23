@@ -133,3 +133,96 @@ export async function getCurrentUser(c) {
     return c.json({ error: '获取用户信息失败' }, 500);
   }
 }
+
+// 更新用户头像
+export async function updateUserAvatar(c) {
+  try {
+    // 错误处理和遥测数据
+    await errorHandling(c);
+    telemetryData(c);
+
+    const user = c.get('user');
+    const { avatarUrl } = await c.req.json();
+    
+    // 验证输入
+    if (!avatarUrl) {
+      return c.json({ error: '头像链接不能为空' }, 400);
+    }
+    
+    // 简单验证是否为有效的URL
+    try {
+      new URL(avatarUrl);
+    } catch {
+      return c.json({ error: '请提供有效的头像链接' }, 400);
+    }
+    
+    // 获取用户信息
+    const username = user.username;
+    const userJson = await c.env.users.get(`user:${username}`);
+    
+    if (!userJson) {
+      return c.json({ error: '用户不存在' }, 404);
+    }
+    
+    const userFull = JSON.parse(userJson);
+    
+    // 更新用户头像
+    const updatedUser = {
+      ...userFull,
+      avatarUrl,
+      updatedAt: Date.now()
+    };
+    
+    // 保存更新后的用户信息
+    await c.env.users.put(`user:${username}`, JSON.stringify(updatedUser));
+    
+    // 返回用户信息（不包含密码）
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    return c.json({ 
+      message: '头像更新成功', 
+      user: userWithoutPassword 
+    });
+  } catch (error) {
+    console.error('更新头像错误:', error);
+    return c.json({ error: '更新头像失败' }, 500);
+  }
+}
+
+// 获取用户资料
+export async function getUserProfile(c) {
+  try {
+    const user = c.get('user');
+    
+    // 获取完整的用户信息
+    const username = user.username;
+    const userJson = await c.env.users.get(`user:${username}`);
+    
+    if (!userJson) {
+      return c.json({ error: '用户不存在' }, 404);
+    }
+    
+    const userFull = JSON.parse(userJson);
+    
+    // 获取用户统计信息
+    const userFilesKey = `user:${user.id}:files`;
+    const userFiles = await c.env.img_url.get(userFilesKey, { type: "json" }) || [];
+    
+    const totalImages = userFiles.length;
+    const totalSize = userFiles.reduce((sum, file) => sum + (file.fileSize || 0), 0);
+    
+    // 返回用户信息（不包含密码）
+    const { password: _, ...userWithoutPassword } = userFull;
+    return c.json({ 
+      user: {
+        ...userWithoutPassword,
+        stats: {
+          totalImages,
+          totalSize
+        }
+      }
+    });
+  } catch (error) {
+    console.error('获取用户资料错误:', error);
+    return c.json({ error: '获取用户资料失败' }, 500);
+  }
+}

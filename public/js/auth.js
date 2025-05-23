@@ -105,6 +105,9 @@ function initAuth() {
                 smoothPageTransition('/login.html');
             });
         }
+
+        // 如果用户已登录，更新头像显示
+        updateUserAvatar();
     } else {
         // 用户未登录
 
@@ -338,6 +341,194 @@ function showError(element, message) {
     }
 }
 
+// 更新用户头像显示
+function updateUserAvatar() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const userAvatars = document.querySelectorAll('.user-avatar');
+    
+    if (user && user.avatarUrl) {
+        userAvatars.forEach(avatar => {
+            // 清空现有内容
+            avatar.innerHTML = '';
+            
+            // 创建头像图片元素
+            const img = document.createElement('img');
+            img.src = user.avatarUrl;
+            img.alt = '用户头像';
+            img.className = 'user-avatar-img';
+            img.onerror = function() {
+                // 如果头像加载失败，显示默认图标
+                this.style.display = 'none';
+                avatar.innerHTML = '<i class="ri-user-3-line"></i>';
+            };
+            
+            avatar.appendChild(img);
+        });
+    } else {
+        // 显示默认头像图标
+        userAvatars.forEach(avatar => {
+            avatar.innerHTML = '<i class="ri-user-3-line"></i>';
+        });
+    }
+}
+
+// 上传头像
+async function uploadAvatar(file) {
+    try {
+        // 首先上传文件到图床
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const uploadResponse = await fetch('/upload', {
+            method: 'POST',
+            headers: getAuthHeader(),
+            body: formData
+        });
+        
+        if (!uploadResponse.ok) {
+            throw new Error('图片上传失败');
+        }
+        
+        const uploadResult = await uploadResponse.json();
+        
+        if (!uploadResult || uploadResult.length === 0 || !uploadResult[0].src) {
+            throw new Error('上传结果无效');
+        }
+        
+        // 获取上传后的图片链接
+        const avatarUrl = window.location.origin + uploadResult[0].src;
+        
+        // 更新用户头像
+        const updateResponse = await fetch('/api/auth/avatar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthHeader()
+            },
+            body: JSON.stringify({ avatarUrl })
+        });
+        
+        if (!updateResponse.ok) {
+            const errorData = await updateResponse.json();
+            throw new Error(errorData.error || '头像更新失败');
+        }
+        
+        const result = await updateResponse.json();
+        
+        // 更新本地存储的用户信息
+        localStorage.setItem('user', JSON.stringify(result.user));
+        
+        // 更新页面上的头像显示
+        updateUserAvatar();
+        
+        return result;
+    } catch (error) {
+        console.error('上传头像错误:', error);
+        throw error;
+    }
+}
+
+// 初始化头像上传功能
+function initAvatarUpload() {
+    // 创建隐藏的文件输入元素
+    const avatarInput = document.createElement('input');
+    avatarInput.type = 'file';
+    avatarInput.accept = 'image/*';
+    avatarInput.style.display = 'none';
+    avatarInput.id = 'avatarInput';
+    document.body.appendChild(avatarInput);
+    
+    // 为所有用户头像添加点击事件
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.user-avatar') && checkAuth()) {
+            e.preventDefault();
+            avatarInput.click();
+        }
+    });
+    
+    // 处理文件选择
+    avatarInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // 验证文件类型
+        if (!file.type.startsWith('image/')) {
+            alert('请选择图片文件');
+            return;
+        }
+        
+        // 验证文件大小（限制为5MB）
+        if (file.size > 5 * 1024 * 1024) {
+            alert('图片文件大小不能超过5MB');
+            return;
+        }
+        
+        try {
+            // 显示加载状态
+            const userAvatars = document.querySelectorAll('.user-avatar');
+            userAvatars.forEach(avatar => {
+                avatar.innerHTML = '<i class="ri-loader-4-line rotating"></i>';
+            });
+            
+            await uploadAvatar(file);
+            
+            // 显示成功消息
+            showSuccessMessage('头像更新成功');
+            
+            // 刷新用户资料信息（如果在仪表盘页面）
+            if (typeof window.refreshUserProfile === 'function') {
+                window.refreshUserProfile();
+            }
+        } catch (error) {
+            // 恢复头像显示
+            updateUserAvatar();
+            alert('头像更新失败: ' + error.message);
+        }
+        
+        // 清空文件输入
+        avatarInput.value = '';
+    });
+}
+
+// 显示成功消息
+function showSuccessMessage(message) {
+    // 创建成功消息元素
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.textContent = message;
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+    `;
+    
+    document.body.appendChild(successDiv);
+    
+    // 显示动画
+    setTimeout(() => {
+        successDiv.style.opacity = '1';
+        successDiv.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // 3秒后自动隐藏
+    setTimeout(() => {
+        successDiv.style.opacity = '0';
+        successDiv.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(successDiv);
+        }, 300);
+    }, 3000);
+}
+
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', () => {
     // 初始化认证状态
@@ -351,4 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 初始化退出登录
     initLogout();
+
+    // 初始化头像上传功能
+    initAvatarUpload();
 });
