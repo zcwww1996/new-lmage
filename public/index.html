@@ -10,13 +10,6 @@
     <meta name="keywords" content="图床,Telegram,图片上传,免费图床,图片托管">
     <meta name="theme-color" content="#4361ee">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/layout-optimization.css">
-    <link rel="stylesheet" href="./css/layout-fixes.css">
-    <link rel="stylesheet" href="./css/hero-enhancement.css">
-    <link rel="stylesheet" href="./css/upload-enhancement.css">
-    <link rel="stylesheet" href="./css/footer-enhancement.css">
-    <link rel="stylesheet" href="./css/header-enhancement.css">
-    <link rel="stylesheet" href="./css/result-enhancement.css">
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +18,6 @@
     <link rel="stylesheet" href="./css/images-premium.css">
     <link rel="stylesheet" href="./css/loaders-premium.css">
     <link rel="stylesheet" href="./css/mobile-nav-enhance.css">
-    <link rel="stylesheet" href="./css/mobile-menu-comprehensive.css">
     <link rel="stylesheet" href="./css/modals-premium.css">
 </head>
 <body class="dark-mode-transition">
@@ -52,47 +44,45 @@
 
     <div class="app-container">
         <header class="header">
-            <div class="header-inner">
-                <div class="logo">
-                    <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
-                    <h1 data-text="TG-Image">TG-Image</h1>
-                </div>
-                <div class="nav-container">
-                    <nav class="nav" id="mainNav">
-                        <a href="/" class="nav-link active animated-link">首页</a>
-                        <a href="/login.html" class="nav-link animated-link">登录</a>
-                        <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="nav-link animated-link">GitHub</a>
-                    </nav>
-                    <div class="header-buttons">
-                        <div id="userDropdown" class="user-dropdown" style="display: none;">
-                            <button id="userDropdownBtn" class="user-dropdown-btn">
-                                <span id="userDisplayName">用户</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </button>
-                            <div class="user-dropdown-content">
-                                <a href="/dashboard.html">我的图片</a>
-                                <a href="/" id="logoutBtn">退出登录</a>
-                            </div>
-                        </div>
-                        <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
-                          <input id="switch" type="checkbox">
-                          <label class="love-heart" for="switch">
-                            <i class="left"></i>
-                            <i class="right"></i>
-                            <i class="bottom"></i>
-                            <div class="round"></div>
-                          </label>
-                        </div>
-                        <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="打开菜单" style="display:none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="3" y1="12" x2="21" y2="12"></line>
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <line x1="3" y1="18" x2="21" y2="18"></line>
+            <div class="logo">
+                <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
+                <h1>TG-Image</h1>
+            </div>
+            <div class="nav-container">
+                <nav class="nav" id="mainNav">
+                    <a href="/" class="nav-link active animated-link">首页</a>
+                    <a href="/login.html" class="nav-link animated-link">登录</a>
+                    <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="nav-link animated-link">GitHub</a>
+                </nav>
+                <div class="header-buttons">
+                    <div id="userDropdown" class="user-dropdown" style="display: none;">
+                        <button id="userDropdownBtn" class="user-dropdown-btn">
+                            <span id="userDisplayName">用户</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
                         </button>
+                        <div class="user-dropdown-content">
+                            <a href="/dashboard.html">我的图片</a>
+                            <a href="/" id="logoutBtn">退出登录</a>
+                        </div>
                     </div>
+                    <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
+                      <input id="switch" type="checkbox">
+                      <label class="love-heart" for="switch">
+                        <i class="left"></i>
+                        <i class="right"></i>
+                        <i class="bottom"></i>
+                        <div class="round"></div>
+                      </label>
+                    </div>
+                    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="打开菜单" style="display:none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
@@ -110,394 +100,67 @@
                         </svg>
                     </button>
                 </div>
-                
-                <div class="mobile-menu-content">
-                    <!-- 用户信息区域 -->
-                    <div class="mobile-user-section" id="mobileUserSection" style="display: none;">
-                        <div class="mobile-user-card">
-                            <div class="mobile-user-avatar" id="mobileUserAvatar">U</div>
-                            <div class="mobile-user-info">
-                                <h3 id="mobileUserName">游客用户</h3>
-                                <p id="mobileUserStatus">未登录</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 快捷功能区域 -->
-                    <div class="mobile-quick-actions">
-                        <div class="quick-actions-grid">
-                            <a href="#upload" class="quick-action-card" onclick="document.getElementById('fileInput').click()">
-                                <div class="quick-action-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="17 8 12 3 7 8"></polyline>
-                                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                                    </svg>
-                                </div>
-                                <h4 class="quick-action-title">快速上传</h4>
-                            </a>
-                            
-                            <a href="/dashboard.html" class="quick-action-card">
-                                <div class="quick-action-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                    </svg>
-                                </div>
-                                <h4 class="quick-action-title">我的图片</h4>
-                            </a>
-                            
-                            <a href="/api" class="quick-action-card">
-                                <div class="quick-action-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="16 18 22 12 16 6"></polyline>
-                                        <polyline points="8 6 2 12 8 18"></polyline>
-                                    </svg>
-                                </div>
-                                <h4 class="quick-action-title">API 文档</h4>
-                            </a>
-                            
-                            <a href="/help" class="quick-action-card">
-                                <div class="quick-action-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                    </svg>
-                                </div>
-                                <h4 class="quick-action-title">帮助中心</h4>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- 主导航区域 -->
-                    <nav class="mobile-nav">
-                        <div class="mobile-nav-section">
-                            <h3 class="mobile-nav-title">主导航</h3>
-                            <a href="/" class="mobile-nav-link active">
-                                <div class="mobile-nav-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                    </svg>
-                                </div>
-                                首页
-                            </a>
-                            <a href="/mobile-menu.html" class="mobile-nav-link">
-                                <div class="mobile-nav-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                                    </svg>
-                                </div>
-                                全部功能
-                            </a>
-                            <a href="/login.html" class="mobile-nav-link" id="mobileLoginLink">
-                                <div class="mobile-nav-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                                        <polyline points="10 17 15 12 10 7"></polyline>
-                                        <line x1="15" y1="12" x2="3" y2="12"></line>
-                                    </svg>
-                                </div>
-                                登录
-                            </a>
-                        </div>
-                        
-                        <div class="mobile-nav-section">
-                            <h3 class="mobile-nav-title">工具</h3>
-                            <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="mobile-nav-link">
-                                <div class="mobile-nav-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                    </svg>
-                                </div>
-                                GitHub
-                            </a>
-                            <a href="https://t.me/tgimage" target="_blank" class="mobile-nav-link">
-                                <div class="mobile-nav-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                                    </svg>
-                                </div>
-                                Telegram
-                            </a>
-                        </div>
-                    </nav>
-
-                    <!-- 状态信息区域 -->
-                    <div class="mobile-status-section">
-                        <div class="mobile-status-grid">
-                            <div class="mobile-status-item">
-                                <h4 class="mobile-status-number">∞</h4>
-                                <p class="mobile-status-label">存储空间</p>
-                            </div>
-                            <div class="mobile-status-item">
-                                <h4 class="mobile-status-number">20MB</h4>
-                                <p class="mobile-status-label">单文件限制</p>
-                            </div>
-                            <div class="mobile-status-item">
-                                <h4 class="mobile-status-number">99.9%</h4>
-                                <p class="mobile-status-label">可用性</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 设置区域 -->
-                    <div class="mobile-settings-section">
-                        <div class="mobile-theme-toggle">
-                            <div class="mobile-theme-info">
-                                <div class="mobile-theme-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                    </svg>
-                                </div>
-                                <div class="mobile-theme-text">
-                                    <h4>暗色模式</h4>
-                                    <p>切换界面主题</p>
-                                </div>
-                            </div>
-                            <div class="love love-toggle mobile-theme-switch" aria-label="切换暗色/亮色模式">
-                              <input id="mobileThemeSwitch" type="checkbox">
-                              <label class="love-heart" for="mobileThemeSwitch">
-                                <i class="left"></i>
-                                <i class="right"></i>
-                                <i class="bottom"></i>
-                                <div class="round"></div>
-                              </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <nav class="mobile-nav">
+                    <a href="/" class="mobile-nav-link active">首页</a>
+                    <a href="/login.html" class="mobile-nav-link">登录</a>
+                    <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="mobile-nav-link">GitHub</a>
+                    <!-- 移动端用户登录后会动态添加退出登录按钮 -->
+                </nav>
             </div>
         </header>
 
         <main>
-            <!-- 英雄区域 -->
-            <section class="hero">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <div class="hero-badge">
-                            <span class="badge-text">🚀 免费图床服务</span>
-                        </div>
-                        <h1 class="hero-title">
-                            <span class="gradient-text">TG-Image</span>
-                            <br>
-                            <span class="hero-subtitle">简单、快速、安全的图片托管</span>
-                        </h1>
-                        <p class="hero-description">
-                            基于Telegram的免费图片上传服务，支持批量上传、拖拽上传，提供多种链接格式，让图片分享变得更简单。
-                        </p>
-                        <div class="hero-stats">
-                            <div class="stat-item">
-                                <div class="stat-number">∞</div>
-                                <div class="stat-label">存储空间</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">20MB</div>
-                                <div class="stat-label">单文件限制</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">99.9%</div>
-                                <div class="stat-label">稳定性</div>
-                            </div>
-                        </div>
+
+            <section class="upload-container">
+                <div class="upload-area" id="dropArea">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
                     </div>
-                    <div class="hero-visual">
-                        <div class="floating-cards">
-                            <div class="floating-card card-1">
-                                <div class="card-icon">📷</div>
-                                <div class="card-text">拖拽上传</div>
-                            </div>
-                            <div class="floating-card card-2">
-                                <div class="card-icon">⚡</div>
-                                <div class="card-text">极速处理</div>
-                            </div>
-                            <div class="floating-card card-3">
-                                <div class="card-icon">🔗</div>
-                                <div class="card-text">多格式链接</div>
-                            </div>
-                            <div class="floating-card card-4">
-                                <div class="card-icon">🌙</div>
-                                <div class="card-text">暗色模式</div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
+                    <p class="upload-hint">支持批量上传多张图片和<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                    <div class="upload-status" id="uploadStatus"></div>
                 </div>
-            </section>
 
-            <section class="upload-section">
-                <div class="upload-container">
-                    <div class="upload-area" id="dropArea">
-                        <div class="upload-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                        </div>
-                        <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
-                        <p class="upload-hint">支持批量上传多张图片和<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</p>
-                        <div class="file-types">
-                            <span class="file-type">JPG</span>
-                            <span class="file-type">PNG</span>
-                            <span class="file-type">GIF</span>
-                            <span class="file-type">WebP</span>
-                            <span class="file-type">SVG</span>
-                        </div>
-                        <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
-                        <div class="upload-status" id="uploadStatus"></div>
+                <div class="result-container" id="resultContainer" style="display: none;">
+                    <h3>上传成功！</h3>
+                    <div class="image-preview premium-img-container">
+                        <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
                     </div>
-
-                    <div class="result-container" id="resultContainer" style="display: none;">
-                        <h3>上传成功！</h3>
-                        <div class="image-preview premium-img-container">
-                            <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
-                        </div>
-                        <div class="link-group">
-                            <div class="link-item">
-                                <label>直接链接:</label>
-                                <div class="copy-container">
-                                    <input type="text" id="directLink" class="premium-input" readonly>
-                                    <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
-                                </div>
-                            </div>
-                            <div class="link-item">
-                                <label>HTML 代码:</label>
-                                <div class="copy-container">
-                                    <input type="text" id="htmlCode" class="premium-input" readonly>
-                                    <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
-                                </div>
-                            </div>
-                            <div class="link-item">
-                                <label>Markdown 代码:</label>
-                                <div class="copy-container">
-                                    <input type="text" id="mdCode" class="premium-input" readonly>
-                                    <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
-                                </div>
+                    <div class="link-group">
+                        <div class="link-item">
+                            <label>直接链接:</label>
+                            <div class="copy-container">
+                                <input type="text" id="directLink" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
                             </div>
                         </div>
-                        <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 功能特性 -->
-            <section class="features">
-                <div class="features-container">
-                    <div class="section-header">
-                        <h2 class="section-title">为什么选择 TG-Image？</h2>
-                        <p class="section-subtitle">专业的图床服务，满足您的所有需求</p>
-                    </div>
-                    
-                    <div class="features-grid">
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
+                        <div class="link-item">
+                            <label>HTML 代码:</label>
+                            <div class="copy-container">
+                                <input type="text" id="htmlCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
                             </div>
-                            <h3>快速上传</h3>
-                            <p>支持拖拽、粘贴、批量上传，多种方式任你选择</p>
                         </div>
-                        
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                    <polyline points="21 15 16 10 5 21"></polyline>
-                                </svg>
+                        <div class="link-item">
+                            <label>Markdown 代码:</label>
+                            <div class="copy-container">
+                                <input type="text" id="mdCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
                             </div>
-                            <h3>多格式支持</h3>
-                            <p>支持 JPG、PNG、GIF、WebP 等主流图片格式</p>
-                        </div>
-                        
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                </svg>
-                            </div>
-                            <h3>安全可靠</h3>
-                            <p>基于 Telegram 强大的CDN网络，保证图片安全稳定</p>
-                        </div>
-                        
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="8 17 12 21 16 17"></polyline>
-                                    <line x1="12" y1="12" x2="12" y2="21"></line>
-                                    <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
-                                </svg>
-                            </div>
-                            <h3>全球加速</h3>
-                            <p>全球CDN加速，无论身在何处都能快速访问</p>
-                        </div>
-                        
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                </svg>
-                            </div>
-                            <h3>多种链接</h3>
-                            <p>提供直链、HTML、Markdown等多种格式，方便使用</p>
-                        </div>
-                        
-                        <div class="feature-card feature-card-3d hover-lift transition">
-                            <div class="feature-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                                    <path d="M10 4v4"></path>
-                                    <path d="M14 4v4"></path>
-                                    <path d="M4 8h16"></path>
-                                </svg>
-                            </div>
-                            <h3>免费使用</h3>
-                            <p>完全免费，无需注册，即开即用</p>
                         </div>
                     </div>
+                    <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
                 </div>
             </section>
         </main>
 
         <footer class="footer">
-            <div class="footer-waves">
-                <div class="wave"></div>
-                <div class="wave"></div>
-            </div>
-            <div class="footer-content">
-                <div class="footer-links">
-                    <a href="/privacy" class="footer-link">隐私政策</a>
-                    <a href="/terms" class="footer-link">服务条款</a>
-                    <a href="/api" class="footer-link">API文档</a>
-                    <a href="/help" class="footer-link">帮助中心</a>
-                </div>
-                <div class="footer-social">
-                    <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="social-link" title="GitHub">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                    </a>
-                    <a href="https://t.me/tgimage" target="_blank" class="social-link" title="Telegram">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                        </svg>
-                    </a>
-                    <a href="mailto:support@tgimage.com" class="social-link" title="邮箱">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                        </svg>
-                    </a>
-                </div>
-                <p>&copy; 2024-2025 TG-Image. 基于 <a href="https://telegram.org" target="_blank">Telegram</a> 提供技术支持</p>
-            </div>
+            <p>&copy; 2024-2025 TG-Image. 基于 <a href="https://telegram.org" target="_blank">Telegram</a> 提供技术支持</p>
         </footer>
     </div>
 
