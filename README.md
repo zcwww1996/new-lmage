@@ -51,14 +51,14 @@
   <tr>
     <td align="center" width="33%">
       <h3>🚀 极速上传</h3>
-      <p>拖拽、点击、粘贴三种上传方式<br>支持PicGo自定义图床，一键搞定</p>
+      <p>拖拽、点击、粘贴三种上传方式<br>支持批量处理，一键搞定</p>
     </td>
     <td align="center" width="33%">
       <h3>💎 原图品质</h3>
       <p>基于Telegram存储引擎<br>保证图片原始分辨率与画质</p>
     </td>
     <td align="center" width="33%">
-      <h3>🎨 视觉盛宴</h3>
+      <h3>�� 视觉盛宴</h3>
       <p>现代化UI设计，暗黑模式<br>3D卡片效果，丝滑动画</p>
     </td>
   </tr>
@@ -92,7 +92,6 @@
 - **点击上传** - 传统文件选择器
 - **粘贴上传** - `Ctrl+V` 快捷键支持
 - **批量上传** - 一次处理多张图片
-- **PicGo集成** - 作为自定义图床使用
 
 ### ⚡ 智能处理
 - 自动格式识别与优化
@@ -388,55 +387,6 @@ JWT_SECRET = "your-secure-jwt-secret"
 - 二维码生成
 - 嵌入代码生成
 - 社交媒体优化
-
-</details>
-
-### 📸 PicGo 集成
-
-<details>
-<summary>🔗 <strong>自定义图床配置</strong></summary>
-
-TG-Image 现在支持作为 **PicGo 自定义图床** 使用！
-
-#### ⚙️ 配置步骤
-
-1. **下载安装 PicGo**
-   - 官方地址：[PicGo Releases](https://github.com/Molunerfinn/PicGo/releases)
-
-2. **配置自定义图床**
-   - 在 PicGo 中选择 "自定义Web图床"
-   - 填入以下配置信息：
-
-```json
-{
-  "url": "https://your-domain.workers.dev/api/picgo/upload",
-  "paramName": "file",
-  "jsonPath": "data.url",
-  "customHeader": {
-    "User-Agent": "PicGo"
-  }
-}
-```
-
-#### 🔧 配置参数说明
-
-| 参数名 | 填入值 | 说明 |
-|--------|-------|------|
-| **API地址** | `https://your-domain.workers.dev/api/picgo/upload` | 替换为您的实际域名 |
-| **POST参数名** | `file` | 上传文件字段名 |
-| **JSON路径** | `data.url` | 返回图片URL路径 |
-| **自定义请求头** | `{"User-Agent": "PicGo"}` | 标识请求来源 |
-
-#### 🚀 使用体验
-
-- ✨ **一键上传** - 截图后自动上传
-- 🔗 **自动复制** - 链接自动复制到剪贴板  
-- 📁 **批量处理** - 支持多图片同时上传
-- 🎯 **完美集成** - 无缝对接 TG-Image 图床
-
-#### 📋 详细教程
-
-完整配置教程请查看：[PICGO_CONFIG.md](PICGO_CONFIG.md)
 
 </details>
 

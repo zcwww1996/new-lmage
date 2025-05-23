@@ -1,7 +1,6 @@
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/cloudflare-workers';
 import { authenticatedUpload } from './functions/upload';
-import { picgoUpload } from './functions/picgo';
 import { fileHandler } from './functions/file/[id]';
 import { register, login, getCurrentUser, updateUserAvatar, getUserProfile } from './functions/user/auth';
 import { getUserImages, deleteUserImage, updateImageInfo, searchUserImages } from './functions/user/images';
@@ -14,9 +13,6 @@ app.get('/*', serveStatic({ root: './' }));
 
 // 上传接口
 app.post('/upload', authenticatedUpload);
-
-// PicGo专用上传接口
-app.post('/api/picgo/upload', picgoUpload);
 
 // 文件访问接口
 app.get('/file/:id', fileHandler);
