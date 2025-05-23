@@ -6,6 +6,9 @@ export async function fileHandler(c) {
     // 检查是否为下载请求
     const isDownload = url.searchParams.get('download') === 'true';
     
+    // 检查是否为预览请求
+    const isPreview = url.searchParams.get('preview') === 'true';
+    
     // 检查是否为浏览器直接访问（而非嵌入、API调用等）
     const userAgent = c.req.header('User-Agent') || '';
     const accept = c.req.header('Accept') || '';
@@ -38,12 +41,12 @@ export async function fileHandler(c) {
 
         // 如果找到文件URL
         if (fileUrl) {
-            // 如果是浏览器直接访问，返回预览页面
-            if (isBrowserDirectAccess) {
+            // 如果是预览请求，返回预览页面
+            if (isPreview) {
                 return createPreviewPage(c, id, fileUrl);
             }
             
-            // 否则返回原图文件
+            // 否则返回原图文件（包括下载和直接访问）
             return await proxyFile(c, fileUrl);
         }
 

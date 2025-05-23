@@ -307,6 +307,7 @@ function initUpload() {
     const resultContainer = document.getElementById('resultContainer');
     const previewImage = document.getElementById('previewImage');
     const directLink = document.getElementById('directLink');
+    const previewLink = document.getElementById('previewLink');
     const htmlCode = document.getElementById('htmlCode');
     const mdCode = document.getElementById('mdCode');
     const uploadAgainBtn = document.getElementById('uploadAgainBtn');
@@ -495,6 +496,7 @@ function initUpload() {
         // 如果只有一个图片，仍然使用旧的预览方式
         if (results.length === 1) {
             const fileUrl = baseUrl + results[0].src;
+            const previewUrl = fileUrl + '?preview=true';
 
             // 设置图片预览
             previewImage.src = fileUrl;
@@ -502,6 +504,7 @@ function initUpload() {
 
             // 设置各种代码
             directLink.value = fileUrl;
+            previewLink.value = previewUrl;
             htmlCode.value = `<img src="${fileUrl}" alt="${files[0].name}" />`;
             mdCode.value = `![${files[0].name}](${fileUrl})`;
         } else {
@@ -520,9 +523,11 @@ function initUpload() {
                 img.alt = fileName;
                 img.addEventListener('click', () => {
                     // 点击单张图片时更新主预览和链接
+                    const previewUrl = fileUrl + '?preview=true';
                     previewImage.src = fileUrl;
                     previewImage.alt = fileName;
                     directLink.value = fileUrl;
+                    previewLink.value = previewUrl;
                     htmlCode.value = `<img src="${fileUrl}" alt="${fileName}" />`;
                     mdCode.value = `![${fileName}](${fileUrl})`;
                 });
@@ -535,6 +540,7 @@ function initUpload() {
             // 默认选中第一张图片
             if (results.length > 0) {
                 const firstFileUrl = baseUrl + results[0].src;
+                const firstPreviewUrl = firstFileUrl + '?preview=true';
                 const firstName = files[0] ? files[0].name : '图片1';
 
                 // 设置默认预览
@@ -543,6 +549,7 @@ function initUpload() {
 
                 // 设置默认代码
                 directLink.value = firstFileUrl;
+                previewLink.value = firstPreviewUrl;
                 htmlCode.value = `<img src="${firstFileUrl}" alt="${firstName}" />`;
                 mdCode.value = `![${firstName}](${firstFileUrl})`;
             }
