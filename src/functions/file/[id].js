@@ -113,8 +113,9 @@ function createPreviewPage(c, id, imageUrl) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>图片预览 - TG-Image</title>
-    <meta name="description" content="图片预览">
+    <meta name="description" content="高质量图片在线预览">
     <link rel="icon" href="${baseUrl}/images/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -122,16 +123,52 @@ function createPreviewPage(c, id, imageUrl) {
             box-sizing: border-box;
         }
         
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3730a3;
+            --text-color: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --bg-dark: #000000;
+            --bg-overlay: rgba(0, 0, 0, 0.9);
+            --bg-panel: rgba(17, 25, 40, 0.9);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+        
         body {
-            background: #000;
-            color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow: hidden;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             user-select: none;
+            position: relative;
+        }
+        
+        /* 动态背景效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 25% 25%, rgba(67, 97, 238, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            z-index: 0;
+            animation: backgroundShift 20s ease-in-out infinite alternate;
+        }
+        
+        @keyframes backgroundShift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-10px, -10px) rotate(1deg); }
         }
         
         .preview-container {
@@ -142,6 +179,8 @@ function createPreviewPage(c, id, imageUrl) {
             align-items: center;
             justify-content: center;
             cursor: zoom-in;
+            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .preview-container.fullscreen {
@@ -149,100 +188,186 @@ function createPreviewPage(c, id, imageUrl) {
         }
         
         .preview-image {
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 85%;
+            max-height: 85%;
             object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+        }
+        
+        .preview-image.loaded {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        
+        .preview-image:hover:not(.fullscreen) {
+            transform: scale(1.02);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.9);
         }
         
         .preview-image.fullscreen {
             max-width: 100%;
             max-height: 100%;
             border-radius: 0;
+            border: none;
+            box-shadow: none;
         }
         
+        /* 控制面板 */
         .controls {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 30px;
+            right: 30px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
             z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s ease-out 0.8s forwards;
+        }
+        
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .control-btn {
-            width: 50px;
-            height: 50px;
-            background: rgba(67, 97, 238, 0.9);
-            border: none;
+            width: 56px;
+            height: 56px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
             border-radius: 50%;
-            color: white;
+            color: var(--text-color);
             font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
         }
         
         .control-btn:hover {
-            background: rgba(67, 97, 238, 1);
-            transform: scale(1.1);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(67, 97, 238, 0.3);
+            border-color: var(--primary-color);
+        }
+        
+        .control-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .control-btn:active {
+            transform: translateY(-2px) scale(1.02);
         }
         
         .control-btn.large {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             font-size: 24px;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            border-color: var(--primary-color);
         }
         
+        .control-btn.large::before {
+            opacity: 1;
+            background: linear-gradient(45deg, var(--primary-dark), #6366f1);
+        }
+        
+        /* 信息面板 */
         .info-panel {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
+            top: 30px;
+            left: 30px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
             font-size: 14px;
             opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+            transform: translateY(-20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
+            min-width: 200px;
         }
         
         .info-panel.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+        }
+        
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
         }
         
         .info-item {
-            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .info-item:last-child {
             margin-bottom: 0;
+            border-bottom: none;
         }
         
+        .info-label {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        .info-value {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        /* 加载状态 */
         .loading {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
+            z-index: 100;
         }
         
         .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid #4361ee;
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin: 0 auto 20px;
         }
         
         @keyframes spin {
@@ -250,28 +375,59 @@ function createPreviewPage(c, id, imageUrl) {
             100% { transform: rotate(360deg); }
         }
         
+        .loading-text {
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        /* 错误状态 */
         .error {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            font-size: 18px;
+            color: var(--error-color);
+            background: var(--bg-panel);
+            padding: 40px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+        
+        .error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
             opacity: 0.7;
         }
         
+        .error-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .error-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        /* 快捷键提示 */
         .hotkeys {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-            font-size: 12px;
+            bottom: 30px;
+            left: 30px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
+            font-size: 13px;
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
         }
         
@@ -280,82 +436,204 @@ function createPreviewPage(c, id, imageUrl) {
             transform: translateY(0);
         }
         
+        .hotkeys kbd {
+            background: var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        
+        /* 品牌标识 */
+        .brand {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 1s forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .brand-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        /* 成功提示 */
+        .toast {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--success-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        /* 响应式设计 */
         @media (max-width: 768px) {
             .controls {
-                bottom: 15px;
-                right: 15px;
-                gap: 8px;
+                bottom: 20px;
+                right: 20px;
+                gap: 10px;
             }
             
             .control-btn {
-                width: 45px;
-                height: 45px;
+                width: 48px;
+                height: 48px;
                 font-size: 18px;
             }
             
             .control-btn.large {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
+                width: 56px;
+                height: 56px;
+                font-size: 22px;
             }
             
             .info-panel {
-                top: 15px;
-                left: 15px;
-                right: 15px;
+                top: 20px;
+                left: 20px;
+                right: 20px;
                 font-size: 13px;
+                padding: 16px;
             }
             
             .hotkeys {
                 display: none;
             }
+            
+            .brand {
+                top: 20px;
+                right: 20px;
+                font-size: 12px;
+            }
+            
+            .preview-image {
+                max-width: 95%;
+                max-height: 95%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                bottom: 16px;
+                right: 16px;
+                gap: 8px;
+            }
+            
+            .info-panel {
+                top: 16px;
+                left: 16px;
+                right: 16px;
+            }
+            
+            .brand {
+                top: 16px;
+                right: 16px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 品牌标识 -->
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="ri-image-line"></i>
+        </div>
+        TG-Image
+    </div>
+
+    <!-- 主预览容器 -->
     <div class="preview-container" id="previewContainer">
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
-            <div>加载中...</div>
+            <div class="loading-text">正在加载图片...</div>
         </div>
+        
         <img class="preview-image" id="previewImage" style="display: none;" />
+        
         <div class="error" id="error" style="display: none;">
-            图片加载失败<br>
-            <small>请检查网络连接或稍后重试</small>
+            <div class="error-icon">
+                <i class="ri-error-warning-line"></i>
+            </div>
+            <div class="error-text">图片加载失败</div>
+            <div class="error-subtitle">请检查网络连接或稍后重试</div>
         </div>
     </div>
     
+    <!-- 信息面板 -->
     <div class="info-panel" id="infoPanel">
-        <div class="info-item"><strong>文件名:</strong> <span id="fileName">${id}</span></div>
-        <div class="info-item"><strong>尺寸:</strong> <span id="dimensions">-</span></div>
-        <div class="info-item"><strong>类型:</strong> <span id="fileType">-</span></div>
+        <div class="info-header">
+            <i class="ri-information-line"></i>
+            图片信息
+        </div>
+        <div class="info-item">
+            <span class="info-label">文件名</span>
+            <span class="info-value" id="fileName">${id}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">尺寸</span>
+            <span class="info-value" id="dimensions">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">类型</span>
+            <span class="info-value" id="fileType">-</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">大小</span>
+            <span class="info-value" id="fileSize">-</span>
+        </div>
     </div>
     
+    <!-- 控制按钮 -->
     <div class="controls">
         <button class="control-btn" id="infoBtn" onclick="toggleInfo()" title="显示/隐藏信息 (I)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
+            <i class="ri-information-line"></i>
         </button>
         <button class="control-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="全屏查看 (F)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-            </svg>
+            <i class="ri-fullscreen-line"></i>
         </button>
         <button class="control-btn large" id="downloadBtn" onclick="downloadImage()" title="下载原图 (D)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+            <i class="ri-download-line"></i>
         </button>
     </div>
     
+    <!-- 快捷键提示 -->
     <div class="hotkeys" id="hotkeys">
-        <div><kbd>F</kbd> 全屏 <kbd>I</kbd> 信息 <kbd>D</kbd> 下载 <kbd>ESC</kbd> 关闭</div>
+        <kbd>F</kbd> 全屏 <kbd>I</kbd> 信息 <kbd>D</kbd> 下载 <kbd>ESC</kbd> 关闭
     </div>
+
+    <!-- 成功提示 -->
+    <div class="toast" id="toast"></div>
 
     <script>
         const imageUrl = '${imageUrl}';
@@ -366,14 +644,30 @@ function createPreviewPage(c, id, imageUrl) {
         const error = document.getElementById('error');
         const infoPanel = document.getElementById('infoPanel');
         const hotkeys = document.getElementById('hotkeys');
+        const toast = document.getElementById('toast');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
         
         let isFullscreen = false;
         let infoVisible = false;
+        
+        // 显示提示消息
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
         
         // 加载图片
         previewImage.onload = function() {
             loading.style.display = 'none';
             previewImage.style.display = 'block';
+            
+            // 添加加载完成动画
+            setTimeout(() => {
+                previewImage.classList.add('loaded');
+            }, 100);
             
             // 更新图片信息
             updateImageInfo();
@@ -383,8 +677,8 @@ function createPreviewPage(c, id, imageUrl) {
                 hotkeys.classList.add('show');
                 setTimeout(() => {
                     hotkeys.classList.remove('show');
-                }, 3000);
-            }, 1000);
+                }, 4000);
+            }, 1500);
         };
         
         previewImage.onerror = function() {
@@ -397,7 +691,7 @@ function createPreviewPage(c, id, imageUrl) {
         // 更新图片信息
         function updateImageInfo() {
             document.getElementById('dimensions').textContent = 
-                previewImage.naturalWidth + ' × ' + previewImage.naturalHeight;
+                previewImage.naturalWidth + ' × ' + previewImage.naturalHeight + ' px';
             
             // 从URL推断文件类型
             const extension = imageUrl.split('.').pop().toLowerCase();
@@ -410,6 +704,30 @@ function createPreviewPage(c, id, imageUrl) {
                 'svg': 'SVG'
             };
             document.getElementById('fileType').textContent = typeMap[extension] || '未知';
+            
+            // 计算文件大小（估算）
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = previewImage.naturalWidth;
+            canvas.height = previewImage.naturalHeight;
+            
+            try {
+                ctx.drawImage(previewImage, 0, 0);
+                const dataUrl = canvas.toDataURL();
+                const sizeInBytes = Math.round((dataUrl.length - 22) * 3 / 4);
+                document.getElementById('fileSize').textContent = formatFileSize(sizeInBytes);
+            } catch (e) {
+                document.getElementById('fileSize').textContent = '未知';
+            }
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
         
         // 切换信息面板
@@ -428,9 +746,13 @@ function createPreviewPage(c, id, imageUrl) {
             if (isFullscreen) {
                 previewContainer.classList.add('fullscreen');
                 previewImage.classList.add('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="ri-fullscreen-exit-line"></i>';
+                fullscreenBtn.title = '退出全屏 (F)';
             } else {
                 previewContainer.classList.remove('fullscreen');
                 previewImage.classList.remove('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="ri-fullscreen-line"></i>';
+                fullscreenBtn.title = '全屏查看 (F)';
             }
         }
         
@@ -442,6 +764,8 @@ function createPreviewPage(c, id, imageUrl) {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            showToast('开始下载图片...');
         }
         
         // 点击图片切换全屏
@@ -457,17 +781,22 @@ function createPreviewPage(c, id, imageUrl) {
                 case 'escape':
                     if (isFullscreen) {
                         toggleFullscreen();
+                    } else if (infoVisible) {
+                        toggleInfo();
                     } else {
                         window.close();
                     }
                     break;
                 case 'f':
+                    e.preventDefault();
                     toggleFullscreen();
                     break;
                 case 'd':
+                    e.preventDefault();
                     downloadImage();
                     break;
                 case 'i':
+                    e.preventDefault();
                     toggleInfo();
                     break;
             }
@@ -476,6 +805,11 @@ function createPreviewPage(c, id, imageUrl) {
         // 防止右键菜单
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
+        });
+        
+        // 添加页面离开前的确认
+        window.addEventListener('beforeunload', function(e) {
+            // 可以在这里添加离开确认逻辑
         });
     </script>
 </body>
