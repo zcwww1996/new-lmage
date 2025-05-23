@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片管理 - TG-Image</title>
+    <meta name="description" content="管理和组织您的图片收藏">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/navigation.css">
+    <link rel="stylesheet" href="./css/manage.css">
+    <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- 导航组件 -->
+    <div id="navigationContainer"></div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">
+                    <i class="title-icon">📁</i>
+                    图片管理
+                </h1>
+                <p class="page-description">组织、编辑和管理您的图片文件</p>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" id="selectAllBtn">
+                    <i>☑️</i>
+                    <span>全选</span>
+                </button>
+                <button class="action-btn secondary" id="batchDeleteBtn" disabled>
+                    <i>🗑️</i>
+                    <span>批量删除</span>
+                </button>
+                <button class="action-btn secondary" id="exportBtn">
+                    <i>📤</i>
+                    <span>导出列表</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 管理工具栏 -->
+        <div class="management-toolbar">
+            <div class="toolbar-section">
+                <h3>快速操作</h3>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" id="createFolderBtn">
+                        <i>📁</i>
+                        <span>新建文件夹</span>
+                    </button>
+                    <button class="quick-action-btn" id="uploadToFolderBtn">
+                        <i>📤</i>
+                        <span>上传到文件夹</span>
+                    </button>
+                    <button class="quick-action-btn" id="organizeBtn">
+                        <i>🔧</i>
+                        <span>智能整理</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="toolbar-section">
+                <h3>批量操作</h3>
+                <div class="batch-actions">
+                    <button class="batch-action-btn" id="batchMoveBtn" disabled>
+                        <i>📁</i>
+                        <span>移动到文件夹</span>
+                    </button>
+                    <button class="batch-action-btn" id="batchTagBtn" disabled>
+                        <i>🏷️</i>
+                        <span>添加标签</span>
+                    </button>
+                    <button class="batch-action-btn" id="batchDownloadBtn" disabled>
+                        <i>⬇️</i>
+                        <span>批量下载</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文件夹视图 -->
+        <div class="folder-navigation">
+            <div class="breadcrumb">
+                <span class="breadcrumb-item active" data-folder-id="root">
+                    <i>🏠</i>
+                    <span>根目录</span>
+                </span>
+            </div>
+            
+            <div class="folder-stats">
+                <span class="stat-item">
+                    <span class="stat-label">当前文件夹:</span>
+                    <span class="stat-value" id="currentFolderCount">0</span>
+                    <span>项</span>
+                </span>
+                <span class="stat-divider">|</span>
+                <span class="stat-item">
+                    <span class="stat-label">已选择:</span>
+                    <span class="stat-value" id="selectedCount">0</span>
+                    <span>项</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- 文件夹和图片列表 -->
+        <div class="content-grid">
+            <!-- 文件夹列表 -->
+            <div class="folders-section">
+                <h3>文件夹</h3>
+                <div class="folders-grid" id="foldersGrid">
+                    <!-- 文件夹项目将通过JavaScript动态生成 -->
+                </div>
+            </div>
+
+            <!-- 图片列表 -->
+            <div class="images-section">
+                <h3>图片文件</h3>
+                <div class="images-management-grid" id="imagesGrid">
+                    <!-- 图片项目将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading-state" id="loadingState">
+            <div class="loader">
+                <div class="loader-spinner"></div>
+                <p>正在加载内容...</p>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📂</div>
+            <h3>文件夹为空</h3>
+            <p>此文件夹中还没有任何文件，开始上传或创建子文件夹吧！</p>
+            <div class="empty-actions">
+                <button class="primary-btn" onclick="window.location.href='/'">
+                    上传图片
+                </button>
+                <button class="secondary-btn" id="createFolderBtnEmpty">
+                    创建文件夹
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建文件夹模态框 -->
+    <div class="modal" id="createFolderModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>创建新文件夹</h3>
+                <button class="modal-close" id="createFolderModalClose">
+                    <i>✕</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createFolderForm">
+                    <div class="form-group">
+                        <label for="folderName">文件夹名称</label>
+                        <input type="text" id="folderName" placeholder="请输入文件夹名称" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="folderDescription">描述 (可选)</label>
+                        <textarea id="folderDescription" placeholder="添加文件夹描述"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn secondary" id="cancelCreateFolder">取消</button>
+                <button type="submit" form="createFolderForm" class="btn primary">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动到文件夹模态框 -->
+    <div class="modal" id="moveToFolderModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>移动到文件夹</h3>
+                <button class="modal-close" id="moveToFolderModalClose">
+                    <i>✕</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="folder-selector" id="folderSelector">
+                    <!-- 文件夹选择器将通过JavaScript生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn secondary" id="cancelMove">取消</button>
+                <button type="button" class="btn primary" id="confirmMove">移动</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量标签模态框 -->
+    <div class="modal" id="batchTagModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量添加标签</h3>
+                <button class="modal-close" id="batchTagModalClose">
+                    <i>✕</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>选择标签</label>
+                    <div class="tags-input-container">
+                        <input type="text" id="tagInput" placeholder="输入标签名称并按回车添加">
+                        <div class="tags-list" id="tagsList">
+                            <!-- 标签将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="common-tags">
+                    <h4>常用标签</h4>
+                    <div class="common-tags-list">
+                        <span class="tag-suggestion" data-tag="风景">风景</span>
+                        <span class="tag-suggestion" data-tag="人物">人物</span>
+                        <span class="tag-suggestion" data-tag="建筑">建筑</span>
+                        <span class="tag-suggestion" data-tag="动物">动物</span>
+                        <span class="tag-suggestion" data-tag="美食">美食</span>
+                        <span class="tag-suggestion" data-tag="旅行">旅行</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn secondary" id="cancelTag">取消</button>
+                <button type="button" class="btn primary" id="confirmTag">添加标签</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片详情模态框 -->
+    <div class="modal" id="imageDetailsModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>图片详情</h3>
+                <button class="modal-close" id="imageDetailsModalClose">
+                    <i>✕</i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="image-details-content">
+                    <div class="image-preview-section">
+                        <img id="detailImage" src="" alt="" class="detail-image">
+                    </div>
+                    <div class="image-info-section">
+                        <form id="imageDetailsForm">
+                            <div class="form-group">
+                                <label for="imageName">图片名称</label>
+                                <input type="text" id="imageName" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="imageDescription">描述</label>
+                                <textarea id="imageDescription" placeholder="添加图片描述"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>当前文件夹</label>
+                                <select id="imageFolder">
+                                    <!-- 文件夹选项将通过JavaScript生成 -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>标签</label>
+                                <div class="image-tags" id="imageTags">
+                                    <!-- 标签将通过JavaScript生成 -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn secondary" id="cancelDetails">取消</button>
+                <button type="submit" form="imageDetailsForm" class="btn primary">保存更改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="./js/navigation.js"></script>
+    <script src="./js/manage.js"></script>
+    <script>
+        // 加载导航组件
+        fetch('./components/navigation.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navigationContainer').innerHTML = html;
+                // 重新初始化导航
+                const navigation = new NavigationController();
+                navigation.initTheme();
+                window.navigationController = navigation;
+            });
+    </script>
+</body>
+</html> 

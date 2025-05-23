@@ -3492,3 +3492,99 @@ body.dark-mode .slider:before {
     width: 230px;
   }
 }
+
+/* 工具卡片样式 */
+.tool-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .tool-card {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.tool-card h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #374151;
+}
+
+body.dark-mode .tool-card h4 {
+    color: #d1d5db;
+}
+
+.tool-card p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+body.dark-mode .tool-card p {
+    color: #9ca3af;
+}
+
+/* 设置网格样式 */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.setting-item label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+body.dark-mode .setting-item label {
+    color: #d1d5db;
+}
+
+.setting-item input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+/* 顶部菜单栏适配主内容区域 */
+.main-content {
+    padding-top: 1rem;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .top-menu-bar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .breadcrumb-menu {
+        margin-top: 0.5rem;
+    }
+    
+    .tool-card {
+        padding: 1.5rem;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}

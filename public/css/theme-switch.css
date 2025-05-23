@@ -1,0 +1,410 @@
+/* 现代化主题切换开关 */
+.theme-toggle {
+    position: relative;
+    display: inline-block;
+}
+
+.theme-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background: linear-gradient(135deg, #ffd93d 6%, #ff8e53 93%);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.theme-switch.dark {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.theme-switch::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-switch.dark::before {
+    transform: translateX(28px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 太阳和月亮图标 */
+.theme-switch::after {
+    content: '☀️';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.theme-switch.dark::after {
+    content: '🌙';
+    left: auto;
+    right: 8px;
+}
+
+/* 悬停效果 */
+.theme-switch:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 导航栏中的主题切换 */
+.nav-theme-toggle {
+    margin-left: 1rem;
+}
+
+/* 侧边栏中的主题切换 */
+.sidebar-theme-toggle .theme-switch {
+    width: 50px;
+    height: 25px;
+}
+
+.sidebar-theme-toggle .theme-switch::before {
+    width: 20px;
+    height: 20px;
+    top: 1.5px;
+    left: 1.5px;
+}
+
+.sidebar-theme-toggle .theme-switch.dark::before {
+    transform: translateX(23px);
+}
+
+.sidebar-theme-toggle .theme-switch::after {
+    font-size: 12px;
+    left: 6px;
+}
+
+.sidebar-theme-toggle .theme-switch.dark::after {
+    right: 6px;
+    left: auto;
+}
+
+/* 带标签的主题切换 */
+.theme-toggle-with-label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.theme-toggle-label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+body.dark-mode .theme-toggle-label {
+    color: var(--dark-text);
+}
+
+/* 动画效果 */
+@keyframes switchOn {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.theme-switch.switching {
+    animation: switchOn 0.3s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .theme-switch {
+        width: 50px;
+        height: 26px;
+    }
+    
+    .theme-switch::before {
+        width: 20px;
+        height: 20px;
+        top: 2px;
+        left: 2px;
+    }
+    
+    .theme-switch.dark::before {
+        transform: translateX(22px);
+    }
+    
+    .theme-switch::after {
+        font-size: 12px;
+        left: 6px;
+    }
+    
+    .theme-switch.dark::after {
+        right: 6px;
+    }
+}
+
+/* 高级主题切换器 */
+.advanced-theme-toggle {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .advanced-theme-toggle {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.theme-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-option.light {
+    background: linear-gradient(135deg, #ffd93d 6%, #ff8e53 93%);
+}
+
+.theme-option.dark {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.theme-option.auto {
+    background: linear-gradient(45deg, #ffd93d 50%, #667eea 50%);
+}
+
+.theme-option.active {
+    border-color: #667eea;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.theme-option:hover:not(.active) {
+    transform: scale(1.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 主题切换提示 */
+.theme-switch-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.theme-switch-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+}
+
+.theme-toggle:hover .theme-switch-tooltip {
+    opacity: 1;
+}
+
+/* 圆形主题切换器 */
+.circular-theme-toggle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd93d 50%, #667eea 50%);
+    border: 3px solid white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.circular-theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ffd93d 0%, #ff8e53 100%);
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.circular-theme-toggle.dark::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.circular-theme-toggle::after {
+    content: '☀️';
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.circular-theme-toggle.dark::after {
+    content: '🌙';
+}
+
+.circular-theme-toggle:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 滑块主题切换器 */
+.slider-theme-toggle {
+    position: relative;
+    width: 80px;
+    height: 40px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid #e2e8f0;
+}
+
+.slider-theme-toggle.dark {
+    background: #4a5568;
+    border-color: #4a5568;
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.slider-theme-toggle.dark .slider-thumb {
+    transform: translateX(38px);
+    background: #2d3748;
+    color: white;
+}
+
+.slider-thumb::after {
+    content: '☀️';
+}
+
+.slider-theme-toggle.dark .slider-thumb::after {
+    content: '🌙';
+}
+
+/* 卡片式主题切换器 */
+.card-theme-toggle {
+    background: white;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .card-theme-toggle {
+    background: #2d3748;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.card-theme-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.8rem;
+}
+
+body.dark-mode .card-theme-header {
+    color: #d1d5db;
+}
+
+.card-theme-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.card-theme-option {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.card-theme-option.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.card-theme-option:hover:not(.active) {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+body.dark-mode .card-theme-option {
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+
+body.dark-mode .card-theme-option:hover:not(.active) {
+    background: rgba(102, 126, 234, 0.2);
+} 

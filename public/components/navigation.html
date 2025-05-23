@@ -1,0 +1,98 @@
+<!-- 主导航组件 -->
+<nav class="main-navigation" id="mainNavigation">
+    <div class="nav-brand">
+        <img src="./images/logo.svg" alt="TG-Image Logo" class="nav-logo">
+        <span class="nav-brand-text">TG-Image</span>
+    </div>
+    
+    <div class="nav-menu">
+        <div class="nav-group">
+            <span class="nav-group-title">主要功能</span>
+            <a href="/" class="nav-item" data-page="home">
+                <i class="nav-icon">🏠</i>
+                <span>首页上传</span>
+            </a>
+            <a href="/gallery.html" class="nav-item" data-page="gallery">
+                <i class="nav-icon">🖼️</i>
+                <span>图片画廊</span>
+            </a>
+            <a href="/manage.html" class="nav-item" data-page="manage">
+                <i class="nav-icon">📁</i>
+                <span>图片管理</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <span class="nav-group-title">数据分析</span>
+            <a href="/analytics.html" class="nav-item" data-page="analytics">
+                <i class="nav-icon">📊</i>
+                <span>使用统计</span>
+            </a>
+            <a href="/storage.html" class="nav-item" data-page="storage">
+                <i class="nav-icon">💾</i>
+                <span>存储管理</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <span class="nav-group-title">工具设置</span>
+            <a href="/batch.html" class="nav-item" data-page="batch">
+                <i class="nav-icon">📦</i>
+                <span>批量处理</span>
+            </a>
+            <a href="/settings.html" class="nav-item" data-page="settings">
+                <i class="nav-icon">⚙️</i>
+                <span>系统设置</span>
+            </a>
+            <a href="/api.html" class="nav-item" data-page="api">
+                <i class="nav-icon">🔌</i>
+                <span>API接口</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <span class="nav-group-title">帮助支持</span>
+            <a href="/docs.html" class="nav-item" data-page="docs">
+                <i class="nav-icon">📚</i>
+                <span>使用文档</span>
+            </a>
+            <a href="/feedback.html" class="nav-item" data-page="feedback">
+                <i class="nav-icon">💬</i>
+                <span>意见反馈</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="nav-footer">
+        <div class="user-info" id="navUserInfo">
+            <div class="user-avatar">
+                <span id="userInitial">U</span>
+            </div>
+            <div class="user-details">
+                <span class="user-name" id="navUserName">未登录</span>
+                <span class="user-status" id="navUserStatus">访客模式</span>
+            </div>
+        </div>
+        
+        <div class="nav-actions">
+            <!-- 使用新的主题切换器 -->
+            <div class="theme-toggle sidebar-theme-toggle">
+                <div class="theme-switch" id="sidebarThemeSwitch">
+                    <div class="theme-switch-tooltip">切换主题</div>
+                </div>
+            </div>
+            
+            <button class="nav-action-btn" id="logoutBtnNav" title="退出登录" style="display: none;">
+                <i class="nav-icon">🚪</i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 移动端导航 -->
+<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+<button class="mobile-nav-toggle" id="mobileNavToggle">
+    <span></span>
+    <span></span>
+    <span></span>
+</button> 

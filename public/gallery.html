@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片画廊 - TG-Image</title>
+    <meta name="description" content="浏览和管理您的图片收藏">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/navigation.css">
+    <link rel="stylesheet" href="./css/gallery.css">
+    <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- 导航组件 -->
+    <div id="navigationContainer"></div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">
+                    <i class="title-icon">🖼️</i>
+                    图片画廊
+                </h1>
+                <p class="page-description">浏览和管理您上传的所有图片</p>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" id="uploadNewBtn">
+                    <i>📤</i>
+                    <span>上传新图片</span>
+                </button>
+                <button class="action-btn secondary" id="refreshGalleryBtn">
+                    <i>🔄</i>
+                    <span>刷新</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 画廊控制面板 -->
+        <div class="gallery-controls">
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="search-icon">🔍</i>
+                    <input type="text" id="searchInput" placeholder="搜索图片名称、标签或描述..." class="search-input">
+                    <button class="search-clear" id="searchClear" style="display: none;">
+                        <i>✕</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label class="filter-label">排序方式:</label>
+                    <select id="sortSelect" class="filter-select">
+                        <option value="newest">最新上传</option>
+                        <option value="oldest">最早上传</option>
+                        <option value="name">文件名</option>
+                        <option value="size">文件大小</option>
+                        <option value="views">浏览次数</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">视图模式:</label>
+                    <div class="view-mode-controls">
+                        <button class="view-mode-btn active" data-mode="grid" title="网格视图">
+                            <i>⊞</i>
+                        </button>
+                        <button class="view-mode-btn" data-mode="list" title="列表视图">
+                            <i>☰</i>
+                        </button>
+                        <button class="view-mode-btn" data-mode="masonry" title="瀑布流">
+                            <i>⧉</i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="favoritesOnly">
+                        <span class="checkmark"></span>
+                        <span>仅显示收藏</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片数量统计 -->
+        <div class="gallery-stats">
+            <div class="stats-item">
+                <span class="stats-label">总计图片:</span>
+                <span class="stats-value" id="totalImages">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">显示中:</span>
+                <span class="stats-value" id="visibleImages">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">已收藏:</span>
+                <span class="stats-value" id="favoriteImages">0</span>
+            </div>
+        </div>
+
+        <!-- 图片画廊 -->
+        <div class="gallery-container">
+            <div class="image-grid" id="imageGrid">
+                <!-- 图片项将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 加载状态 -->
+            <div class="loading-state" id="loadingState">
+                <div class="loader">
+                    <div class="loader-spinner"></div>
+                    <p>正在加载图片...</p>
+                </div>
+            </div>
+
+            <!-- 空状态 -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">📷</div>
+                <h3>暂无图片</h3>
+                <p>您还没有上传任何图片，点击上方按钮开始上传吧！</p>
+                <button class="primary-btn" onclick="window.location.href='/'">
+                    立即上传
+                </button>
+            </div>
+        </div>
+
+        <!-- 分页控制 -->
+        <div class="pagination-container" id="paginationContainer">
+            <div class="pagination">
+                <button class="pagination-btn" id="prevPage" disabled>
+                    <i>‹</i>
+                    <span>上一页</span>
+                </button>
+                
+                <div class="page-numbers" id="pageNumbers">
+                    <!-- 页码将通过JavaScript生成 -->
+                </div>
+                
+                <button class="pagination-btn" id="nextPage">
+                    <span>下一页</span>
+                    <i>›</i>
+                </button>
+            </div>
+            
+            <div class="pagination-info">
+                <span>每页显示:</span>
+                <select id="pageSize" class="page-size-select">
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                    <option value="48">48</option>
+                    <option value="96">96</option>
+                </select>
+                <span>项</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div class="image-modal" id="imageModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">图片详情</div>
+                <button class="modal-close" id="modalClose">
+                    <i>✕</i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modalImage" src="" alt="" class="modal-image">
+                    <div class="image-navigation">
+                        <button class="nav-btn" id="prevImage" title="上一张">
+                            <i>‹</i>
+                        </button>
+                        <button class="nav-btn" id="nextImage" title="下一张">
+                            <i>›</i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="modal-info">
+                    <div class="info-section">
+                        <h4>图片信息</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">文件名:</span>
+                                <span class="info-value" id="imageFileName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">大小:</span>
+                                <span class="info-value" id="imageFileSize">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">尺寸:</span>
+                                <span class="info-value" id="imageDimensions">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">上传时间:</span>
+                                <span class="info-value" id="imageUploadTime">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-section">
+                        <h4>操作</h4>
+                        <div class="action-buttons">
+                            <button class="action-btn secondary" id="copyLinkBtn">
+                                <i>🔗</i>
+                                <span>复制链接</span>
+                            </button>
+                            <button class="action-btn secondary" id="downloadBtn">
+                                <i>⬇️</i>
+                                <span>下载</span>
+                            </button>
+                            <button class="action-btn secondary" id="favoriteBtn">
+                                <i>⭐</i>
+                                <span>收藏</span>
+                            </button>
+                            <button class="action-btn danger" id="deleteBtn">
+                                <i>🗑️</i>
+                                <span>删除</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="./js/navigation.js"></script>
+    <script src="./js/gallery.js"></script>
+    <script>
+        // 加载导航组件
+        fetch('./components/navigation.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navigationContainer').innerHTML = html;
+                // 重新初始化导航
+                const navigation = new NavigationController();
+                navigation.initTheme();
+                window.navigationController = navigation;
+            });
+    </script>
+</body>
+</html> 
