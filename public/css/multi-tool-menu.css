@@ -855,4 +855,213 @@ body.dark-mode {
         width: 100%;
         justify-content: flex-end;
     }
+}
+
+/* 链接复制相关样式 */
+.link-actions {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--tool-border);
+}
+
+.link-group {
+    margin-bottom: 0.5rem;
+}
+
+.link-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--tool-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.link-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.link-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--tool-border);
+    border-radius: var(--tool-border-radius-sm);
+    background: var(--tool-header-bg);
+    color: var(--tool-text-primary);
+    font-size: 0.875rem;
+    font-family: monospace;
+    transition: var(--tool-transition);
+}
+
+.link-input:focus {
+    outline: none;
+    border-color: var(--tool-primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+body.dark-mode .link-input {
+    background: var(--tool-module-bg);
+    border-color: var(--tool-border);
+    color: var(--tool-text-primary);
+}
+
+/* 查看链接样式 */
+.view-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: var(--tool-primary-color);
+    color: white;
+    border-radius: var(--tool-border-radius-sm);
+    text-decoration: none;
+    transition: var(--tool-transition);
+    margin-left: 0.5rem;
+}
+
+.view-link:hover {
+    background: #2563eb;
+    transform: scale(1.1);
+}
+
+.view-link i {
+    font-size: 0.875rem;
+}
+
+/* 分享按钮样式 */
+.share-single-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: var(--tool-success-color);
+    color: white;
+    border: none;
+    border-radius: var(--tool-border-radius-sm);
+    cursor: pointer;
+    transition: var(--tool-transition);
+}
+
+.share-single-btn:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+/* 上传状态样式 */
+.upload-pending {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--tool-warning-color);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.upload-pending i {
+    animation: spin 2s linear infinite;
+}
+
+.result-item .upload-info {
+    align-items: center;
+}
+
+/* 工具按钮变体 */
+.tool-btn.tool-btn-accent {
+    background: var(--tool-success-color);
+    color: white;
+}
+
+.tool-btn.tool-btn-accent:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -8px rgba(16, 185, 129, 0.4);
+}
+
+/* 复制按钮反馈动画 */
+.copy-url-btn.copied {
+    background: var(--tool-success-color);
+    transform: scale(0.95);
+}
+
+.copy-url-btn.copied::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.875rem;
+    color: white;
+}
+
+/* 批量操作按钮组 */
+.tool-actions {
+    flex-wrap: wrap;
+}
+
+.tool-actions .tool-btn {
+    min-width: 120px;
+}
+
+/* 结果项动画 */
+@keyframes resultItemAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-item {
+    animation: resultItemAppear 0.3s ease;
+}
+
+/* 上传信息增强样式 */
+.result-item .upload-info {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.5rem;
+    border-radius: var(--tool-border-radius-sm);
+    margin-top: 0.5rem;
+}
+
+.result-item .upload-error {
+    background: rgba(239, 68, 68, 0.1);
+    padding: 0.5rem;
+    border-radius: var(--tool-border-radius-sm);
+}
+
+.result-item .upload-pending {
+    background: rgba(245, 158, 11, 0.1);
+    padding: 0.5rem;
+    border-radius: var(--tool-border-radius-sm);
+}
+
+/* 响应式优化 */
+@media (max-width: 480px) {
+    .link-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .copy-url-btn,
+    .view-link {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .result-item .result-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .download-single-btn,
+    .share-single-btn {
+        width: 100%;
+        height: 2.5rem;
+    }
 } 
