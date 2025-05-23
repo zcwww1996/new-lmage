@@ -366,15 +366,13 @@ class MultiToolMenu {
         formData.append('file', file); // 使用'file'而不是'files'
         
         try {
-            // 获取认证头（如果用户已登录）
-            const headers = {};
-            const authToken = localStorage.getItem('authToken');
-            if (authToken) {
-                headers['Authorization'] = `Bearer ${authToken}`;
-            }
+            // 获取认证头（使用现有的getAuthHeader函数）
+            const headers = typeof getAuthHeader === 'function' ? getAuthHeader() : {};
             
-            console.log('上传WebP文件:', file.name, '大小:', this.formatFileSize(file.size));
-            console.log('认证状态:', authToken ? '已登录' : '匿名上传');
+            console.log('🚀 上传WebP文件:', file.name, '大小:', this.formatFileSize(file.size));
+            console.log('🔐 认证状态:', Object.keys(headers).length > 0 ? '已登录' : '匿名上传');
+            console.log('📝 表单数据:', formData.has('file') ? '文件已添加' : '文件缺失');
+            console.log('🔑 认证头:', headers);
             
             const response = await fetch('/upload', { // 使用'/upload'而不是'/api/upload'
                 method: 'POST',
@@ -382,28 +380,63 @@ class MultiToolMenu {
                 body: formData
             });
             
+            console.log('📡 响应状态:', response.status, response.statusText);
+            console.log('📋 响应头:', Object.fromEntries(response.headers.entries()));
+            
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('上传响应错误:', response.status, errorText);
+                console.error('❌ 上传响应错误:', response.status, errorText);
                 throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
             
-            const result = await response.json();
-            console.log('上传成功:', result);
+            // 尝试解析JSON响应
+            const responseText = await response.text();
+            console.log('📜 原始响应内容:', responseText);
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+                console.log('✅ 解析后的响应:', result);
+            } catch (parseError) {
+                console.error('❌ JSON解析失败:', parseError);
+                console.error('📜 无法解析的内容:', responseText);
+                throw new Error(`响应格式错误: ${parseError.message}`);
+            }
+            
+            // 检查响应是否包含错误
+            if (result.error) {
+                console.error('❌ 服务器返回错误:', result.error);
+                throw new Error(result.error);
+            }
             
             // 检查返回格式
-            if (result && result.length > 0 && result[0].src) {
+            console.log('🔍 检查返回格式...');
+            console.log('- 是否为数组:', Array.isArray(result));
+            console.log('- 数组长度:', result ? result.length : 'N/A');
+            console.log('- 第一项内容:', result && result[0] ? result[0] : 'N/A');
+            
+            if (result && Array.isArray(result) && result.length > 0 && result[0].src) {
                 const fileUrl = window.location.origin + result[0].src;
+                console.log('🎉 上传成功! 图床链接:', fileUrl);
                 return {
                     success: true,
                     url: fileUrl,
                     src: result[0].src
                 };
             } else {
+                console.error('❌ 上传响应格式异常');
+                console.error('期望: Array.isArray(result) && result.length > 0 && result[0].src');
+                console.error('实际:', {
+                    isArray: Array.isArray(result),
+                    length: result ? result.length : 'undefined',
+                    firstItem: result && result[0] ? result[0] : 'undefined',
+                    hasSrc: result && result[0] ? !!result[0].src : false
+                });
                 throw new Error('上传响应格式异常');
             }
         } catch (error) {
-            console.error('上传失败详细信息:', error);
+            console.error('💥 上传失败详细信息:', error);
+            console.error('🔍 错误堆栈:', error.stack);
             throw new Error(`上传失败: ${error.message}`);
         }
     }
