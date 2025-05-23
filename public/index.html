@@ -10,9 +10,6 @@
     <meta name="keywords" content="图床,Telegram,图片上传,免费图床,图片托管">
     <meta name="theme-color" content="#4361ee">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="./css/navigation.css">
-    <link rel="stylesheet" href="./css/theme-switch.css">
-    <link rel="stylesheet" href="./css/menu-components.css">
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,180 +42,7 @@
         <div class="scroll-progress-bar" id="scrollProgress"></div>
     </div>
 
-    <!-- 导航组件 -->
-    <div id="navigationContainer"></div>
-
-    <!-- 顶部菜单栏 -->
-    <div class="top-menu-bar">
-        <div class="menu-group">
-            <button class="menu-item" id="fileMenu">文件
-                <div class="dropdown-menu" id="fileDropdown">
-                    <a href="/" class="dropdown-item">
-                        <span class="dropdown-icon">🏠</span>
-                        <span>首页</span>
-                    </a>
-                    <a href="/gallery.html" class="dropdown-item">
-                        <span class="dropdown-icon">🖼️</span>
-                        <span>图片画廊</span>
-                    </a>
-                    <a href="/manage.html" class="dropdown-item">
-                        <span class="dropdown-icon">📁</span>
-                        <span>图片管理</span>
-                    </a>
-                    <div class="context-menu-separator"></div>
-                    <button class="dropdown-item" onclick="window.location.reload()">
-                        <span class="dropdown-icon">🔄</span>
-                        <span>刷新页面</span>
-                    </button>
-                </div>
-            </button>
-            
-            <button class="menu-item" id="toolsMenu">工具
-                <div class="dropdown-menu" id="toolsDropdown">
-                    <a href="/batch.html" class="dropdown-item">
-                        <span class="dropdown-icon">📦</span>
-                        <span>批量处理</span>
-                    </a>
-                    <a href="/api.html" class="dropdown-item">
-                        <span class="dropdown-icon">🔌</span>
-                        <span>API接口</span>
-                    </a>
-                    <button class="dropdown-item" id="compressionTool">
-                        <span class="dropdown-icon">🗜️</span>
-                        <span>图片压缩</span>
-                    </button>
-                    <button class="dropdown-item" id="watermarkTool">
-                        <span class="dropdown-icon">🏷️</span>
-                        <span>添加水印</span>
-                    </button>
-                </div>
-            </button>
-            
-            <button class="menu-item" id="viewMenu">视图
-                <div class="dropdown-menu" id="viewDropdown">
-                    <button class="dropdown-item" id="fullscreenToggle">
-                        <span class="dropdown-icon">⛶</span>
-                        <span>全屏模式</span>
-                    </button>
-                    <button class="dropdown-item" id="zoomIn">
-                        <span class="dropdown-icon">🔍</span>
-                        <span>放大</span>
-                    </button>
-                    <button class="dropdown-item" id="zoomOut">
-                        <span class="dropdown-icon">🔎</span>
-                        <span>缩小</span>
-                    </button>
-                    <div class="context-menu-separator"></div>
-                    <button class="dropdown-item" id="darkModeToggle">
-                        <span class="dropdown-icon">🌙</span>
-                        <span>切换主题</span>
-                    </button>
-                </div>
-            </button>
-            
-            <button class="menu-item" id="helpMenu">帮助
-                <div class="dropdown-menu" id="helpDropdown">
-                    <a href="/docs.html" class="dropdown-item">
-                        <span class="dropdown-icon">📚</span>
-                        <span>使用文档</span>
-                    </a>
-                    <a href="/feedback.html" class="dropdown-item">
-                        <span class="dropdown-icon">💬</span>
-                        <span>意见反馈</span>
-                    </a>
-                    <button class="dropdown-item" id="keyboardShortcuts">
-                        <span class="dropdown-icon">⌨️</span>
-                        <span>快捷键</span>
-                    </button>
-                    <button class="dropdown-item" id="aboutDialog">
-                        <span class="dropdown-icon">ℹ️</span>
-                        <span>关于</span>
-                    </button>
-                </div>
-            </button>
-        </div>
-        
-        <!-- 搜索菜单 -->
-        <div class="search-menu">
-            <div class="search-input-wrapper">
-                <span class="search-icon-enhanced">🔍</span>
-                <input type="text" class="search-input-enhanced" placeholder="搜索图片、功能..." id="globalSearch">
-            </div>
-            <div class="search-suggestions" id="searchSuggestions">
-                <div class="search-suggestion" data-action="upload">
-                    <span class="dropdown-icon">📤</span>
-                    <span>上传图片</span>
-                </div>
-                <div class="search-suggestion" data-action="gallery">
-                    <span class="dropdown-icon">🖼️</span>
-                    <span>图片画廊</span>
-                </div>
-                <div class="search-suggestion" data-action="manage">
-                    <span class="dropdown-icon">📁</span>
-                    <span>图片管理</span>
-                </div>
-                <div class="search-suggestion" data-action="analytics">
-                    <span class="dropdown-icon">📊</span>
-                    <span>使用统计</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 现代主题切换器 -->
-        <div class="theme-toggle nav-theme-toggle">
-            <div class="theme-switch" id="modernThemeSwitch">
-                <div class="theme-switch-tooltip">切换主题</div>
-            </div>
-        </div>
-        
-        <!-- 用户菜单 -->
-        <div class="menu-group">
-            <button class="menu-item" id="userMenuBtn">
-                <span class="dropdown-icon">👤</span>
-                <span id="userMenuName">访客</span>
-                <div class="dropdown-menu" id="userDropdownMenu">
-                    <a href="/login.html" class="dropdown-item">
-                        <span class="dropdown-icon">🔑</span>
-                        <span>登录</span>
-                    </a>
-                    <a href="/register.html" class="dropdown-item">
-                        <span class="dropdown-icon">📝</span>
-                        <span>注册</span>
-                    </a>
-                    <div class="context-menu-separator"></div>
-                    <button class="dropdown-item" id="userProfile" style="display: none;">
-                        <span class="dropdown-icon">👤</span>
-                        <span>个人资料</span>
-                    </button>
-                    <button class="dropdown-item" id="userSettings" style="display: none;">
-                        <span class="dropdown-icon">⚙️</span>
-                        <span>设置</span>
-                    </button>
-                    <button class="dropdown-item danger" id="userLogout" style="display: none;">
-                        <span class="dropdown-icon">🚪</span>
-                        <span>退出登录</span>
-                    </button>
-                </div>
-            </button>
-        </div>
-    </div>
-
-    <!-- 面包屑导航 -->
-    <div class="breadcrumb-menu">
-        <a href="/" class="breadcrumb-item active">
-            <span>🏠</span>
-            <span>首页</span>
-        </a>
-        <span class="breadcrumb-separator">›</span>
-        <span class="breadcrumb-item">
-            <span>📤</span>
-            <span>图片上传</span>
-        </span>
-    </div>
-
-    <!-- 主内容区域 -->
-    <div class="main-content">
-        <!-- 原有的页面内容保持不变 -->
+    <div class="app-container">
         <header class="header">
             <div class="logo">
                 <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
@@ -239,17 +63,19 @@
                             </svg>
                         </button>
                         <div class="user-dropdown-content">
-                            <a href="/gallery.html">图片画廊</a>
-                            <a href="/manage.html">图片管理</a>
+                            <a href="/dashboard.html">我的图片</a>
                             <a href="/" id="logoutBtn">退出登录</a>
                         </div>
                     </div>
-                    
-                    <!-- 替换爱心开关为现代开关 -->
-                    <div class="theme-toggle">
-                        <div class="theme-switch" id="headerThemeSwitch"></div>
+                    <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
+                      <input id="switch" type="checkbox">
+                      <label class="love-heart" for="switch">
+                        <i class="left"></i>
+                        <i class="right"></i>
+                        <i class="bottom"></i>
+                        <div class="round"></div>
+                      </label>
                     </div>
-                    
                     <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="打开菜单" style="display:none;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -277,7 +103,6 @@
                 <nav class="mobile-nav">
                     <a href="/" class="mobile-nav-link active">首页</a>
                     <a href="/login.html" class="mobile-nav-link">登录</a>
-                    <a href="/gallery.html" class="mobile-nav-link">图片画廊</a>
                     <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="mobile-nav-link">GitHub</a>
                     <!-- 移动端用户登录后会动态添加退出登录按钮 -->
                 </nav>
@@ -285,196 +110,58 @@
         </header>
 
         <main>
-            <!-- 功能标签页 -->
-            <div class="tab-menu">
-                <div class="tab-header">
-                    <button class="tab-item active" data-tab="upload">
-                        <span>📤 图片上传</span>
-                    </button>
-                    <button class="tab-item" data-tab="tools">
-                        <span>🔧 图片工具</span>
-                    </button>
-                    <button class="tab-item" data-tab="settings">
-                        <span>⚙️ 上传设置</span>
-                    </button>
-                </div>
-                
-                <div class="tab-content">
-                    <!-- 上传面板 -->
-                    <div class="tab-panel active" id="uploadPanel">
-                        <section class="upload-container">
-                            <div class="upload-area" id="dropArea">
-                                <div class="upload-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="17 8 12 3 7 8"></polyline>
-                                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                                    </svg>
-                                </div>
-                                <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
-                                <p class="upload-hint">支持批量上传多张图片和<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</p>
-                                <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
-                                <div class="upload-status" id="uploadStatus"></div>
-                            </div>
 
-                            <div class="result-container" id="resultContainer" style="display: none;">
-                                <h3>上传成功！</h3>
-                                <div class="image-preview premium-img-container">
-                                    <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
-                                </div>
-                                <div class="link-group">
-                                    <div class="link-item">
-                                        <label>直接链接:</label>
-                                        <div class="copy-container">
-                                            <input type="text" id="directLink" class="premium-input" readonly>
-                                            <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
-                                        </div>
-                                    </div>
-                                    <div class="link-item">
-                                        <label>HTML 代码:</label>
-                                        <div class="copy-container">
-                                            <input type="text" id="htmlCode" class="premium-input" readonly>
-                                            <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
-                                        </div>
-                                    </div>
-                                    <div class="link-item">
-                                        <label>Markdown 代码:</label>
-                                        <div class="copy-container">
-                                            <input type="text" id="mdCode" class="premium-input" readonly>
-                                            <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
-                            </div>
-                        </section>
+            <section class="upload-container">
+                <div class="upload-area" id="dropArea">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
                     </div>
-                    
-                    <!-- 工具面板 -->
-                    <div class="tab-panel" id="toolsPanel">
-                        <div style="padding: 2rem; text-align: center;">
-                            <h3>图片工具</h3>
-                            <p>图片压缩、格式转换、添加水印等功能</p>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
-                                <div class="tool-card">
-                                    <h4>🗜️ 图片压缩</h4>
-                                    <p>减小图片文件大小</p>
-                                    <button class="premium-btn premium-btn-primary">开始压缩</button>
-                                </div>
-                                <div class="tool-card">
-                                    <h4>🔄 格式转换</h4>
-                                    <p>转换图片格式</p>
-                                    <button class="premium-btn premium-btn-primary">开始转换</button>
-                                </div>
-                                <div class="tool-card">
-                                    <h4>🏷️ 添加水印</h4>
-                                    <p>为图片添加水印</p>
-                                    <button class="premium-btn premium-btn-primary">添加水印</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 设置面板 -->
-                    <div class="tab-panel" id="settingsPanel">
-                        <div style="padding: 2rem;">
-                            <h3>上传设置</h3>
-                            <div class="settings-grid">
-                                <div class="setting-item">
-                                    <label>图片质量</label>
-                                    <select class="premium-input">
-                                        <option>原始质量</option>
-                                        <option>高质量</option>
-                                        <option>中等质量</option>
-                                        <option>低质量</option>
-                                    </select>
-                                </div>
-                                <div class="setting-item">
-                                    <label>文件夹</label>
-                                    <select class="premium-input">
-                                        <option>默认文件夹</option>
-                                        <option>风景照片</option>
-                                        <option>人物照片</option>
-                                        <option>其他</option>
-                                    </select>
-                                </div>
-                                <div class="setting-item">
-                                    <label>
-                                        <input type="checkbox"> 自动压缩
-                                    </label>
-                                </div>
-                                <div class="setting-item">
-                                    <label>
-                                        <input type="checkbox"> 添加水印
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
+                    <p class="upload-hint">支持批量上传多张图片和<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
+                    <div class="upload-status" id="uploadStatus"></div>
                 </div>
-            </div>
+
+                <div class="result-container" id="resultContainer" style="display: none;">
+                    <h3>上传成功！</h3>
+                    <div class="image-preview premium-img-container">
+                        <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
+                    </div>
+                    <div class="link-group">
+                        <div class="link-item">
+                            <label>直接链接:</label>
+                            <div class="copy-container">
+                                <input type="text" id="directLink" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
+                            </div>
+                        </div>
+                        <div class="link-item">
+                            <label>HTML 代码:</label>
+                            <div class="copy-container">
+                                <input type="text" id="htmlCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
+                            </div>
+                        </div>
+                        <div class="link-item">
+                            <label>Markdown 代码:</label>
+                            <div class="copy-container">
+                                <input type="text" id="mdCode" class="premium-input" readonly>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
+                </div>
+            </section>
         </main>
 
         <footer class="footer">
             <p>&copy; 2024-2025 TG-Image. 基于 <a href="https://telegram.org" target="_blank">Telegram</a> 提供技术支持</p>
         </footer>
-    </div>
-
-    <!-- 右键菜单 -->
-    <div class="context-menu" id="contextMenu">
-        <button class="context-menu-item" data-action="copy">
-            <span class="context-menu-icon">📋</span>
-            <span>复制</span>
-        </button>
-        <button class="context-menu-item" data-action="paste">
-            <span class="context-menu-icon">📌</span>
-            <span>粘贴图片</span>
-        </button>
-        <div class="context-menu-separator"></div>
-        <button class="context-menu-item" data-action="refresh">
-            <span class="context-menu-icon">🔄</span>
-            <span>刷新页面</span>
-        </button>
-        <button class="context-menu-item" data-action="fullscreen">
-            <span class="context-menu-icon">⛶</span>
-            <span>全屏模式</span>
-        </button>
-        <div class="context-menu-separator"></div>
-        <button class="context-menu-item context-menu-submenu">
-            <span class="context-menu-icon">🔧</span>
-            <span>开发者工具</span>
-            <div class="context-submenu context-menu">
-                <button class="context-menu-item" data-action="console">
-                    <span class="context-menu-icon">💻</span>
-                    <span>控制台</span>
-                </button>
-                <button class="context-menu-item" data-action="inspector">
-                    <span class="context-menu-icon">🔍</span>
-                    <span>元素检查</span>
-                </button>
-            </div>
-        </button>
-    </div>
-
-    <!-- 浮动操作菜单 -->
-    <div class="fab-menu">
-        <button class="fab-main" id="fabMain">
-            <span>+</span>
-        </button>
-        <div class="fab-submenu" id="fabSubmenu">
-            <button class="fab-item" title="上传图片" onclick="document.getElementById('fileInput').click()">
-                📤
-            </button>
-            <button class="fab-item" title="图片画廊" onclick="window.location.href='/gallery.html'">
-                🖼️
-            </button>
-            <button class="fab-item" title="设置" onclick="window.location.href='/settings.html'">
-                ⚙️
-            </button>
-            <button class="fab-item" title="帮助" onclick="window.location.href='/docs.html'">
-                ❓
-            </button>
-        </div>
     </div>
 
     <!-- 返回顶部按钮 -->
@@ -488,24 +175,7 @@
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
-    <script src="./js/navigation.js"></script>
-    <script src="./js/menu-controller.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
-    <script>
-        // 加载导航组件
-        fetch('./components/navigation.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('navigationContainer').innerHTML = html;
-                // 重新初始化导航
-                const navigation = new NavigationController();
-                navigation.initTheme();
-                window.navigationController = navigation;
-            })
-            .catch(error => {
-                console.log('导航组件加载失败，使用传统导航');
-            });
-    </script>
 </body>
 </html>
