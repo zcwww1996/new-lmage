@@ -1,0 +1,319 @@
+/* 
+ * 菜单管理系统 - TG-Image
+ * 现代化侧边菜单设计
+ */
+
+:root {
+  --menu-width: 280px;
+  --menu-collapsed-width: 70px;
+  --menu-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --menu-bg: var(--card-bg);
+  --menu-border: var(--border-color);
+  --menu-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  --menu-item-hover: rgba(var(--primary-light-rgb), 0.08);
+  --menu-item-active: rgba(var(--primary-light-rgb), 0.15);
+  --menu-icon-size: 22px;
+  --menu-text-color: var(--text-color);
+  --menu-text-muted: var(--text-light);
+  --menu-header-height: 60px;
+  --menu-footer-height: 50px;
+}
+
+body.dark-mode {
+  --menu-bg: var(--dark-card-bg);
+  --menu-border: var(--dark-border);
+  --menu-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  --menu-item-hover: rgba(var(--primary-light-rgb), 0.1);
+  --menu-item-active: rgba(var(--primary-light-rgb), 0.2);
+  --menu-text-color: var(--dark-text);
+  --menu-text-muted: var(--dark-text-light);
+}
+
+/* 主容器布局调整 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: padding-left var(--menu-transition);
+}
+
+.app-container.menu-expanded {
+  padding-left: var(--menu-width);
+}
+
+.app-container.menu-collapsed {
+  padding-left: var(--menu-collapsed-width);
+}
+
+/* 侧边菜单 */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--menu-width);
+  background: var(--menu-bg);
+  border-right: 1px solid var(--menu-border);
+  box-shadow: var(--menu-shadow);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: width var(--menu-transition), transform var(--menu-transition);
+  overflow: hidden;
+}
+
+.side-menu.collapsed {
+  width: var(--menu-collapsed-width);
+}
+
+/* 菜单头部 */
+.menu-header {
+  height: var(--menu-header-height);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--menu-border);
+  position: relative;
+}
+
+.menu-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.menu-logo img {
+  height: 32px;
+  min-width: 32px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.menu-logo h1 {
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: opacity var(--menu-transition), transform var(--menu-transition);
+}
+
+.side-menu.collapsed .menu-logo h1 {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* 菜单切换按钮 */
+.menu-toggle {
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: var(--primary-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+.menu-toggle:hover {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.menu-toggle svg {
+  width: 14px;
+  height: 14px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.side-menu.collapsed .menu-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* 菜单内容 */
+.menu-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 15px 0;
+}
+
+/* 菜单项 */
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: var(--menu-text-color);
+  text-decoration: none;
+  position: relative;
+  transition: background-color 0.2s ease;
+  margin: 4px 8px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.menu-item:hover {
+  background-color: var(--menu-item-hover);
+}
+
+.menu-item.active {
+  background-color: var(--menu-item-active);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.menu-item-icon {
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  color: var(--menu-text-muted);
+  transition: color 0.2s ease, transform 0.3s ease;
+}
+
+.menu-item.active .menu-item-icon {
+  color: var(--primary-color);
+}
+
+.menu-item:hover .menu-item-icon {
+  transform: translateX(3px);
+}
+
+.menu-item-text {
+  white-space: nowrap;
+  transition: opacity var(--menu-transition), transform var(--menu-transition);
+}
+
+.side-menu.collapsed .menu-item-text {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+/* 菜单分类 */
+.menu-category {
+  padding: 0 20px;
+  margin: 15px 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--menu-text-muted);
+  white-space: nowrap;
+  transition: opacity var(--menu-transition);
+}
+
+.side-menu.collapsed .menu-category {
+  opacity: 0;
+}
+
+/* 菜单底部 */
+.menu-footer {
+  height: var(--menu-footer-height);
+  border-top: 1px solid var(--menu-border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  color: var(--menu-text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--menu-transition);
+}
+
+.side-menu.collapsed .menu-footer {
+  opacity: 0;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .side-menu {
+    transform: translateX(-100%);
+    width: var(--menu-width);
+  }
+  
+  .side-menu.mobile-visible {
+    transform: translateX(0);
+  }
+  
+  .app-container.menu-expanded,
+  .app-container.menu-collapsed {
+    padding-left: 0;
+  }
+  
+  .menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* 菜单项徽章 */
+.menu-badge {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--primary-gradient);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0 6px;
+  transition: opacity var(--menu-transition), transform var(--menu-transition);
+}
+
+.side-menu.collapsed .menu-badge {
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* 菜单提示 */
+.menu-tooltip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--dark-card-bg);
+  color: var(--dark-text);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.side-menu.collapsed .menu-item:hover .menu-tooltip {
+  opacity: 1;
+  visibility: visible;
+}

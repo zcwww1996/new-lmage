@@ -19,6 +19,12 @@
     <link rel="stylesheet" href="./css/loaders-premium.css">
     <link rel="stylesheet" href="./css/mobile-nav-enhance.css">
     <link rel="stylesheet" href="./css/modals-premium.css">
+    <link rel="stylesheet" href="./css/menu-system.css">
+    <link rel="stylesheet" href="./css/header-modern.css">
+    <link rel="stylesheet" href="./css/upload-modern.css">
+    <link rel="stylesheet" href="./css/share.css">
+    <!-- 引入图标库 -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body class="dark-mode-transition">
     <!-- 页面加载动画 -->
@@ -42,119 +48,202 @@
         <div class="scroll-progress-bar" id="scrollProgress"></div>
     </div>
 
-    <div class="app-container">
-        <header class="header">
-            <div class="logo">
-                <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
+    <!-- 侧边菜单 -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-logo">
+                <img src="./images/logo.svg" alt="TG-Image Logo">
                 <h1>TG-Image</h1>
             </div>
-            <div class="nav-container">
-                <nav class="nav" id="mainNav">
-                    <a href="/" class="nav-link active animated-link">首页</a>
-                    <a href="/login.html" class="nav-link animated-link">登录</a>
-                    <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="nav-link animated-link">GitHub</a>
-                </nav>
-                <div class="header-buttons">
-                    <div id="userDropdown" class="user-dropdown" style="display: none;">
-                        <button id="userDropdownBtn" class="user-dropdown-btn">
-                            <span id="userDisplayName">用户</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                        <div class="user-dropdown-content">
-                            <a href="/dashboard.html">我的图片</a>
-                            <a href="/" id="logoutBtn">退出登录</a>
-                        </div>
-                    </div>
-                    <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
-                      <input id="switch" type="checkbox">
-                      <label class="love-heart" for="switch">
-                        <i class="left"></i>
-                        <i class="right"></i>
-                        <i class="bottom"></i>
-                        <div class="round"></div>
-                      </label>
-                    </div>
-                    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="打开菜单" style="display:none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="ri-arrow-left-s-line"></i>
+            </div>
+        </div>
+        <div class="menu-content">
+            <div class="menu-category">主要功能</div>
+            <a href="/" class="menu-item active">
+                <div class="menu-item-icon"><i class="ri-home-5-line"></i></div>
+                <div class="menu-item-text">首页</div>
+                <div class="menu-tooltip">首页</div>
+            </a>
+            <a href="/dashboard.html" class="menu-item">
+                <div class="menu-item-icon"><i class="ri-image-2-line"></i></div>
+                <div class="menu-item-text">我的图片</div>
+                <div class="menu-tooltip">我的图片</div>
+            </a>
+            <a href="#" class="menu-item" id="uploadMenuBtn">
+                <div class="menu-item-icon"><i class="ri-upload-cloud-2-line"></i></div>
+                <div class="menu-item-text">上传图片</div>
+                <div class="menu-tooltip">上传图片</div>
+            </a>
+
+            <div class="menu-category">账户</div>
+            <a href="/login.html" class="menu-item" id="loginMenuItem">
+                <div class="menu-item-icon"><i class="ri-login-box-line"></i></div>
+                <div class="menu-item-text">登录</div>
+                <div class="menu-tooltip">登录</div>
+            </a>
+            <a href="#" class="menu-item" id="logoutMenuItem" style="display: none;">
+                <div class="menu-item-icon"><i class="ri-logout-box-line"></i></div>
+                <div class="menu-item-text">退出登录</div>
+                <div class="menu-tooltip">退出登录</div>
+            </a>
+
+            <div class="menu-category">更多</div>
+            <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="menu-item">
+                <div class="menu-item-icon"><i class="ri-github-line"></i></div>
+                <div class="menu-item-text">GitHub</div>
+                <div class="menu-tooltip">GitHub</div>
+            </a>
+            <a href="#" class="menu-item" id="themeMenuItem">
+                <div class="menu-item-icon"><i class="ri-moon-line"></i></div>
+                <div class="menu-item-text">切换主题</div>
+                <div class="menu-tooltip">切换主题</div>
+            </a>
+        </div>
+        <div class="menu-footer">
+            &copy; 2024 TG-Image
+        </div>
+    </div>
+
+    <!-- 菜单遮罩层 -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <div class="app-container menu-expanded">
+        <header class="header">
+            <div class="header-left">
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="打开菜单">
+                    <i class="ri-menu-line"></i>
+                </button>
+                <div class="logo">
+                    <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
+                    <h1>TG-Image</h1>
                 </div>
             </div>
-
-            <!-- 移动端导航菜单 -->
-            <div class="mobile-menu" id="mobileMenu">
-                <div class="mobile-menu-header">
-                    <div class="logo">
-                        <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
-                        <h1>TG-Image</h1>
-                    </div>
-                    <button id="mobileMenuCloseBtn" class="mobile-menu-close" aria-label="关闭菜单">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
+            <div class="header-center">
+                <div class="search-container">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" class="search-input" placeholder="搜索图片...">
                 </div>
-                <nav class="mobile-nav">
-                    <a href="/" class="mobile-nav-link active">首页</a>
-                    <a href="/login.html" class="mobile-nav-link">登录</a>
-                    <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="mobile-nav-link">GitHub</a>
-                    <!-- 移动端用户登录后会动态添加退出登录按钮 -->
-                </nav>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="header-action-btn" id="uploadBtn" title="上传图片">
+                        <i class="ri-upload-cloud-2-line"></i>
+                    </button>
+                    <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
+                        <input id="switch" type="checkbox">
+                        <label class="love-heart" for="switch">
+                            <i class="left"></i>
+                            <i class="right"></i>
+                            <i class="bottom"></i>
+                            <div class="round"></div>
+                        </label>
+                    </div>
+                    <div id="userDropdown" class="user-dropdown" style="display: none;">
+                        <button id="userDropdownBtn" class="user-dropdown-btn">
+                            <div class="user-avatar">
+                                <i class="ri-user-3-line"></i>
+                            </div>
+                            <span id="userDisplayName">用户</span>
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div class="user-dropdown-content">
+                            <a href="/dashboard.html" class="dropdown-item">
+                                <i class="ri-image-2-line"></i>
+                                <span>我的图片</span>
+                            </a>
+                            <a href="#" class="dropdown-item" id="logoutBtn">
+                                <i class="ri-logout-box-line"></i>
+                                <span>退出登录</span>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="/login.html" class="login-btn" id="loginBtn">
+                        <i class="ri-login-box-line"></i>
+                        <span>登录</span>
+                    </a>
+                </div>
             </div>
         </header>
 
         <main>
 
             <section class="upload-container">
+                <div class="upload-header">
+                    <h2 class="upload-title">
+                        <i class="ri-image-add-line"></i>
+                        <span>上传图片</span>
+                    </h2>
+                    <p class="upload-subtitle">简单、快速、安全的图片托管服务</p>
+                </div>
+
                 <div class="upload-area" id="dropArea">
                     <div class="upload-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
+                        <i class="ri-upload-cloud-2-line"></i>
                     </div>
                     <p class="upload-text">拖放图片到这里或<span class="browse-text">选择文件</span></p>
-                    <p class="upload-hint">支持批量上传多张图片和<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</p>
+                    <p class="upload-hint">
+                        <span class="upload-hint-item"><i class="ri-image-line"></i> 支持多种图片格式</span>
+                        <span class="upload-hint-item"><i class="ri-file-copy-line"></i> 支持批量上传</span>
+                        <span class="upload-hint-item"><i class="ri-clipboard-line"></i> 支持<kbd>Ctrl</kbd>+<kbd>V</kbd>粘贴上传</span>
+                    </p>
                     <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
                     <div class="upload-status" id="uploadStatus"></div>
                 </div>
 
                 <div class="result-container" id="resultContainer" style="display: none;">
-                    <h3>上传成功！</h3>
+                    <div class="result-header">
+                        <h3><i class="ri-check-line"></i> 上传成功！</h3>
+                        <p class="result-subtitle">您的图片已成功上传，可以通过以下方式使用</p>
+                    </div>
+
                     <div class="image-preview premium-img-container">
                         <img id="previewImage" src="" alt="上传的图片" class="premium-img premium-img-rounded premium-img-shadow">
+                        <div class="image-preview-overlay">
+                            <i class="ri-zoom-in-line"></i>
+                            <span>点击查看大图</span>
+                        </div>
                     </div>
+
                     <div class="link-group">
                         <div class="link-item">
-                            <label>直接链接:</label>
+                            <label><i class="ri-link"></i> 直接链接:</label>
                             <div class="copy-container">
                                 <input type="text" id="directLink" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">复制</button>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#directLink">
+                                    <i class="ri-file-copy-line"></i> 复制
+                                </button>
                             </div>
                         </div>
                         <div class="link-item">
-                            <label>HTML 代码:</label>
+                            <label><i class="ri-code-s-slash-line"></i> HTML 代码:</label>
                             <div class="copy-container">
                                 <input type="text" id="htmlCode" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">复制</button>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#htmlCode">
+                                    <i class="ri-file-copy-line"></i> 复制
+                                </button>
                             </div>
                         </div>
                         <div class="link-item">
-                            <label>Markdown 代码:</label>
+                            <label><i class="ri-markdown-line"></i> Markdown 代码:</label>
                             <div class="copy-container">
                                 <input type="text" id="mdCode" class="premium-input" readonly>
-                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">复制</button>
+                                <button class="copy-btn premium-btn premium-btn-primary premium-btn-sm" data-clipboard-target="#mdCode">
+                                    <i class="ri-file-copy-line"></i> 复制
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">再次上传</button>
+
+                    <div class="result-actions">
+                        <button class="upload-again-btn premium-btn premium-btn-accent" id="uploadAgainBtn">
+                            <i class="ri-upload-2-line"></i> 再次上传
+                        </button>
+                        <button class="share-btn premium-btn premium-btn-outline" id="shareBtn">
+                            <i class="ri-share-line"></i> 分享
+                        </button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -177,5 +266,7 @@
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
+    <script src="./js/menu-system.js"></script>
+    <script src="./js/share.js"></script>
 </body>
 </html>
