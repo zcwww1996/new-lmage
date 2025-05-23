@@ -508,22 +508,25 @@ body.dark-mode .menu-footer {
 /* 菜单提示 */
 .menu-tooltip {
   position: absolute;
-  left: calc(100% + 15px);
+  left: calc(100% + 12px);
   top: 50%;
   transform: translateY(-50%);
   background: linear-gradient(135deg, #1a1b23 0%, #242530 100%);
   color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 20px rgba(67, 97, 238, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 
+              0 0 20px rgba(67, 97, 238, 0.15),
+              0 4px 12px rgba(0, 0, 0, 0.2);
   pointer-events: none;
   z-index: 1001;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .menu-tooltip:after {
@@ -532,14 +535,19 @@ body.dark-mode .menu-footer {
   right: 100%;
   top: 50%;
   transform: translateY(-50%);
-  border: 6px solid transparent;
+  border: 8px solid transparent;
   border-right-color: #1a1b23;
 }
 
 .side-menu.collapsed .menu-item:hover .menu-tooltip {
   opacity: 1;
   visibility: visible;
-  transform: translateY(-50%) translateX(5px);
+  transform: translateY(-50%) translateX(8px);
+}
+
+/* 折叠状态下的提示框特殊样式 */
+.side-menu.collapsed .menu-tooltip {
+  left: calc(100% + 15px);
 }
 
 /* 滚动条美化增强 */
@@ -581,16 +589,32 @@ body.dark-mode .menu-footer {
 }
 
 .side-menu.collapsed .menu-item {
-  margin: 8px 6px;
-  padding: 16px 12px;
+  margin: 6px 8px;
+  padding: 14px 0;
   justify-content: center;
   min-height: 48px;
+  position: relative;
+}
+
+/* 折叠状态下完全隐藏文字和徽章 */
+.side-menu.collapsed .menu-item-text {
+  display: none !important;
+}
+
+.side-menu.collapsed .menu-badge {
+  display: none !important;
 }
 
 /* 折叠状态下的图标样式优化 */
 .side-menu.collapsed .menu-item-icon {
-  margin-right: 0;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
   transform: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 折叠状态下悬停效果调整 */
@@ -601,9 +625,22 @@ body.dark-mode .menu-footer {
 }
 
 .side-menu.collapsed .menu-item:hover .menu-item-icon {
-  transform: scale(1.15) rotate(5deg);
+  transform: scale(1.2) rotate(8deg);
+  color: var(--primary-color);
 }
 
 .side-menu.collapsed .menu-item.active .menu-item-icon {
-  transform: scale(1.15) rotate(-5deg);
+  transform: scale(1.25) rotate(-8deg);
+  color: var(--primary-color);
+}
+
+/* 折叠状态下的激活状态样式 */
+.side-menu.collapsed .menu-item.active {
+  transform: translateX(0);
+}
+
+/* 确保折叠状态下左边框正常显示 */
+.side-menu.collapsed .menu-item:before {
+  left: 0;
+  width: 3px;
 }
