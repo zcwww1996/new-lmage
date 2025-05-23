@@ -19,6 +19,21 @@ function initSettingsPage() {
     
     // 检查存储使用情况
     updateStorageInfo();
+    
+    // 监听全局主题变化
+    window.addEventListener('themeChanged', (e) => {
+        updateDarkModeToggleState(e.detail.theme === 'dark');
+    });
+}
+
+/**
+ * 更新深色模式切换按钮状态
+ */
+function updateDarkModeToggleState(isDark) {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.classList.toggle('active', isDark);
+    }
 }
 
 /**
@@ -64,10 +79,19 @@ function saveSettings(settings) {
  * 应用设置到UI
  */
 function applySettingsToUI(settings) {
-    // 深色模式
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (darkModeToggle) {
-        darkModeToggle.classList.toggle('active', settings.darkMode);
+    // 深色模式 - 从全局主题管理器获取状态
+    if (window.themeManager) {
+        const isDark = window.themeManager.theme === 'dark';
+        updateDarkModeToggleState(isDark);
+        // 同步到本地设置
+        settings.darkMode = isDark;
+        saveSettings(settings);
+    } else {
+        // 如果主题管理器还未初始化，使用本地设置
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.classList.toggle('active', settings.darkMode);
+        }
     }
     
     // 语言设置
@@ -129,17 +153,22 @@ function applySettingsToUI(settings) {
  * 初始化事件监听器
  */
 function initSettingsEventListeners() {
-    // 深色模式切换
+    // 深色模式切换 - 使用全局主题管理器
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (darkModeToggle) {
         darkModeToggle.addEventListener('click', () => {
-            toggleSetting('darkMode', darkModeToggle);
-            // 立即应用主题切换
-            const switchCheckbox = document.getElementById('switch');
-            if (switchCheckbox) {
-                switchCheckbox.checked = darkModeToggle.classList.contains('active');
-                const event = new Event('change');
-                switchCheckbox.dispatchEvent(event);
+            if (window.themeManager) {
+                window.themeManager.toggleTheme();
+                showNotification('主题已切换', 'success');
+            } else {
+                // 降级处理：如果主题管理器未加载
+                toggleSetting('darkMode', darkModeToggle);
+                const switchCheckbox = document.getElementById('switch');
+                if (switchCheckbox) {
+                    switchCheckbox.checked = darkModeToggle.classList.contains('active');
+                    const event = new Event('change');
+                    switchCheckbox.dispatchEvent(event);
+                }
             }
         });
     }

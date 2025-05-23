@@ -1903,6 +1903,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 与菜单系统集成
         initMenuIntegration();
     }
+
+    // 监听主题变化事件
+    window.addEventListener('themeChanged', (e) => {
+        // 更新图表颜色
+        updateChartsTheme();
+    });
 });
 
 // 初始化与菜单系统的集成
@@ -1972,13 +1978,9 @@ function initMenuIntegration() {
  * 切换主题
  */
 function toggleTheme() {
-    const switchCheckbox = document.getElementById('switch');
-    if (switchCheckbox) {
-        switchCheckbox.checked = !switchCheckbox.checked;
-
-        // 触发change事件
-        const event = new Event('change');
-        switchCheckbox.dispatchEvent(event);
+    // 使用全局主题管理器
+    if (window.themeManager) {
+        window.themeManager.toggleTheme();
     }
 }
 

@@ -191,7 +191,7 @@ class BeautyEffects {
 
         // 监听主题切换
         document.addEventListener('themeChanged', (e) => {
-            this.adaptToTheme(e.detail.isDark);
+            this.adaptToTheme(e.detail.theme === 'dark');
         });
     }
 

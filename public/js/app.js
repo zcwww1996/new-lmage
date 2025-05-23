@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageLoader();
 
     // 初始化主题
-    initTheme();
+    // initTheme();
 
     // 初始化剪贴板功能
     initClipboard();
@@ -266,49 +266,6 @@ function initPageLoader() {
         document.querySelectorAll(selector).forEach(el => {
             el.classList.add('fade-in-element');
         });
-    });
-}
-
-// 主题切换功能
-function initTheme() {
-    const themeToggle = document.getElementById('themeToggle');
-    const switchCheckbox = document.getElementById('switch');
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-    // 检查本地存储中的主题设置
-    const savedTheme = localStorage.getItem('theme');
-
-    // 根据保存的主题或系统偏好设置初始主题
-    if (savedTheme === 'dark' || (!savedTheme && prefersDarkScheme.matches)) {
-        document.body.classList.add('dark-mode');
-        switchCheckbox.checked = true; // 右侧位置表示黑夜模式
-    } else {
-        document.body.classList.remove('dark-mode');
-        switchCheckbox.checked = false; // 左侧位置表示白天模式
-    }
-
-    // 主题切换事件
-    switchCheckbox.addEventListener('change', () => {
-        document.body.classList.toggle('dark-mode');
-
-        if (document.body.classList.contains('dark-mode')) {
-            localStorage.setItem('theme', 'dark');
-        } else {
-            localStorage.setItem('theme', 'light');
-        }
-    });
-
-    // 监听系统主题变化
-    prefersDarkScheme.addEventListener('change', (e) => {
-        if (!localStorage.getItem('theme')) {
-            if (e.matches) {
-                document.body.classList.add('dark-mode');
-                switchCheckbox.checked = true;
-            } else {
-                document.body.classList.remove('dark-mode');
-                switchCheckbox.checked = false;
-            }
-        }
     });
 }
 
