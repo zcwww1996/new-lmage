@@ -591,9 +591,76 @@ function initUpload() {
             }
         }
 
+        // 控制批量处理按钮的显示
+        const batchProcessBtn = document.getElementById('batchProcessBtn');
+        if (batchProcessBtn) {
+            if (files.length > 1) {
+                // 多张图片时显示批量处理按钮
+                batchProcessBtn.style.display = 'flex';
+                
+                // 移除之前的事件监听器
+                batchProcessBtn.removeEventListener('click', handleBatchProcess);
+                
+                // 添加新的事件监听器
+                batchProcessBtn.addEventListener('click', handleBatchProcess);
+                
+                function handleBatchProcess() {
+                    if (window.batchProcessor && files.length > 0) {
+                        // 打开批量处理器
+                        window.batchProcessor.open(files);
+                    } else {
+                        console.error('批量处理器未初始化或没有文件');
+                        alert('批量处理器未准备就绪，请稍后再试');
+                    }
+                }
+            } else {
+                // 单张图片时隐藏批量处理按钮
+                batchProcessBtn.style.display = 'none';
+            }
+        }
+
         // 隐藏上传区域，显示结果
         dropArea.style.display = 'none';
         resultContainer.style.display = 'block';
+
+        // 添加编辑按钮的事件监听器
+        const editImageBtn = document.getElementById('editImageBtn');
+        if (editImageBtn) {
+            // 移除之前的事件监听器
+            editImageBtn.removeEventListener('click', handleEditImage);
+            
+            // 添加新的事件监听器
+            editImageBtn.addEventListener('click', handleEditImage);
+            
+            function handleEditImage() {
+                const currentImageSrc = previewImage.src;
+                const currentImageName = previewImage.alt || 'edited-image.jpg';
+                
+                if (currentImageSrc && window.imageEditor) {
+                    // 创建一个临时的Image对象来加载图片
+                    const tempImg = new Image();
+                    tempImg.crossOrigin = 'anonymous'; // 允许跨域
+                    
+                    tempImg.onload = function() {
+                        // 图片加载完成后打开编辑器
+                        window.imageEditor.open(tempImg, currentImageName);
+                    };
+                    
+                    tempImg.onerror = function() {
+                        console.error('图片加载失败:', currentImageSrc);
+                        alert('图片加载失败，无法编辑');
+                    };
+                    
+                    tempImg.src = currentImageSrc;
+                } else {
+                    console.error('图像编辑器未初始化或没有选中的图片');
+                    alert('图像编辑器未准备就绪，请稍后再试');
+                }
+            }
+        }
+
+        // 存储当前文件列表，供批量处理使用
+        window.currentUploadedFiles = files;
     }
 
     // 再次上传
@@ -717,8 +784,6 @@ function initImagePreview() {
         });
     }
 }
-
-
 
 // 3D卡片效果初始化
 function init3DCards() {
