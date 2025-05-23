@@ -19,10 +19,16 @@
     <link rel="stylesheet" href="./css/loaders-premium.css">
     <link rel="stylesheet" href="./css/modals-premium.css">
     <link rel="stylesheet" href="./css/mobile-nav-enhance.css">
+    <link rel="stylesheet" href="./css/menu-system.css">
+    <link rel="stylesheet" href="./css/header-modern.css">
+    <link rel="stylesheet" href="./css/share.css">
+    <link rel="stylesheet" href="./css/menu-stats.css">
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 引入图标库 -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         .dashboard-container {
             max-width: 1200px;
@@ -1632,7 +1638,7 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode-transition">
     <!-- 页面加载动画 -->
     <div id="pageLoader" class="page-loader">
         <div class="loader-content">
@@ -1649,67 +1655,130 @@
     <!-- 页面过渡动画 -->
     <div id="pageTransition" class="page-transition"></div>
 
-    <div class="app-container">
-        <header class="header">
-            <div class="logo">
-                <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
+    <!-- 页面滚动进度条 -->
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-bar" id="scrollProgress"></div>
+    </div>
+
+    <!-- 侧边菜单 -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-logo">
+                <img src="./images/logo.svg" alt="TG-Image Logo">
                 <h1>TG-Image</h1>
             </div>
-            <div class="nav-container">
-                <nav class="nav" id="mainNav">
-                    <a href="/" class="nav-link animated-link">首页</a>
-                    <a href="/dashboard.html" class="nav-link active animated-link">我的图片</a>
-                    <a href="https://github.com/your-username/tg-image" target="_blank" class="nav-link animated-link">GitHub</a>
-                </nav>
-                <div class="header-buttons">
+            <div class="menu-toggle" id="menuToggle">
+                <i class="ri-arrow-left-s-line"></i>
+            </div>
+        </div>
+        <div class="menu-content">
+            <div class="menu-category">主要功能</div>
+            <a href="/" class="menu-item">
+                <div class="menu-item-icon"><i class="ri-home-5-line"></i></div>
+                <div class="menu-item-text">首页</div>
+                <div class="menu-tooltip">首页</div>
+            </a>
+            <a href="/dashboard.html" class="menu-item active">
+                <div class="menu-item-icon"><i class="ri-image-2-line"></i></div>
+                <div class="menu-item-text">我的图片</div>
+                <div class="menu-tooltip">我的图片</div>
+            </a>
+            <a href="#" class="menu-item" id="uploadMenuBtn">
+                <div class="menu-item-icon"><i class="ri-upload-cloud-2-line"></i></div>
+                <div class="menu-item-text">上传图片</div>
+                <div class="menu-tooltip">上传图片</div>
+            </a>
+
+            <!-- 统计信息按钮 -->
+            <a href="#" class="menu-item" id="statsMenuItem">
+                <div class="menu-item-icon"><i class="ri-bar-chart-2-line"></i></div>
+                <div class="menu-item-text">统计信息</div>
+                <div class="menu-tooltip">统计信息</div>
+            </a>
+
+            <div class="menu-category">账户</div>
+            <a href="/login.html" class="menu-item" id="loginMenuItem" style="display: none;">
+                <div class="menu-item-icon"><i class="ri-login-box-line"></i></div>
+                <div class="menu-item-text">登录</div>
+                <div class="menu-tooltip">登录</div>
+            </a>
+            <a href="#" class="menu-item" id="logoutMenuItem">
+                <div class="menu-item-icon"><i class="ri-logout-box-line"></i></div>
+                <div class="menu-item-text">退出登录</div>
+                <div class="menu-tooltip">退出登录</div>
+            </a>
+
+            <div class="menu-category">更多</div>
+            <a href="https://github.com/xiyewuqiu/new-lmage" target="_blank" class="menu-item">
+                <div class="menu-item-icon"><i class="ri-github-line"></i></div>
+                <div class="menu-item-text">GitHub</div>
+                <div class="menu-tooltip">GitHub</div>
+            </a>
+            <a href="#" class="menu-item" id="themeMenuItem">
+                <div class="menu-item-icon"><i class="ri-moon-line"></i></div>
+                <div class="menu-item-text">切换主题</div>
+                <div class="menu-tooltip">切换主题</div>
+            </a>
+        </div>
+        <div class="menu-footer">
+            &copy; 2024 TG-Image
+        </div>
+    </div>
+
+    <!-- 菜单遮罩层 -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <div class="app-container menu-expanded">
+        <header class="header">
+            <div class="header-left">
+                <button id="mobileMenuToggle" class="mobile-menu-toggle" aria-label="打开菜单">
+                    <i class="ri-menu-line"></i>
+                </button>
+                <div class="logo">
+                    <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
+                    <h1>TG-Image</h1>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="search-container">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" class="search-input" placeholder="搜索图片...">
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="header-action-btn" id="uploadBtn" title="上传图片">
+                        <i class="ri-upload-cloud-2-line"></i>
+                    </button>
                     <div class="love love-toggle" id="themeToggle" aria-label="切换暗色/亮色模式">
-                      <input id="switch" type="checkbox">
-                      <label class="love-heart" for="switch">
-                        <i class="left"></i>
-                        <i class="right"></i>
-                        <i class="bottom"></i>
-                        <div class="round"></div>
-                      </label>
+                        <input id="switch" type="checkbox">
+                        <label class="love-heart" for="switch">
+                            <i class="left"></i>
+                            <i class="right"></i>
+                            <i class="bottom"></i>
+                            <div class="round"></div>
+                        </label>
                     </div>
                     <div id="userDropdown" class="user-dropdown">
                         <button id="userDropdownBtn" class="user-dropdown-btn">
+                            <div class="user-avatar">
+                                <i class="ri-user-3-line"></i>
+                            </div>
                             <span id="userDisplayName">用户</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
+                            <i class="ri-arrow-down-s-line"></i>
                         </button>
                         <div class="user-dropdown-content">
-                            <a href="/dashboard.html">我的图片</a>
-                            <a href="/" id="logoutBtn">退出登录</a>
+                            <a href="/dashboard.html" class="dropdown-item">
+                                <i class="ri-image-2-line"></i>
+                                <span>我的图片</span>
+                            </a>
+                            <a href="#" class="dropdown-item" id="logoutBtn">
+                                <i class="ri-logout-box-line"></i>
+                                <span>退出登录</span>
+                            </a>
                         </div>
                     </div>
-                    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="菜单">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
                 </div>
-            </div>
-
-            <!-- 移动端导航菜单 -->
-            <div class="mobile-menu" id="mobileMenu">
-                <div class="mobile-menu-header">
-                    <div class="logo">
-                        <img src="./images/logo.svg" alt="TG-Image Logo" class="logo-img">
-                        <h1>TG-Image</h1>
-                    </div>
-                    <button id="mobileMenuCloseBtn" class="mobile-menu-close" aria-label="关闭菜单">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-                <nav class="mobile-nav">
-                    <a href="/" class="mobile-nav-link">首页</a>
-                    <a href="/dashboard.html" class="mobile-nav-link active">我的图片</a>
-                    <a href="/" id="mobileLogoutBtn" class="mobile-nav-link">退出登录</a>
-                </nav>
             </div>
         </header>
 
@@ -1719,88 +1788,13 @@
                     <h2 class="dashboard-title">我的图片</h2>
                     <div class="dashboard-actions">
                         <a href="/" class="upload-btn premium-btn premium-btn-primary premium-btn-icon-left">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
+                            <i class="ri-upload-cloud-2-line"></i>
                             上传新图片
                         </a>
-                    </div>
-                </div>
-
-                <div class="dashboard-stats">
-                    <div class="stat-card-enhanced">
-                        <div class="stat-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                        </div>
-                        <div class="stat-value-enhanced" id="totalImages">0</div>
-                        <div class="stat-label-enhanced">总图片数</div>
-                    </div>
-                    <div class="stat-card-enhanced">
-                        <div class="stat-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                        </div>
-                        <div class="stat-value-enhanced" id="totalSize">0 MB</div>
-                        <div class="stat-label-enhanced">总存储空间</div>
-                    </div>
-                    <div class="stat-card-enhanced">
-                        <div class="stat-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </div>
-                        <div class="stat-value-enhanced" id="recentUploads">0</div>
-                        <div class="stat-label-enhanced">最近上传(7天)</div>
-                    </div>
-                    <div class="stat-card-enhanced">
-                        <div class="stat-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="20" x2="12" y2="10"></line>
-                                <line x1="18" y1="20" x2="18" y2="4"></line>
-                                <line x1="6" y1="20" x2="6" y2="16"></line>
-                            </svg>
-                        </div>
-                        <div class="stat-value-enhanced" id="avgFileSize">0 MB</div>
-                        <div class="stat-label-enhanced">平均大小</div>
-                    </div>
-                </div>
-
-                <!-- 数据可视化面板 -->
-                <div class="dashboard-charts">
-                    <div class="chart-container-enhanced">
-                        <div class="chart-header">
-                            <div class="chart-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                </svg>
-                            </div>
-                            <h3 class="chart-title-enhanced">上传趋势</h3>
-                        </div>
-                        <canvas id="uploadTrendChart"></canvas>
-                    </div>
-                    <div class="chart-container-enhanced">
-                        <div class="chart-header">
-                            <div class="chart-icon" style="background: #8b5cf6;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                                </svg>
-                            </div>
-                            <h3 class="chart-title-enhanced">存储使用情况</h3>
-                        </div>
-                        <canvas id="storageUsageChart"></canvas>
+                        <button id="statsToggleBtn" class="stats-toggle-btn premium-btn premium-btn-outline-primary premium-btn-icon-left">
+                            <i class="ri-bar-chart-2-line"></i>
+                            统计信息
+                        </button>
                     </div>
                 </div>
 
@@ -2071,11 +2065,76 @@
     <!-- 移动端菜单遮罩 -->
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
+    <!-- 浮动图表面板 -->
+    <div class="floating-charts-panel" id="chartsPanel">
+        <div class="charts-panel-header">
+            <h3>数据统计</h3>
+            <button class="charts-panel-close" id="closeChartsBtn">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <div class="charts-panel-content">
+            <!-- 统计卡片 -->
+            <div class="stats-cards-container">
+                <div class="stat-card-enhanced">
+                    <div class="stat-icon">
+                        <i class="ri-image-line"></i>
+                    </div>
+                    <div class="stat-value-enhanced" id="totalImages">0</div>
+                    <div class="stat-label-enhanced">总图片数</div>
+                </div>
+                <div class="stat-card-enhanced">
+                    <div class="stat-icon">
+                        <i class="ri-hard-drive-line"></i>
+                    </div>
+                    <div class="stat-value-enhanced" id="totalSize">0 MB</div>
+                    <div class="stat-label-enhanced">总存储空间</div>
+                </div>
+                <div class="stat-card-enhanced">
+                    <div class="stat-icon">
+                        <i class="ri-calendar-line"></i>
+                    </div>
+                    <div class="stat-value-enhanced" id="recentUploads">0</div>
+                    <div class="stat-label-enhanced">最近上传(7天)</div>
+                </div>
+                <div class="stat-card-enhanced">
+                    <div class="stat-icon">
+                        <i class="ri-file-size-line"></i>
+                    </div>
+                    <div class="stat-value-enhanced" id="avgFileSize">0 MB</div>
+                    <div class="stat-label-enhanced">平均大小</div>
+                </div>
+            </div>
+
+            <!-- 图表 -->
+            <div class="chart-container-enhanced">
+                <div class="chart-header">
+                    <div class="chart-icon">
+                        <i class="ri-line-chart-line"></i>
+                    </div>
+                    <h3 class="chart-title-enhanced">上传趋势</h3>
+                </div>
+                <canvas id="uploadTrendChart"></canvas>
+            </div>
+            <div class="chart-container-enhanced">
+                <div class="chart-header">
+                    <div class="chart-icon" style="background: #8b5cf6;">
+                        <i class="ri-pie-chart-line"></i>
+                    </div>
+                    <h3 class="chart-title-enhanced">存储使用情况</h3>
+                </div>
+                <canvas id="storageUsageChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
     <script src="./js/dashboard.js"></script>
+    <script src="./js/menu-system.js"></script>
+    <script src="./js/share.js"></script>
 </body>
 </html>

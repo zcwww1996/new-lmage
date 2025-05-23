@@ -1857,5 +1857,305 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname === '/dashboard.html') {
         // 初始化仪表盘
         initDashboard();
+
+        // 与菜单系统集成
+        initMenuIntegration();
     }
 });
+
+// 初始化与菜单系统的集成
+function initMenuIntegration() {
+    // 上传按钮点击事件
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadMenuBtn = document.getElementById('uploadMenuBtn');
+
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+    }
+
+    if (uploadMenuBtn) {
+        uploadMenuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/';
+        });
+    }
+
+    // 退出登录菜单项点击事件
+    const logoutMenuItem = document.getElementById('logoutMenuItem');
+    if (logoutMenuItem) {
+        logoutMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
+
+    // 主题切换菜单项点击事件
+    const themeMenuItem = document.getElementById('themeMenuItem');
+    if (themeMenuItem) {
+        themeMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleTheme();
+        });
+    }
+
+    // 移动端菜单切换按钮
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    if (mobileMenuToggle && sideMenu && menuOverlay) {
+        mobileMenuToggle.addEventListener('click', () => {
+            sideMenu.classList.add('mobile-visible');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            sideMenu.classList.remove('mobile-visible');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // 初始化图表面板控制
+    initChartsPanelControl();
+
+    // 更新菜单中的统计数据
+    updateMenuStats();
+}
+
+/**
+ * 切换主题
+ */
+function toggleTheme() {
+    const switchCheckbox = document.getElementById('switch');
+    if (switchCheckbox) {
+        switchCheckbox.checked = !switchCheckbox.checked;
+
+        // 触发change事件
+        const event = new Event('change');
+        switchCheckbox.dispatchEvent(event);
+    }
+}
+
+/**
+ * 初始化图表面板控制
+ */
+function initChartsPanelControl() {
+    const statsMenuItem = document.getElementById('statsMenuItem');
+    const statsToggleBtn = document.getElementById('statsToggleBtn');
+    const chartsPanel = document.getElementById('chartsPanel');
+    const closeChartsBtn = document.getElementById('closeChartsBtn');
+
+    // 点击菜单中的统计信息按钮
+    if (statsMenuItem && chartsPanel) {
+        statsMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            chartsPanel.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    // 点击仪表盘中的统计信息按钮
+    if (statsToggleBtn && chartsPanel) {
+        statsToggleBtn.addEventListener('click', () => {
+            chartsPanel.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    // 点击关闭按钮
+    if (closeChartsBtn && chartsPanel) {
+        closeChartsBtn.addEventListener('click', () => {
+            chartsPanel.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    }
+
+    // 点击外部区域关闭
+    document.addEventListener('click', (e) => {
+        if (chartsPanel && chartsPanel.classList.contains('active')) {
+            if (!chartsPanel.contains(e.target) &&
+                e.target !== statsMenuItem &&
+                e.target !== statsToggleBtn &&
+                !statsMenuItem?.contains(e.target) &&
+                !statsToggleBtn?.contains(e.target)) {
+                chartsPanel.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+    });
+}
+
+/**
+ * 更新统计数据
+ */
+function updateMenuStats() {
+    // 获取统计面板中的统计元素
+    const totalImagesEl = document.getElementById('totalImages');
+    const totalSizeEl = document.getElementById('totalSize');
+    const recentUploadsEl = document.getElementById('recentUploads');
+    const avgFileSizeEl = document.getElementById('avgFileSize');
+
+    // 模拟数据 - 实际应用中应该从API获取
+    const stats = {
+        totalImages: 128,
+        totalSize: '256 MB',
+        recentUploads: 15,
+        avgFileSize: '2 MB'
+    };
+
+    // 更新统计面板中的数据
+    if (totalImagesEl) totalImagesEl.textContent = stats.totalImages;
+    if (totalSizeEl) totalSizeEl.textContent = stats.totalSize;
+    if (recentUploadsEl) recentUploadsEl.textContent = stats.recentUploads;
+    if (avgFileSizeEl) avgFileSizeEl.textContent = stats.avgFileSize;
+
+    // 初始化图表
+    initCharts();
+}
+
+/**
+ * 初始化图表
+ */
+function initCharts() {
+    // 初始化上传趋势图表
+    initUploadTrendChart();
+
+    // 初始化存储使用情况图表
+    initStorageUsageChart();
+}
+
+/**
+ * 初始化上传趋势图表
+ */
+function initUploadTrendChart() {
+    const ctx = document.getElementById('uploadTrendChart');
+
+    if (!ctx) return;
+
+    // 模拟数据 - 实际应用中应该从API获取
+    const labels = ['1月', '2月', '3月', '4月', '5月', '6月', '7月'];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: '上传数量',
+            data: [12, 19, 8, 15, 25, 18, 30],
+            borderColor: '#4361ee',
+            backgroundColor: 'rgba(67, 97, 238, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    padding: 10,
+                    cornerRadius: 4,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    };
+
+    // 创建图表
+    new Chart(ctx, config);
+}
+
+/**
+ * 初始化存储使用情况图表
+ */
+function initStorageUsageChart() {
+    const ctx = document.getElementById('storageUsageChart');
+
+    if (!ctx) return;
+
+    // 模拟数据 - 实际应用中应该从API获取
+    const data = {
+        labels: ['已使用', '剩余空间'],
+        datasets: [{
+            data: [256, 744],
+            backgroundColor: [
+                '#8b5cf6',
+                '#e5e7eb'
+            ],
+            borderWidth: 0,
+            hoverOffset: 4
+        }]
+    };
+
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            return `${label}: ${value} MB`;
+                        }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    padding: 10,
+                    cornerRadius: 4,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            }
+        }
+    };
+
+    // 创建图表
+    new Chart(ctx, config);
+}
