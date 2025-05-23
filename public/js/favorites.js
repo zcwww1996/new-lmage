@@ -632,15 +632,21 @@ function hidePagination() {
  * 复制到剪贴板
  */
 function copyToClipboard(text) {
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-            showNotification('已复制到剪贴板', 'success');
-        }).catch(err => {
-            console.error('复制失败:', err);
-            fallbackCopyToClipboard(text);
-        });
+    // 使用common.js中的函数
+    if (window.commonUtils && window.commonUtils.copyToClipboard) {
+        window.commonUtils.copyToClipboard(text);
     } else {
-        fallbackCopyToClipboard(text);
+        // 降级方案
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('已复制到剪贴板', 'success');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                fallbackCopyToClipboard(text);
+            });
+        } else {
+            fallbackCopyToClipboard(text);
+        }
     }
 }
 
@@ -680,61 +686,13 @@ function viewImage(imageUrl) {
  * 显示通知
  */
 function showNotification(message, type = 'info') {
-    // 创建通知元素
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="ri-${getNotificationIcon(type)}-line"></i>
-            <span>${message}</span>
-            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                <i class="ri-close-line"></i>
-            </button>
-        </div>
-    `;
-    
-    // 添加样式
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: var(--card-bg);
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
-        border-left: 4px solid var(--${type === 'error' ? 'error' : type === 'success' ? 'success' : 'primary'}-color);
-        animation: slideInRight 0.3s ease;
-        padding: 1rem;
-        min-width: 300px;
-    `;
-    
-    // 添加到页面
-    document.body.appendChild(notification);
-    
-    // 自动删除
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease forwards';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 300);
-        }
-    }, 3000);
-}
-
-/**
- * 获取通知图标
- */
-function getNotificationIcon(type) {
-    const icons = {
-        success: 'check-circle',
-        error: 'error-warning',
-        info: 'information',
-        warning: 'alert-circle'
-    };
-    return icons[type] || 'information';
+    // 使用common.js中的函数
+    if (window.showNotification) {
+        window.showNotification(message, type);
+    } else {
+        // 降级方案
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
 }
 
 /**
@@ -745,7 +703,7 @@ function showLoading() {
     if (grid) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                <div class="loading-spinner" style="display: inline-block; width: 40px; height: 40px; border: 4px solid var(--border-color); border-radius: 50%; border-top-color: var(--primary-color); animation: spin 1s ease-in-out infinite;"></div>
+                <div class="loading-spinner"></div>
                 <p style="margin-top: 1rem; color: var(--text-light);">正在加载收藏图片...</p>
             </div>
         `;
@@ -756,7 +714,7 @@ function showLoading() {
  * 隐藏加载状态
  */
 function hideLoading() {
-    // 加载完成后会重新渲染内容
+    // 加载完成后会通过renderImages重新渲染内容，无需特殊处理
 }
 
 /**
@@ -779,26 +737,37 @@ function showError(message) {
  * 滚动到顶部
  */
 function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 使用common.js中的函数
+    if (window.commonUtils && window.commonUtils.scrollToTop) {
+        window.commonUtils.scrollToTop();
+    } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
 /**
  * 格式化日期
  */
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) {
-        return '昨天';
-    } else if (diffDays < 7) {
-        return `${diffDays}天前`;
-    } else if (diffDays < 30) {
-        return `${Math.floor(diffDays / 7)}周前`;
+    // 使用common.js中的函数
+    if (window.commonUtils && window.commonUtils.formatDate) {
+        return window.commonUtils.formatDate(dateString);
     } else {
-        return date.toLocaleDateString('zh-CN');
+        // 降级方案
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+            return '昨天';
+        } else if (diffDays < 7) {
+            return `${diffDays}天前`;
+        } else if (diffDays < 30) {
+            return `${Math.floor(diffDays / 7)}周前`;
+        } else {
+            return date.toLocaleDateString('zh-CN');
+        }
     }
 }
 
@@ -806,78 +775,38 @@ function formatDate(dateString) {
  * 格式化文件大小
  */
 function formatFileSize(bytes) {
-    if (bytes === 0) return '0 B';
-    
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    // 使用common.js中的函数
+    if (window.commonUtils && window.commonUtils.formatFileSize) {
+        return window.commonUtils.formatFileSize(bytes);
+    } else {
+        // 降级方案
+        if (bytes === 0) return '0 B';
+        
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
 }
 
 /**
  * 防抖函数
  */
 function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
+    // 使用common.js中的函数
+    if (window.commonUtils && window.commonUtils.debounce) {
+        return window.commonUtils.debounce(func, wait);
+    } else {
+        // 降级方案
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
             clearTimeout(timeout);
-            func(...args);
+            timeout = setTimeout(later, wait);
         };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// 添加通知动画样式
-if (!document.querySelector('#favorites-notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'favorites-notification-styles';
-    style.textContent = `
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            cursor: pointer;
-            margin-left: auto;
-            padding: 0.25rem;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        
-        .notification-close:hover {
-            background: rgba(0, 0, 0, 0.1);
-            color: var(--text-color);
-        }
-        
-        .page-ellipsis {
-            padding: 0.5rem 1rem;
-            color: var(--text-light);
-            user-select: none;
-        }
-    `;
-    document.head.appendChild(style);
+    }
 } 
