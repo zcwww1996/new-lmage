@@ -19,552 +19,113 @@
     <link rel="icon" href="./images/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        :root {
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-tertiary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-quaternary: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            --neon-glow: 0 0 20px rgba(102, 126, 234, 0.6);
-            --particle-color: rgba(102, 126, 234, 0.8);
-        }
-
-        body {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            min-height: 100vh;
-            font-family: 'Poppins', 'Inter', sans-serif;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* 粒子背景动画 */
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            background: var(--particle-color);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-            opacity: 0.7;
-        }
-
-        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: -0.5s; }
-        .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: -1s; }
-        .particle:nth-child(3) { width: 3px; height: 3px; left: 30%; animation-delay: -1.5s; }
-        .particle:nth-child(4) { width: 5px; height: 5px; left: 40%; animation-delay: -2s; }
-        .particle:nth-child(5) { width: 4px; height: 4px; left: 50%; animation-delay: -2.5s; }
-        .particle:nth-child(6) { width: 6px; height: 6px; left: 60%; animation-delay: -3s; }
-        .particle:nth-child(7) { width: 3px; height: 3px; left: 70%; animation-delay: -3.5s; }
-        .particle:nth-child(8) { width: 5px; height: 5px; left: 80%; animation-delay: -4s; }
-        .particle:nth-child(9) { width: 4px; height: 4px; left: 90%; animation-delay: -4.5s; }
-
-        @keyframes float {
-            0%, 100% { 
-                transform: translateY(100vh) rotate(0deg); 
-                opacity: 0; 
-            }
-            10%, 90% { 
-                opacity: 0.7; 
-            }
-            50% { 
-                transform: translateY(-100px) rotate(180deg); 
-                opacity: 1; 
-            }
-        }
-
-        /* 玻璃态效果 */
-        .glass-container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: var(--glass-shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 3s ease-in-out infinite;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
-        }
-
         .auth-container {
             max-width: 480px;
             margin: 2rem auto;
-            padding: 3rem 2.5rem;
-            position: relative;
-            z-index: 10;
-            animation: slideInUp 0.8s ease-out;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
         }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        body.dark-mode .auth-container {
+            background-color: var(--dark-card-bg);
         }
 
         .auth-header {
             text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .auth-header::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: var(--gradient-primary);
-            border-radius: 2px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.7; transform: translateX(-50%) scale(1.1); }
+            margin-bottom: 2rem;
         }
 
         .auth-header h2 {
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+            background: var(--primary-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
         }
 
-        .auth-header p {
-            color: rgba(255,255,255,0.8);
-            font-size: 1.1rem;
-            font-weight: 300;
-            margin-top: 1rem;
-        }
-
-        /* 超现代表单卡片 */
-        .wrapper {
-            position: relative;
-            z-index: 10;
-        }
-
-        .card-switch {
-            position: relative;
-            perspective: 1000px;
-        }
-
-        .switch {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        .flip-card__inner {
-            position: relative;
-            width: 100%;
-            text-align: center;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-
-        .toggle:checked ~ .slider .flip-card__inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-card__front,
-        .flip-card__back {
-            position: relative;
-            width: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .flip-card__back {
-            transform: rotateY(180deg);
-            position: absolute;
-            top: 0;
-        }
-
-        .title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 2rem;
-            text-align: center;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
-        }
-
-        .flip-card__form {
+        .auth-form {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
-        .flip-card__input {
-            padding: 1rem 1.5rem;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 15px;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .form-group input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
             font-size: 1rem;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all var(--transition-fast);
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
-        .flip-card__input::placeholder {
-            color: rgba(255,255,255,0.6);
+        body.dark-mode .form-group input {
+            background-color: var(--dark-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
         }
 
-        .flip-card__input:focus {
+        .form-group input:focus {
             outline: none;
-            border-color: rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.1);
-            box-shadow: var(--neon-glow);
-            transform: translateY(-2px);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(var(--primary-light-rgb), 0.2);
         }
 
-        .flip-card__btn {
-            padding: 1rem 2rem;
-            background: var(--gradient-primary);
+        .auth-btn {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-gradient);
             color: white;
             border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
+            transition: all var(--transition-fast);
         }
 
-        .flip-card__btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(var(--primary-dark-rgb), 0.3);
         }
 
-        .flip-card__btn:hover::before {
-            left: 100%;
+        .auth-links {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
         }
 
-        .flip-card__btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-
-        .flip-card__btn:active {
-            transform: translateY(-1px);
-        }
-
-        /* 切换开关样式 */
-        .toggle {
+        .auth-error {
+            background-color: rgba(255, 0, 0, 0.1);
+            color: #e74c3c;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
             display: none;
         }
 
-        .slider {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-        }
-
-        .card-side {
-            position: relative;
-            width: 300px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .card-side::before {
-            content: '登录';
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            z-index: 2;
-            transition: all 0.3s ease;
-        }
-
-        .card-side::after {
-            content: '注册';
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255,255,255,0.6);
-            font-weight: 600;
-            font-size: 0.9rem;
-            z-index: 2;
-            transition: all 0.3s ease;
-        }
-
-        .toggle:checked ~ .slider .card-side::before {
-            color: rgba(255,255,255,0.6);
-        }
-
-        .toggle:checked ~ .slider .card-side::after {
-            color: white;
-        }
-
-        .card-side span {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 146px;
-            height: 36px;
-            background: var(--gradient-primary);
-            border-radius: 18px;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .toggle:checked ~ .slider .card-side span {
-            transform: translateX(150px);
-        }
-
-        /* 美化表单验证 */
-        .form-group {
-            position: relative;
-        }
-
-        .form-group.error .flip-card__input {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-        }
-
-        .form-group.success .flip-card__input {
-            border-color: #51cf66;
-            box-shadow: 0 0 20px rgba(81, 207, 102, 0.3);
-        }
-
-        .error-message {
-            position: absolute;
-            bottom: -25px;
-            left: 0;
-            color: #ff6b6b;
-            font-size: 0.8rem;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .form-group.error .error-message {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 社交登录按钮 */
-        .social-login {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .social-login h4 {
-            text-align: center;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 1.5rem;
-            font-weight: 400;
-        }
-
-        .social-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .social-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .social-btn:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        .social-btn.google:hover { background: #db4437; border-color: #db4437; }
-        .social-btn.github:hover { background: #333; border-color: #333; }
-        .social-btn.twitter:hover { background: #1da1f2; border-color: #1da1f2; }
-
-        /* 忘记密码链接 */
-        .forgot-password {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-
-        .forgot-password a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: white;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .auth-container {
-                margin: 1rem;
-                padding: 2rem 1.5rem;
-            }
-
-            .auth-header h2 {
-                font-size: 2rem;
-            }
-
-            .card-side {
-                width: 250px;
-            }
-
-            .card-side span {
-                width: 121px;
-            }
-
-            .toggle:checked ~ .slider .card-side span {
-                transform: translateX(125px);
-            }
-        }
-
-        /* 加载状态 */
-        .loading {
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .loading .flip-card__btn {
-            background: var(--gradient-secondary);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        /* 成功状态动画 */
-        .success-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(81, 207, 102, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s ease;
-        }
-
-        .success-animation.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .success-checkmark {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: bounceIn 0.6s ease-out;
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        body.dark-mode .auth-error {
+            background-color: rgba(255, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
-    <!-- 粒子背景 -->
-    <div class="particles-container">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
     <!-- 页面加载动画 -->
     <div id="pageLoader" class="page-loader">
         <div class="loader-content">
@@ -575,13 +136,6 @@
                 <div class="loader-dot"></div>
             </div>
             <div class="loader-brand">TG-Image</div>
-        </div>
-    </div>
-
-    <!-- 成功动画 -->
-    <div id="successAnimation" class="success-animation">
-        <div class="success-checkmark">
-            <i class="ri-check-line" style="font-size: 2rem; color: #51cf66;"></i>
         </div>
     </div>
 
@@ -640,100 +194,32 @@
 
         <main>
             <div id="loginError" class="auth-error"></div>
-            <div class="auth-container glass-container">
-                <div class="auth-header">
-                    <h2>欢迎回来</h2>
-                    <p>登录到您的 TG-Image 账户</p>
-                </div>
-                
-                <div class="wrapper">
-                    <div class="card-switch">
-                        <label class="switch">
-                           <input class="toggle" type="checkbox" id="authToggle">
-                           <span class="slider">
-                               <div class="card-side">
-                                   <span></span>
-                               </div>
-                           </span>
-                           <div class="flip-card__inner">
-                              <div class="flip-card__front">
-                                 <div class="title">登录账户</div>
-                                 <form id="loginForm" class="flip-card__form">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="用户名或邮箱" name="username" id="username" class="flip-card__input premium-input" required>
-                                        <span class="error-message">请输入有效的用户名或邮箱</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" placeholder="密码" name="password" id="password" class="flip-card__input premium-input" required>
-                                        <span class="error-message">密码长度至少6位</span>
-                                    </div>
-                                    <div class="forgot-password">
-                                        <a href="#" id="forgotPasswordLink">忘记密码？</a>
-                                    </div>
-                                    <button type="submit" class="flip-card__btn premium-btn premium-btn-primary">
-                                        <i class="ri-login-circle-line"></i>
-                                        <span>立即登录</span>
-                                    </button>
-                                 </form>
-                                 
-                                 <div class="social-login">
-                                     <h4>或使用社交账户登录</h4>
-                                     <div class="social-buttons">
-                                         <div class="social-btn google" title="Google登录">
-                                             <i class="ri-google-fill"></i>
-                                         </div>
-                                         <div class="social-btn github" title="GitHub登录">
-                                             <i class="ri-github-fill"></i>
-                                         </div>
-                                         <div class="social-btn twitter" title="Twitter登录">
-                                             <i class="ri-twitter-fill"></i>
-                                         </div>
-                                     </div>
-                                 </div>
-                              </div>
-                              <div class="flip-card__back">
-                                 <div class="title">创建账户</div>
-                                 <form id="registerForm" class="flip-card__form">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="用户名" name="username" id="regUsername" class="flip-card__input premium-input" required>
-                                        <span class="error-message">用户名长度3-20位，只能包含字母、数字和下划线</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" placeholder="电子邮箱" name="email" id="regEmail" class="flip-card__input premium-input" required>
-                                        <span class="error-message">请输入有效的邮箱地址</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" placeholder="密码" name="password" id="regPassword" class="flip-card__input premium-input" required>
-                                        <span class="error-message">密码长度至少8位，包含大小写字母和数字</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" placeholder="确认密码" name="confirmPassword" id="regConfirmPassword" class="flip-card__input premium-input" required>
-                                        <span class="error-message">两次输入的密码不一致</span>
-                                    </div>
-                                    <button type="submit" class="flip-card__btn premium-btn premium-btn-primary">
-                                        <i class="ri-user-add-line"></i>
-                                        <span>立即注册</span>
-                                    </button>
-                                 </form>
-                                 
-                                 <div class="social-login">
-                                     <h4>或使用社交账户注册</h4>
-                                     <div class="social-buttons">
-                                         <div class="social-btn google" title="Google注册">
-                                             <i class="ri-google-fill"></i>
-                                         </div>
-                                         <div class="social-btn github" title="GitHub注册">
-                                             <i class="ri-github-fill"></i>
-                                         </div>
-                                         <div class="social-btn twitter" title="Twitter注册">
-                                             <i class="ri-twitter-fill"></i>
-                                         </div>
-                                     </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </label>
-                    </div>
+            <div class="wrapper">
+                <div class="card-switch">
+                    <label class="switch">
+                       <input class="toggle" type="checkbox" id="authToggle">
+                       <span class="slider"></span>
+                       <span class="card-side"></span>
+                       <div class="flip-card__inner">
+                          <div class="flip-card__front">
+                             <div class="title">登录</div>
+                             <form id="loginForm" class="flip-card__form">
+                                <input type="text" placeholder="用户名" name="username" id="username" class="flip-card__input premium-input" required>
+                                <input type="password" placeholder="密码" name="password" id="password" class="flip-card__input premium-input" required>
+                                <button type="submit" class="flip-card__btn premium-btn premium-btn-primary">登录</button>
+                             </form>
+                          </div>
+                          <div class="flip-card__back">
+                             <div class="title">注册</div>
+                             <form id="registerForm" class="flip-card__form">
+                                <input type="text" placeholder="用户名" name="username" id="regUsername" class="flip-card__input premium-input" required>
+                                <input type="email" placeholder="电子邮箱" name="email" id="regEmail" class="flip-card__input premium-input" required>
+                                <input type="password" placeholder="密码" name="password" id="regPassword" class="flip-card__input premium-input" required>
+                                <button type="submit" class="flip-card__btn premium-btn premium-btn-primary">注册</button>
+                             </form>
+                          </div>
+                       </div>
+                    </label>
                 </div>
             </div>
         </main>
@@ -759,7 +245,6 @@
         // 登录/注册卡片切换初始化
         document.addEventListener('DOMContentLoaded', function() {
             const authToggle = document.getElementById('authToggle');
-            const successAnimation = document.getElementById('successAnimation');
 
             // 根据URL参数决定显示登录还是注册表单
             const urlParams = new URLSearchParams(window.location.search);
@@ -768,102 +253,6 @@
             if (action === 'register') {
                 authToggle.checked = true;
             }
-
-            // 表单验证
-            function validateInput(input, validationFn) {
-                const formGroup = input.closest('.form-group');
-                const isValid = validationFn(input.value);
-                
-                formGroup.classList.remove('error', 'success');
-                if (input.value.length > 0) {
-                    formGroup.classList.add(isValid ? 'success' : 'error');
-                }
-                
-                return isValid;
-            }
-
-            // 验证函数
-            const validators = {
-                username: (value) => /^[a-zA-Z0-9_]{3,20}$/.test(value),
-                email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-                password: (value) => value.length >= 8 && /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value),
-                loginPassword: (value) => value.length >= 6
-            };
-
-            // 绑定实时验证
-            document.getElementById('username').addEventListener('input', function() {
-                validateInput(this, validators.username);
-            });
-
-            document.getElementById('regUsername').addEventListener('input', function() {
-                validateInput(this, validators.username);
-            });
-
-            document.getElementById('regEmail').addEventListener('input', function() {
-                validateInput(this, validators.email);
-            });
-
-            document.getElementById('password').addEventListener('input', function() {
-                validateInput(this, validators.loginPassword);
-            });
-
-            document.getElementById('regPassword').addEventListener('input', function() {
-                validateInput(this, validators.password);
-            });
-
-            document.getElementById('regConfirmPassword').addEventListener('input', function() {
-                const password = document.getElementById('regPassword').value;
-                validateInput(this, (value) => value === password && value.length > 0);
-            });
-
-            // 表单提交处理
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                this.classList.add('loading');
-                
-                // 模拟登录过程
-                setTimeout(() => {
-                    this.classList.remove('loading');
-                    successAnimation.classList.add('active');
-                    
-                    setTimeout(() => {
-                        successAnimation.classList.remove('active');
-                        window.location.href = '/dashboard.html';
-                    }, 1500);
-                }, 2000);
-            });
-
-            document.getElementById('registerForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                this.classList.add('loading');
-                
-                // 模拟注册过程
-                setTimeout(() => {
-                    this.classList.remove('loading');
-                    successAnimation.classList.add('active');
-                    
-                    setTimeout(() => {
-                        successAnimation.classList.remove('active');
-                        authToggle.checked = false; // 切换到登录表单
-                    }, 1500);
-                }, 2000);
-            });
-
-            // 社交登录处理
-            document.querySelectorAll('.social-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const platform = this.classList[1];
-                    console.log(`社交登录: ${platform}`);
-                    // 这里可以集成实际的社交登录逻辑
-                });
-            });
-
-            // 忘记密码处理
-            document.getElementById('forgotPasswordLink').addEventListener('click', function(e) {
-                e.preventDefault();
-                // 这里可以打开忘记密码模态框或跳转到重置密码页面
-                alert('忘记密码功能正在开发中...');
-            });
 
             // 初始化表单处理
             initLoginForm();
