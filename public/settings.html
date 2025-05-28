@@ -542,7 +542,7 @@
                             </div>
                             <h3 class="settings-card-title">外观设置</h3>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div class="settings-item-info">
                                 <div class="settings-item-title">深色模式</div>
@@ -583,7 +583,7 @@
                             </div>
                             <h3 class="settings-card-title">上传设置</h3>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div class="settings-item-info">
                                 <div class="settings-item-title">自动压缩</div>
@@ -623,7 +623,7 @@
                             </div>
                             <h3 class="settings-card-title">隐私安全</h3>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div class="settings-item-info">
                                 <div class="settings-item-title">图片公开可见</div>
@@ -660,7 +660,7 @@
                             </div>
                             <h3 class="settings-card-title">存储管理</h3>
                         </div>
-                        
+
                         <div class="settings-item">
                             <div class="settings-item-info">
                                 <div class="settings-item-title">自动清理</div>
@@ -673,14 +673,16 @@
                         <div class="storage-info">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <span style="font-weight: 600;">存储使用情况</span>
-                                <span style="color: var(--primary-color); font-weight: 600;">128.5 MB / 2 GB</span>
+                                <span style="color: var(--primary-color); font-weight: 600;" id="storageUsageDisplay">128.5 MB / ∞</span>
                             </div>
                             <div class="storage-bar">
-                                <div class="storage-progress" style="width: 6.4%;"></div>
+                                <div class="storage-progress" style="width: 0%; background: linear-gradient(90deg, var(--primary-color), var(--success-color));"></div>
                             </div>
                             <div class="storage-text">
-                                <span>已使用 6.4%</span>
-                                <span>剩余 1.87 GB</span>
+                                <span id="storageUsedText">已使用 128.5 MB</span>
+                                <span style="color: var(--success-color); font-weight: 600;">
+                                    <i class="ri-infinity-line"></i> 无限空间
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -755,4 +757,4 @@
     <script src="./js/menu-system.js"></script>
     <script src="./js/settings.js"></script>
 </body>
-</html> 
+</html>

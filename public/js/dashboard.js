@@ -90,7 +90,7 @@ function updateMenuBadges() {
     if (imageCountBadge) {
         const totalImages = currentImages.length;
         imageCountBadge.textContent = totalImages;
-        
+
         // 添加数字增长动画
         if (totalImages > 0) {
             imageCountBadge.style.transform = 'scale(1.2)';
@@ -105,7 +105,7 @@ function updateMenuBadges() {
     if (favoriteCountBadge) {
         const favoriteCount = favoriteImages.size;
         favoriteCountBadge.textContent = favoriteCount;
-        
+
         // 添加数字增长动画
         if (favoriteCount > 0) {
             favoriteCountBadge.style.transform = 'scale(1.2)';
@@ -819,17 +819,17 @@ function initCharts() {
         }
     });
 
-    // 初始化存储使用情况图表
+    // 初始化存储使用情况图表 - 无限存储版本
     const storageUsageCtx = document.getElementById('storageUsageChart').getContext('2d');
     storageUsageChart = new Chart(storageUsageCtx, {
         type: 'doughnut',
         data: {
-            labels: ['图片', '其他文件'],
+            labels: ['已使用', '无限可用空间'],
             datasets: [{
-                data: [0, 0],
+                data: [0, 100],
                 backgroundColor: [
-                    '#3b82f6',
-                    '#8b5cf6'
+                    '#4361ee',  // 已使用 - 蓝色
+                    '#10b981'   // 无限空间 - 绿色
                 ],
                 borderColor: isDarkMode ? '#1f2937' : '#ffffff',
                 borderWidth: 3,
@@ -875,8 +875,12 @@ function initCharts() {
                     },
                     callbacks: {
                         label: function(context) {
+                            const label = context.label || '';
+                            if (label.includes('无限')) {
+                                return '∞ 无限存储空间';
+                            }
                             const value = context.raw;
-                            return context.label + ': ' + formatFileSize(value);
+                            return label + ': ' + formatFileSize(value);
                         }
                     }
                 }
@@ -937,17 +941,28 @@ function updateCharts() {
     uploadTrendChart.data.datasets[0].data = data;
     uploadTrendChart.update();
 
-    // 更新存储使用情况图表
+    // 更新存储使用情况图表 - 无限存储版本
     let imageSize = 0;
     currentImages.forEach(img => {
         imageSize += img.fileSize || 0;
     });
 
-    // 假设总存储空间为1GB，或者从API获取
-    const totalStorage = 1024 * 1024 * 1024; // 1GB
-    const otherSize = Math.max(0, totalStorage - imageSize);
+    // 由于是无限存储，只显示已使用的空间
+    // 设置一个很大的数值来表示无限空间，但在视觉上只显示很小的使用比例
+    const displayTotalStorage = Math.max(imageSize * 100, 1024 * 1024 * 1024); // 至少1GB用于显示
+    const otherSize = displayTotalStorage - imageSize;
 
     storageUsageChart.data.datasets[0].data = [imageSize, otherSize];
+
+    // 更新图表标签以反映无限存储
+    storageUsageChart.data.labels = ['已使用', '无限可用空间'];
+
+    // 更新颜色以突出无限存储特性
+    storageUsageChart.data.datasets[0].backgroundColor = [
+        '#4361ee', // 已使用 - 蓝色
+        '#10b981'  // 可用空间 - 绿色（表示无限）
+    ];
+
     storageUsageChart.update();
 }
 

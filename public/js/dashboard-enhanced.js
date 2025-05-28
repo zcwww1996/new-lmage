@@ -11,7 +11,7 @@ class DashboardEnhanced {
             popularTags: {},
             recentActivity: []
         };
-        
+
         this.charts = {};
         this.filters = {
             dateRange: 'all',
@@ -19,7 +19,7 @@ class DashboardEnhanced {
             tag: 'all',
             favoriteOnly: false
         };
-        
+
         this.init();
     }
 
@@ -61,7 +61,7 @@ class DashboardEnhanced {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card advanced-stat-card">
                 <div class="stat-icon">
                     <i class="ri-heart-line"></i>
@@ -75,7 +75,7 @@ class DashboardEnhanced {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card advanced-stat-card">
                 <div class="stat-icon">
                     <i class="ri-share-line"></i>
@@ -89,7 +89,7 @@ class DashboardEnhanced {
                     </div>
                 </div>
             </div>
-            
+
             <div class="stat-card advanced-stat-card">
                 <div class="stat-icon">
                     <i class="ri-speed-line"></i>
@@ -181,6 +181,15 @@ class DashboardEnhanced {
                     </div>
                     <div class="storage-stat">
                         <div class="storage-stat-icon">
+                            <i class="ri-infinity-line"></i>
+                        </div>
+                        <div class="storage-stat-info">
+                            <div class="storage-stat-value" style="color: var(--success-color);">∞</div>
+                            <div class="storage-stat-label">可用空间</div>
+                        </div>
+                    </div>
+                    <div class="storage-stat">
+                        <div class="storage-stat-icon">
                             <i class="ri-file-line"></i>
                         </div>
                         <div class="storage-stat-info">
@@ -242,7 +251,7 @@ class DashboardEnhanced {
                             <div class="quick-action-desc">上传多张图片</div>
                         </div>
                     </button>
-                    
+
                     <button class="quick-action-btn" id="bulkEditBtn">
                         <div class="quick-action-icon">
                             <i class="ri-edit-box-line"></i>
@@ -252,7 +261,7 @@ class DashboardEnhanced {
                             <div class="quick-action-desc">批量处理图片</div>
                         </div>
                     </button>
-                    
+
                     <button class="quick-action-btn" id="exportDataBtn">
                         <div class="quick-action-icon">
                             <i class="ri-download-2-line"></i>
@@ -262,7 +271,7 @@ class DashboardEnhanced {
                             <div class="quick-action-desc">导出图片信息</div>
                         </div>
                     </button>
-                    
+
                     <button class="quick-action-btn" id="cleanupBtn">
                         <div class="quick-action-icon">
                             <i class="ri-delete-bin-line"></i>
@@ -272,7 +281,7 @@ class DashboardEnhanced {
                             <div class="quick-action-desc">删除无用文件</div>
                         </div>
                     </button>
-                    
+
                     <button class="quick-action-btn" id="shareCollectionBtn">
                         <div class="quick-action-icon">
                             <i class="ri-share-forward-line"></i>
@@ -282,7 +291,7 @@ class DashboardEnhanced {
                             <div class="quick-action-desc">创建分享链接</div>
                         </div>
                     </button>
-                    
+
                     <button class="quick-action-btn" id="settingsBtn">
                         <div class="quick-action-icon">
                             <i class="ri-settings-3-line"></i>
@@ -539,13 +548,51 @@ class DashboardEnhanced {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        
-        // 简化的图表实现（实际项目中可以使用Chart.js等库）
-        this.drawSimpleChart(ctx, 'doughnut', {
-            labels: ['已使用', '可用空间'],
-            data: [this.statistics.totalSize, 1024*1024*1024*10 - this.statistics.totalSize],
-            colors: ['#4361ee', '#e5e7eb']
-        });
+
+        // 由于是无限存储，显示一个特殊的图表
+        this.drawUnlimitedStorageChart(ctx);
+    }
+
+    // 绘制无限存储图表
+    drawUnlimitedStorageChart(ctx) {
+        const canvas = ctx.canvas;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 20;
+
+        // 清空画布
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 绘制外圆环（已使用部分）
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 0.3); // 小部分弧线表示已使用
+        ctx.lineWidth = 15;
+        ctx.strokeStyle = '#4361ee';
+        ctx.stroke();
+
+        // 绘制无限符号
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.scale(0.8, 0.8);
+
+        // 绘制无限符号 ∞
+        ctx.beginPath();
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = '#10b981';
+        ctx.moveTo(-30, 0);
+        ctx.bezierCurveTo(-30, -20, -10, -20, 0, 0);
+        ctx.bezierCurveTo(10, 20, 30, 20, 30, 0);
+        ctx.bezierCurveTo(30, -20, 10, -20, 0, 0);
+        ctx.bezierCurveTo(-10, 20, -30, 20, -30, 0);
+        ctx.stroke();
+
+        ctx.restore();
+
+        // 添加文字说明
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('无限存储空间', centerX, centerY + radius + 30);
     }
 
     // 更新格式分布图表
@@ -554,7 +601,7 @@ class DashboardEnhanced {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        
+
         this.drawSimpleChart(ctx, 'bar', {
             labels: Object.keys(this.statistics.formatDistribution),
             data: Object.values(this.statistics.formatDistribution),
@@ -638,7 +685,7 @@ class DashboardEnhanced {
         this.statistics.recentActivity.forEach((activity) => {
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
-            
+
             let iconClass = 'ri-upload-line';
             switch (activity.type) {
                 case 'favorite': iconClass = 'ri-heart-line'; break;
@@ -756,4 +803,4 @@ if (document.readyState === 'loading') {
     });
 } else {
     window.dashboardEnhanced = new DashboardEnhanced();
-} 
+}
