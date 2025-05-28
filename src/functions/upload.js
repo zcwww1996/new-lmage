@@ -39,14 +39,22 @@ export async function upload(c) {
         }
 
         console.log(`接收到${files.length}个文件上传请求`);
-        
+
         // 处理所有文件上传
         const uploadResults = [];
         for (const uploadFile of files) {
             if (!uploadFile) continue;
-            
+
             const fileName = uploadFile.name;
             const fileExtension = fileName.split('.').pop().toLowerCase();
+
+            console.log(`处理文件: ${fileName}, 类型: ${uploadFile.type}, 扩展名: ${fileExtension}, 大小: ${uploadFile.size}`);
+
+            // 检测是否为GIF文件
+            const isGifFile = fileExtension === 'gif' || uploadFile.type === 'image/gif';
+            if (isGifFile) {
+                console.log(`检测到GIF文件: ${fileName}, Telegram可能会将其转换为MP4格式`);
+            }
 
             const telegramFormData = new FormData();
             telegramFormData.append("chat_id", env.TG_Chat_ID);
@@ -57,15 +65,23 @@ export async function upload(c) {
                 // 对于图片类型，使用sendDocument以保持原图质量
                 telegramFormData.append("document", uploadFile);
                 apiEndpoint = 'sendDocument';
+                console.log(`图片文件使用sendDocument上传: ${fileName}`);
+
+                if (isGifFile) {
+                    console.log(`注意: GIF文件可能被Telegram自动转换为MP4格式`);
+                }
             } else if (uploadFile.type.startsWith('audio/')) {
                 telegramFormData.append("audio", uploadFile);
                 apiEndpoint = 'sendAudio';
+                console.log(`音频文件使用sendAudio上传: ${fileName}`);
             } else if (uploadFile.type.startsWith('video/')) {
                 telegramFormData.append("video", uploadFile);
                 apiEndpoint = 'sendVideo';
+                console.log(`视频文件使用sendVideo上传: ${fileName}`);
             } else {
                 telegramFormData.append("document", uploadFile);
                 apiEndpoint = 'sendDocument';
+                console.log(`其他文件使用sendDocument上传: ${fileName}`);
             }
 
             const result = await sendToTelegram(telegramFormData, apiEndpoint, env);
@@ -78,13 +94,23 @@ export async function upload(c) {
             const fileId = getFileId(result.data);
 
             if (!fileId) {
-                console.error(`文件 ${fileName} 获取文件ID失败`);
+                console.error(`文件 ${fileName} 获取文件ID失败，响应数据:`, result.data);
                 continue;
             }
 
+            console.log(`文件 ${fileName} 获取到文件ID: ${fileId}`);
+
             // 将文件信息保存到 KV 存储
+            // 对于GIF文件，保持原始扩展名，即使Telegram转换为MP4
             const fileKey = `${fileId}.${fileExtension}`;
             const timestamp = Date.now();
+
+            console.log(`生成文件键: ${fileKey}`);
+
+            // 如果是GIF文件，记录可能的格式转换
+            if (isGifFile) {
+                console.log(`GIF文件保存为: ${fileKey} (保持原始扩展名)`);
+            }
 
             if (env.img_url) {
                 // 创建文件元数据
@@ -128,7 +154,7 @@ export async function upload(c) {
                     console.log('匿名上传，不关联用户');
                 }
             }
-            
+
             // 添加到上传结果
             uploadResults.push({ 'src': `/file/${fileKey}` });
         }

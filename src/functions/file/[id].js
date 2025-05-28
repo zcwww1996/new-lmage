@@ -2,30 +2,30 @@ export async function fileHandler(c) {
     const env = c.env;
     const id = c.req.param('id');
     const url = new URL(c.req.url);
-    
+
     // 检查是否为下载请求
     const isDownload = url.searchParams.get('download') === 'true';
-    
+
     // 检查是否为预览请求
     const isPreview = url.searchParams.get('preview') === 'true';
-    
+
     // 检查是否为浏览器直接访问（而非嵌入、API调用等）
     const userAgent = c.req.header('User-Agent') || '';
     const accept = c.req.header('Accept') || '';
     const referer = c.req.header('Referer') || '';
-    
+
     // 判断是否为浏览器直接访问：
     // 1. Accept头包含text/html
     // 2. 没有referer或referer不是图片嵌入
     // 3. 不是下载请求
-    const isBrowserDirectAccess = !isDownload && 
-                                  accept.includes('text/html') && 
+    const isBrowserDirectAccess = !isDownload &&
+                                  accept.includes('text/html') &&
                                   !accept.includes('image/') &&
                                   (!referer || !referer.includes('image'));
 
     try {
         let fileUrl = null;
-        
+
         // 尝试处理通过Telegram Bot API上传的文件
         if (id.length > 30 || id.includes('.')) { // 长ID通常代表通过Bot上传的文件，或包含扩展名的文件
             const fileId = id.split('.')[0]; // 分离文件ID和扩展名
@@ -45,7 +45,7 @@ export async function fileHandler(c) {
             if (isPreview) {
                 return createPreviewPage(c, id, fileUrl);
             }
-            
+
             // 否则返回原图文件（包括下载和直接访问）
             return await proxyFile(c, fileUrl);
         }
@@ -106,7 +106,7 @@ function createPreviewPage(c, id, imageUrl) {
     const currentUrl = new URL(c.req.url);
     const baseUrl = `${currentUrl.protocol}//${currentUrl.host}`;
     const downloadUrl = `${baseUrl}/file/${id}?download=true`;
-    
+
     const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -122,7 +122,7 @@ function createPreviewPage(c, id, imageUrl) {
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         :root {
             --primary-color: #4361ee;
             --primary-dark: #3730a3;
@@ -138,7 +138,7 @@ function createPreviewPage(c, id, imageUrl) {
             --radius: 16px;
             --radius-sm: 8px;
         }
-        
+
         body {
             background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
             color: var(--text-color);
@@ -151,7 +151,7 @@ function createPreviewPage(c, id, imageUrl) {
             user-select: none;
             position: relative;
         }
-        
+
         /* 动态背景效果 */
         body::before {
             content: '';
@@ -165,12 +165,12 @@ function createPreviewPage(c, id, imageUrl) {
             z-index: 0;
             animation: backgroundShift 20s ease-in-out infinite alternate;
         }
-        
+
         @keyframes backgroundShift {
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(-10px, -10px) rotate(1deg); }
         }
-        
+
         .preview-container {
             position: relative;
             width: 100%;
@@ -182,11 +182,11 @@ function createPreviewPage(c, id, imageUrl) {
             z-index: 1;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .preview-container.fullscreen {
             cursor: zoom-out;
         }
-        
+
         .preview-image {
             max-width: 85%;
             max-height: 85%;
@@ -198,17 +198,17 @@ function createPreviewPage(c, id, imageUrl) {
             opacity: 0;
             transform: scale(0.9) translateY(20px);
         }
-        
+
         .preview-image.loaded {
             opacity: 1;
             transform: scale(1) translateY(0);
         }
-        
+
         .preview-image:hover:not(.fullscreen) {
             transform: scale(1.02);
             box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.9);
         }
-        
+
         .preview-image.fullscreen {
             max-width: 100%;
             max-height: 100%;
@@ -216,7 +216,7 @@ function createPreviewPage(c, id, imageUrl) {
             border: none;
             box-shadow: none;
         }
-        
+
         /* 控制面板 */
         .controls {
             position: fixed;
@@ -229,14 +229,14 @@ function createPreviewPage(c, id, imageUrl) {
             transform: translateY(20px);
             animation: slideUp 0.6s ease-out 0.8s forwards;
         }
-        
+
         @keyframes slideUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .control-btn {
             width: 56px;
             height: 56px;
@@ -254,7 +254,7 @@ function createPreviewPage(c, id, imageUrl) {
             position: relative;
             overflow: hidden;
         }
-        
+
         .control-btn::before {
             content: '';
             position: absolute;
@@ -267,21 +267,21 @@ function createPreviewPage(c, id, imageUrl) {
             transition: opacity 0.3s ease;
             z-index: -1;
         }
-        
+
         .control-btn:hover {
             transform: translateY(-4px) scale(1.05);
             box-shadow: 0 12px 24px rgba(67, 97, 238, 0.3);
             border-color: var(--primary-color);
         }
-        
+
         .control-btn:hover::before {
             opacity: 1;
         }
-        
+
         .control-btn:active {
             transform: translateY(-2px) scale(1.02);
         }
-        
+
         .control-btn.large {
             width: 64px;
             height: 64px;
@@ -289,12 +289,12 @@ function createPreviewPage(c, id, imageUrl) {
             background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
             border-color: var(--primary-color);
         }
-        
+
         .control-btn.large::before {
             opacity: 1;
             background: linear-gradient(45deg, var(--primary-dark), #6366f1);
         }
-        
+
         /* 信息面板 */
         .info-panel {
             position: fixed;
@@ -312,12 +312,12 @@ function createPreviewPage(c, id, imageUrl) {
             z-index: 1000;
             min-width: 200px;
         }
-        
+
         .info-panel.show {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
-        
+
         .info-header {
             display: flex;
             align-items: center;
@@ -326,7 +326,7 @@ function createPreviewPage(c, id, imageUrl) {
             font-weight: 600;
             color: var(--primary-color);
         }
-        
+
         .info-item {
             display: flex;
             justify-content: space-between;
@@ -334,22 +334,22 @@ function createPreviewPage(c, id, imageUrl) {
             padding: 8px 0;
             border-bottom: 1px solid var(--border-color);
         }
-        
+
         .info-item:last-child {
             margin-bottom: 0;
             border-bottom: none;
         }
-        
+
         .info-label {
             color: var(--text-muted);
             font-size: 13px;
         }
-        
+
         .info-value {
             color: var(--text-color);
             font-weight: 500;
         }
-        
+
         /* 加载状态 */
         .loading {
             position: absolute;
@@ -359,7 +359,7 @@ function createPreviewPage(c, id, imageUrl) {
             text-align: center;
             z-index: 100;
         }
-        
+
         .loading-spinner {
             width: 48px;
             height: 48px;
@@ -369,18 +369,18 @@ function createPreviewPage(c, id, imageUrl) {
             animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
             margin: 0 auto 20px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         .loading-text {
             color: var(--text-muted);
             font-size: 16px;
             font-weight: 500;
         }
-        
+
         /* 错误状态 */
         .error {
             position: absolute;
@@ -396,24 +396,24 @@ function createPreviewPage(c, id, imageUrl) {
             backdrop-filter: blur(20px);
             z-index: 100;
         }
-        
+
         .error-icon {
             font-size: 48px;
             margin-bottom: 16px;
             opacity: 0.7;
         }
-        
+
         .error-text {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 8px;
         }
-        
+
         .error-subtitle {
             font-size: 14px;
             color: var(--text-muted);
         }
-        
+
         /* 快捷键提示 */
         .hotkeys {
             position: fixed;
@@ -430,12 +430,12 @@ function createPreviewPage(c, id, imageUrl) {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
         }
-        
+
         .hotkeys.show {
             opacity: 1;
             transform: translateY(0);
         }
-        
+
         .hotkeys kbd {
             background: var(--border-color);
             padding: 4px 8px;
@@ -445,7 +445,7 @@ function createPreviewPage(c, id, imageUrl) {
             font-weight: bold;
             margin: 0 4px;
         }
-        
+
         /* 品牌标识 */
         .brand {
             position: fixed;
@@ -461,11 +461,11 @@ function createPreviewPage(c, id, imageUrl) {
             animation: fadeIn 0.6s ease-out 1s forwards;
             z-index: 1000;
         }
-        
+
         @keyframes fadeIn {
             to { opacity: 1; }
         }
-        
+
         .brand-icon {
             width: 24px;
             height: 24px;
@@ -477,7 +477,7 @@ function createPreviewPage(c, id, imageUrl) {
             font-size: 12px;
             color: white;
         }
-        
+
         /* 成功提示 */
         .toast {
             position: fixed;
@@ -493,12 +493,12 @@ function createPreviewPage(c, id, imageUrl) {
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-        
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .controls {
@@ -506,19 +506,19 @@ function createPreviewPage(c, id, imageUrl) {
                 right: 20px;
                 gap: 10px;
             }
-            
+
             .control-btn {
                 width: 48px;
                 height: 48px;
                 font-size: 18px;
             }
-            
+
             .control-btn.large {
                 width: 56px;
                 height: 56px;
                 font-size: 22px;
             }
-            
+
             .info-panel {
                 top: 20px;
                 left: 20px;
@@ -526,36 +526,36 @@ function createPreviewPage(c, id, imageUrl) {
                 font-size: 13px;
                 padding: 16px;
             }
-            
+
             .hotkeys {
                 display: none;
             }
-            
+
             .brand {
                 top: 20px;
                 right: 20px;
                 font-size: 12px;
             }
-            
+
             .preview-image {
                 max-width: 95%;
                 max-height: 95%;
             }
         }
-        
+
         @media (max-width: 480px) {
             .controls {
                 bottom: 16px;
                 right: 16px;
                 gap: 8px;
             }
-            
+
             .info-panel {
                 top: 16px;
                 left: 16px;
                 right: 16px;
             }
-            
+
             .brand {
                 top: 16px;
                 right: 16px;
@@ -578,18 +578,19 @@ function createPreviewPage(c, id, imageUrl) {
             <div class="loading-spinner"></div>
             <div class="loading-text">正在加载图片...</div>
         </div>
-        
+
         <img class="preview-image" id="previewImage" style="display: none;" />
-        
+        <video class="preview-image" id="previewVideo" style="display: none;" autoplay loop muted playsinline></video>
+
         <div class="error" id="error" style="display: none;">
             <div class="error-icon">
                 <i class="ri-error-warning-line"></i>
             </div>
-            <div class="error-text">图片加载失败</div>
+            <div class="error-text">文件加载失败</div>
             <div class="error-subtitle">请检查网络连接或稍后重试</div>
         </div>
     </div>
-    
+
     <!-- 信息面板 -->
     <div class="info-panel" id="infoPanel">
         <div class="info-header">
@@ -613,7 +614,7 @@ function createPreviewPage(c, id, imageUrl) {
             <span class="info-value" id="fileSize">-</span>
         </div>
     </div>
-    
+
     <!-- 控制按钮 -->
     <div class="controls">
         <button class="control-btn" id="infoBtn" onclick="toggleInfo()" title="显示/隐藏信息 (I)">
@@ -626,7 +627,7 @@ function createPreviewPage(c, id, imageUrl) {
             <i class="ri-download-line"></i>
         </button>
     </div>
-    
+
     <!-- 快捷键提示 -->
     <div class="hotkeys" id="hotkeys">
         <kbd>F</kbd> 全屏 <kbd>I</kbd> 信息 <kbd>D</kbd> 下载 <kbd>ESC</kbd> 关闭
@@ -639,6 +640,7 @@ function createPreviewPage(c, id, imageUrl) {
         const imageUrl = '${imageUrl}';
         const downloadUrl = '${downloadUrl}';
         const previewImage = document.getElementById('previewImage');
+        const previewVideo = document.getElementById('previewVideo');
         const previewContainer = document.getElementById('previewContainer');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
@@ -646,10 +648,11 @@ function createPreviewPage(c, id, imageUrl) {
         const hotkeys = document.getElementById('hotkeys');
         const toast = document.getElementById('toast');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
-        
+
         let isFullscreen = false;
         let infoVisible = false;
-        
+        let currentElement = null; // 当前显示的元素（img或video）
+
         // 显示提示消息
         function showToast(message) {
             toast.textContent = message;
@@ -658,20 +661,49 @@ function createPreviewPage(c, id, imageUrl) {
                 toast.classList.remove('show');
             }, 2000);
         }
-        
-        // 加载图片
-        previewImage.onload = function() {
+
+        // 检测文件类型并加载相应元素
+        function loadMedia() {
+            const originalFormat = '${id}'.includes('.') ? '${id}'.split('.').pop().toLowerCase() : '';
+
+            // 先尝试作为图片加载
+            const testImg = new Image();
+            testImg.onload = function() {
+                // 成功加载为图片
+                currentElement = previewImage;
+                previewImage.src = imageUrl;
+                showMedia(previewImage);
+            };
+
+            testImg.onerror = function() {
+                // 图片加载失败，尝试作为视频加载（可能是GIF转MP4）
+                if (originalFormat === 'gif') {
+                    currentElement = previewVideo;
+                    previewVideo.src = imageUrl;
+                    showMedia(previewVideo);
+                } else {
+                    // 都失败了，显示错误
+                    loading.style.display = 'none';
+                    error.style.display = 'block';
+                }
+            };
+
+            testImg.src = imageUrl;
+        }
+
+        // 显示媒体元素
+        function showMedia(element) {
             loading.style.display = 'none';
-            previewImage.style.display = 'block';
-            
+            element.style.display = 'block';
+
             // 添加加载完成动画
             setTimeout(() => {
-                previewImage.classList.add('loaded');
+                element.classList.add('loaded');
             }, 100);
-            
-            // 更新图片信息
-            updateImageInfo();
-            
+
+            // 更新文件信息
+            updateMediaInfo();
+
             // 显示快捷键提示
             setTimeout(() => {
                 hotkeys.classList.add('show');
@@ -679,48 +711,66 @@ function createPreviewPage(c, id, imageUrl) {
                     hotkeys.classList.remove('show');
                 }, 4000);
             }, 1500);
+        }
+
+        // 视频加载事件
+        previewVideo.onloadeddata = function() {
+            if (currentElement === previewVideo) {
+                showMedia(previewVideo);
+            }
         };
-        
-        previewImage.onerror = function() {
-            loading.style.display = 'none';
-            error.style.display = 'block';
+
+        previewVideo.onerror = function() {
+            if (currentElement === previewVideo) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+            }
         };
-        
-        previewImage.src = imageUrl;
-        
-        // 更新图片信息
-        function updateImageInfo() {
-            document.getElementById('dimensions').textContent = 
-                previewImage.naturalWidth + ' × ' + previewImage.naturalHeight + ' px';
-            
-            // 从URL推断文件类型
+
+        // 开始加载
+        loadMedia();
+
+        // 更新媒体信息
+        function updateMediaInfo() {
+            const originalFormat = '${id}'.includes('.') ? '${id}'.split('.').pop().toLowerCase() : '';
             const extension = imageUrl.split('.').pop().toLowerCase();
+
+            if (currentElement === previewImage) {
+                // 图片信息
+                document.getElementById('dimensions').textContent =
+                    previewImage.naturalWidth + ' × ' + previewImage.naturalHeight + ' px';
+            } else if (currentElement === previewVideo) {
+                // 视频信息
+                document.getElementById('dimensions').textContent =
+                    previewVideo.videoWidth + ' × ' + previewVideo.videoHeight + ' px';
+            }
+
             const typeMap = {
                 'jpg': 'JPEG',
-                'jpeg': 'JPEG', 
+                'jpeg': 'JPEG',
                 'png': 'PNG',
                 'gif': 'GIF',
                 'webp': 'WebP',
-                'svg': 'SVG'
+                'svg': 'SVG',
+                'mp4': 'MP4'
             };
-            document.getElementById('fileType').textContent = typeMap[extension] || '未知';
-            
-            // 计算文件大小（估算）
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = previewImage.naturalWidth;
-            canvas.height = previewImage.naturalHeight;
-            
-            try {
-                ctx.drawImage(previewImage, 0, 0);
-                const dataUrl = canvas.toDataURL();
-                const sizeInBytes = Math.round((dataUrl.length - 22) * 3 / 4);
-                document.getElementById('fileSize').textContent = formatFileSize(sizeInBytes);
-            } catch (e) {
-                document.getElementById('fileSize').textContent = '未知';
+
+            // 如果原始文件是GIF但实际是MP4，显示为GIF
+            let displayType = typeMap[extension] || '未知';
+            if (originalFormat === 'gif') {
+                if (currentElement === previewVideo || extension === 'mp4') {
+                    displayType = 'GIF (动图)';
+                } else {
+                    displayType = 'GIF';
+                }
             }
+
+            document.getElementById('fileType').textContent = displayType;
+
+            // 文件大小显示为未知（无法准确计算）
+            document.getElementById('fileSize').textContent = '未知';
         }
-        
+
         // 格式化文件大小
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 B';
@@ -729,7 +779,7 @@ function createPreviewPage(c, id, imageUrl) {
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
-        
+
         // 切换信息面板
         function toggleInfo() {
             infoVisible = !infoVisible;
@@ -739,23 +789,27 @@ function createPreviewPage(c, id, imageUrl) {
                 infoPanel.classList.remove('show');
             }
         }
-        
+
         // 切换全屏
         function toggleFullscreen() {
             isFullscreen = !isFullscreen;
             if (isFullscreen) {
                 previewContainer.classList.add('fullscreen');
-                previewImage.classList.add('fullscreen');
+                if (currentElement) {
+                    currentElement.classList.add('fullscreen');
+                }
                 fullscreenBtn.innerHTML = '<i class="ri-fullscreen-exit-line"></i>';
                 fullscreenBtn.title = '退出全屏 (F)';
             } else {
                 previewContainer.classList.remove('fullscreen');
-                previewImage.classList.remove('fullscreen');
+                if (currentElement) {
+                    currentElement.classList.remove('fullscreen');
+                }
                 fullscreenBtn.innerHTML = '<i class="ri-fullscreen-line"></i>';
                 fullscreenBtn.title = '全屏查看 (F)';
             }
         }
-        
+
         // 下载图片
         function downloadImage() {
             const link = document.createElement('a');
@@ -764,17 +818,17 @@ function createPreviewPage(c, id, imageUrl) {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             showToast('开始下载图片...');
         }
-        
-        // 点击图片切换全屏
+
+        // 点击媒体元素切换全屏
         previewContainer.addEventListener('click', function(e) {
-            if (e.target === previewImage || e.target === previewContainer) {
+            if (e.target === previewImage || e.target === previewVideo || e.target === previewContainer) {
                 toggleFullscreen();
             }
         });
-        
+
         // 键盘快捷键
         document.addEventListener('keydown', function(e) {
             switch(e.key.toLowerCase()) {
@@ -801,12 +855,12 @@ function createPreviewPage(c, id, imageUrl) {
                     break;
             }
         });
-        
+
         // 防止右键菜单
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
-        
+
         // 添加页面离开前的确认
         window.addEventListener('beforeunload', function(e) {
             // 可以在这里添加离开确认逻辑
@@ -872,21 +926,49 @@ async function proxyFile(c, fileUrl) {
 
     // 确保设置正确的Content-Type，以便浏览器能够预览图片
     const contentType = response.headers.get('Content-Type');
+    // 从请求ID中获取原始文件扩展名
+    const requestId = c.req.param('id');
+    const originalExtension = requestId.includes('.') ? requestId.split('.').pop().toLowerCase() : '';
+    console.log(`请求ID: ${requestId}, 原始扩展名: ${originalExtension}`);
+
     if (contentType) {
-        headers.set('Content-Type', contentType);
+        // 特殊处理：如果原始文件是GIF但Telegram返回的是MP4，保持为video类型但添加特殊标记
+        if (originalExtension === 'gif' && contentType.startsWith('video/')) {
+            console.log('检测到GIF转MP4的情况，保持video Content-Type');
+            headers.set('Content-Type', contentType);
+            // 添加自定义头部标记这是一个转换后的GIF
+            headers.set('X-Original-Format', 'gif');
+        } else {
+            headers.set('Content-Type', contentType);
+        }
     } else {
         // 根据URL推断内容类型
         const fileExtension = fileUrl.split('.').pop().toLowerCase();
+        console.log(`从URL推断文件扩展名: ${fileExtension}`);
+
         if (['jpg', 'jpeg'].includes(fileExtension)) {
             headers.set('Content-Type', 'image/jpeg');
         } else if (fileExtension === 'png') {
             headers.set('Content-Type', 'image/png');
-        } else if (fileExtension === 'gif') {
-            headers.set('Content-Type', 'image/gif');
+        } else if (fileExtension === 'gif' || originalExtension === 'gif') {
+            // 如果原始是GIF文件，但实际可能是MP4
+            if (fileExtension === 'mp4' || contentType === 'video/mp4') {
+                headers.set('Content-Type', 'video/mp4');
+                headers.set('X-Original-Format', 'gif');
+                console.log('设置GIF转MP4的Content-Type');
+            } else {
+                headers.set('Content-Type', 'image/gif');
+                console.log('设置GIF Content-Type');
+            }
         } else if (fileExtension === 'webp') {
             headers.set('Content-Type', 'image/webp');
         } else if (fileExtension === 'svg') {
             headers.set('Content-Type', 'image/svg+xml');
+        } else if (fileExtension === 'mp4') {
+            headers.set('Content-Type', 'video/mp4');
+        } else {
+            // 默认设置为二进制流
+            headers.set('Content-Type', 'application/octet-stream');
         }
     }
 
