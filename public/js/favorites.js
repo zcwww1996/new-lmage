@@ -23,10 +23,10 @@ let selectedImages = new Set();
 function initFavoritesPage() {
     // 加载收藏图片数据
     loadFavoriteImages();
-    
+
     // 初始化事件监听器
     initEventListeners();
-    
+
     // 初始化视图状态
     initViewState();
 }
@@ -37,29 +37,50 @@ function initFavoritesPage() {
 async function loadFavoriteImages() {
     try {
         showLoading();
-        
-        // 模拟API调用
-        // const response = await fetch('/api/favorites');
-        // favoriteImages = await response.json();
-        
-        // 使用模拟数据
-        favoriteImages = generateMockFavoriteImages();
-        
+
+        // 检查用户登录状态
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
+        }
+
+        console.log('开始加载收藏图片...');
+
+        // 真实API调用
+        const response = await fetch('/api/favorites', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+            throw new Error(`API错误: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('收藏图片数据:', data);
+
+        favoriteImages = data.images || [];
         filteredImages = [...favoriteImages];
-        
+
         // 更新统计信息
         updateStats();
-        
+
         // 应用当前排序
         applySorting();
-        
+
         // 渲染图片
         renderImages();
-        
+
         hideLoading();
     } catch (error) {
         console.error('加载收藏图片失败:', error);
-        showError('加载收藏图片失败，请刷新页面重试');
+        showError('加载收藏图片失败: ' + error.message);
         hideLoading();
     }
 }
@@ -71,12 +92,12 @@ function generateMockFavoriteImages() {
     const mockImages = [];
     const names = ['风景.jpg', '美食.png', '动物.gif', '建筑.jpg', '人物.png', '艺术.jpg'];
     const tags = [['风景', '自然'], ['美食', '生活'], ['动物', '可爱'], ['建筑', '城市'], ['人物', '摄影'], ['艺术', '创意']];
-    
+
     for (let i = 1; i <= 24; i++) {
         const nameIndex = (i - 1) % names.length;
         const uploadDate = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
         const favoriteDate = new Date(uploadDate.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000);
-        
+
         mockImages.push({
             id: `fav_${i}`,
             name: `${names[nameIndex].split('.')[0]}_${i}.${names[nameIndex].split('.')[1]}`,
@@ -89,7 +110,7 @@ function generateMockFavoriteImages() {
             views: Math.floor(Math.random() * 1000) + 10
         });
     }
-    
+
     return mockImages;
 }
 
@@ -102,7 +123,7 @@ function initEventListeners() {
     if (searchInput) {
         searchInput.addEventListener('input', debounce(handleSearch, 300));
     }
-    
+
     // 排序下拉菜单
     const sortDropdown = document.getElementById('sortDropdown');
     const sortBtn = document.getElementById('sortBtn');
@@ -111,7 +132,7 @@ function initEventListeners() {
             e.stopPropagation();
             sortDropdown.classList.toggle('active');
         });
-        
+
         // 排序选项
         const sortOptions = sortDropdown.querySelectorAll('.filter-option');
         sortOptions.forEach(option => {
@@ -121,30 +142,30 @@ function initEventListeners() {
             });
         });
     }
-    
+
     // 点击外部关闭下拉菜单
     document.addEventListener('click', () => {
         if (sortDropdown) {
             sortDropdown.classList.remove('active');
         }
     });
-    
+
     // 视图切换
     const gridViewBtn = document.getElementById('gridViewBtn');
     const listViewBtn = document.getElementById('listViewBtn');
-    
+
     if (gridViewBtn) {
         gridViewBtn.addEventListener('click', () => switchView('grid'));
     }
     if (listViewBtn) {
         listViewBtn.addEventListener('click', () => switchView('list'));
     }
-    
+
     // 批量操作
     const batchCopy = document.getElementById('batchCopy');
     const batchUnfavorite = document.getElementById('batchUnfavorite');
     const batchCancel = document.getElementById('batchCancel');
-    
+
     if (batchCopy) {
         batchCopy.addEventListener('click', handleBatchCopy);
     }
@@ -178,7 +199,7 @@ function handleSearch(e) {
  */
 function handleSortChange(sortType, sortLabel) {
     currentSort = sortType;
-    
+
     // 更新按钮文本
     const sortBtn = document.getElementById('sortBtn');
     if (sortBtn) {
@@ -187,13 +208,13 @@ function handleSortChange(sortType, sortLabel) {
             textSpan.textContent = sortLabel;
         }
     }
-    
+
     // 更新活动状态
     const sortOptions = document.querySelectorAll('.filter-option');
     sortOptions.forEach(option => {
         option.classList.toggle('active', option.dataset.sort === sortType);
     });
-    
+
     applySorting();
     renderImages();
 }
@@ -211,10 +232,10 @@ function applyFilters() {
                 return false;
             }
         }
-        
+
         return true;
     });
-    
+
     applySorting();
     renderImages();
     updateStats();
@@ -246,16 +267,16 @@ function applySorting() {
 function renderImages() {
     const grid = document.getElementById('favoritesGrid');
     const emptyState = document.getElementById('emptyState');
-    
+
     if (!grid || !emptyState) return;
-    
+
     // 计算分页
     const totalItems = filteredImages.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
     const pageItems = filteredImages.slice(startIndex, endIndex);
-    
+
     if (totalItems === 0) {
         // 显示空状态
         grid.style.display = 'none';
@@ -263,17 +284,17 @@ function renderImages() {
         hidePagination();
         return;
     }
-    
+
     // 隐藏空状态
     grid.style.display = 'grid';
     emptyState.style.display = 'none';
-    
+
     // 渲染图片卡片
     grid.innerHTML = pageItems.map(image => createImageCard(image)).join('');
-    
+
     // 绑定卡片事件
     bindCardEvents();
-    
+
     // 渲染分页
     renderPagination(totalPages);
 }
@@ -286,7 +307,7 @@ function createImageCard(image) {
     const uploadDate = formatDate(image.uploadDate);
     const fileSize = formatFileSize(image.size * 1024); // 转换为字节
     const isSelected = selectedImages.has(image.id);
-    
+
     return `
         <div class="favorite-card ${isSelected ? 'selected' : ''}" data-id="${image.id}">
             <div class="image-checkbox">
@@ -345,7 +366,7 @@ function bindCardEvents() {
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', handleImageSelection);
     });
-    
+
     // 复制链接按钮
     const copyBtns = document.querySelectorAll('.btn-copy');
     copyBtns.forEach(btn => {
@@ -354,7 +375,7 @@ function bindCardEvents() {
             copyToClipboard(btn.dataset.url);
         });
     });
-    
+
     // 查看大图按钮
     const viewBtns = document.querySelectorAll('.btn-view');
     viewBtns.forEach(btn => {
@@ -363,7 +384,7 @@ function bindCardEvents() {
             viewImage(btn.dataset.url);
         });
     });
-    
+
     // 取消收藏按钮
     const unfavoriteBtns = document.querySelectorAll('.btn-unfavorite');
     unfavoriteBtns.forEach(btn => {
@@ -372,7 +393,7 @@ function bindCardEvents() {
             unfavoriteImage(btn.dataset.id);
         });
     });
-    
+
     // 标签点击事件
     const tags = document.querySelectorAll('.favorite-tag');
     tags.forEach(tag => {
@@ -389,7 +410,7 @@ function bindCardEvents() {
 function handleImageSelection(e) {
     const card = e.target.closest('.favorite-card');
     const imageId = card.dataset.id;
-    
+
     if (e.target.checked) {
         selectedImages.add(imageId);
         card.classList.add('selected');
@@ -397,7 +418,7 @@ function handleImageSelection(e) {
         selectedImages.delete(imageId);
         card.classList.remove('selected');
     }
-    
+
     updateBatchToolbar();
 }
 
@@ -407,11 +428,11 @@ function handleImageSelection(e) {
 function updateBatchToolbar() {
     const toolbar = document.getElementById('batchToolbar');
     const selectedCount = document.getElementById('selectedCount');
-    
+
     if (!toolbar || !selectedCount) return;
-    
+
     selectedCount.textContent = selectedImages.size;
-    
+
     if (selectedImages.size > 0) {
         toolbar.classList.add('active');
     } else {
@@ -424,18 +445,18 @@ function updateBatchToolbar() {
  */
 function clearSelection() {
     selectedImages.clear();
-    
+
     // 更新UI
     const checkboxes = document.querySelectorAll('.favorite-card .checkbox-input');
     checkboxes.forEach(checkbox => {
         checkbox.checked = false;
     });
-    
+
     const cards = document.querySelectorAll('.favorite-card');
     cards.forEach(card => {
         card.classList.remove('selected');
     });
-    
+
     updateBatchToolbar();
 }
 
@@ -445,7 +466,7 @@ function clearSelection() {
 function handleBatchCopy() {
     const selectedImageData = favoriteImages.filter(img => selectedImages.has(img.id));
     const links = selectedImageData.map(img => img.url).join('\n');
-    
+
     copyToClipboard(links);
     showNotification(`已复制 ${selectedImages.size} 个图片链接`, 'success');
 }
@@ -453,15 +474,52 @@ function handleBatchCopy() {
 /**
  * 批量取消收藏
  */
-function handleBatchUnfavorite() {
+async function handleBatchUnfavorite() {
     if (confirm(`确定要取消收藏 ${selectedImages.size} 张图片吗？`)) {
-        // 模拟API调用
-        selectedImages.forEach(imageId => {
-            unfavoriteImageById(imageId);
-        });
-        
-        showNotification(`已取消收藏 ${selectedImages.size} 张图片`, 'success');
-        clearSelection();
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const fileIds = Array.from(selectedImages);
+            console.log('批量取消收藏:', fileIds);
+
+            // 调用批量操作API
+            const response = await fetch('/api/favorites/batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    fileIds: fileIds,
+                    operation: 'remove'
+                })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const errorData = await response.json();
+                throw new Error(errorData.error || '批量取消收藏失败');
+            }
+
+            const result = await response.json();
+            console.log('批量取消收藏结果:', result);
+
+            // 重新加载收藏列表
+            await loadFavoriteImages();
+
+            showNotification(result.message || `已取消收藏 ${result.summary.success} 张图片`, 'success');
+            clearSelection();
+        } catch (error) {
+            console.error('批量取消收藏失败:', error);
+            showNotification('批量取消收藏失败: ' + error.message, 'error');
+        }
     }
 }
 
@@ -478,22 +536,51 @@ function unfavoriteImage(imageId) {
 /**
  * 根据ID取消收藏图片
  */
-function unfavoriteImageById(imageId) {
-    // 从数组中移除
-    favoriteImages = favoriteImages.filter(img => img.id !== imageId);
-    
-    // 重新应用过滤器
-    applyFilters();
-    
-    // 从选择中移除
-    selectedImages.delete(imageId);
-    updateBatchToolbar();
-    
-    // 更新统计
-    updateStats();
-    
-    // 这里应该调用API
-    // await fetch(`/api/favorites/${imageId}`, { method: 'DELETE' });
+async function unfavoriteImageById(imageId) {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
+        }
+
+        console.log('取消收藏图片:', imageId);
+
+        // 调用真实API
+        const response = await fetch(`/api/favorites/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+            const errorData = await response.json();
+            throw new Error(errorData.error || '取消收藏失败');
+        }
+
+        // 从数组中移除
+        favoriteImages = favoriteImages.filter(img => img.id !== imageId);
+
+        // 重新应用过滤器
+        applyFilters();
+
+        // 从选择中移除
+        selectedImages.delete(imageId);
+        updateBatchToolbar();
+
+        // 更新统计
+        updateStats();
+
+        console.log('取消收藏成功:', imageId);
+    } catch (error) {
+        console.error('取消收藏失败:', error);
+        showNotification('取消收藏失败: ' + error.message, 'error');
+    }
 }
 
 /**
@@ -513,20 +600,20 @@ function searchByTag(tagName) {
  */
 function switchView(viewType) {
     currentView = viewType;
-    
+
     const grid = document.getElementById('favoritesGrid');
     const gridBtn = document.getElementById('gridViewBtn');
     const listBtn = document.getElementById('listViewBtn');
-    
+
     if (!grid || !gridBtn || !listBtn) return;
-    
+
     // 更新按钮状态
     gridBtn.classList.toggle('active', viewType === 'grid');
     listBtn.classList.toggle('active', viewType === 'list');
-    
+
     // 更新网格样式
     grid.classList.toggle('list-view', viewType === 'list');
-    
+
     // 保存偏好设置
     localStorage.setItem('favoritesView', viewType);
 }
@@ -537,11 +624,11 @@ function switchView(viewType) {
 function updateStats() {
     const totalFavorites = document.getElementById('totalFavorites');
     const totalSize = document.getElementById('totalSize');
-    
+
     if (totalFavorites) {
         totalFavorites.textContent = favoriteImages.length;
     }
-    
+
     if (totalSize) {
         const totalSizeBytes = favoriteImages.reduce((sum, img) => sum + img.size * 1024, 0);
         totalSize.textContent = formatFileSize(totalSizeBytes);
@@ -557,29 +644,29 @@ function renderPagination(totalPages) {
         hidePagination();
         return;
     }
-    
+
     pagination.style.display = 'flex';
-    
+
     let paginationHTML = '';
-    
+
     // 上一页按钮
     paginationHTML += `
         <button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" data-page="${currentPage - 1}">
             <i class="ri-arrow-left-s-line"></i>
         </button>
     `;
-    
+
     // 页码按钮
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
-    
+
     if (startPage > 1) {
         paginationHTML += `<button class="page-btn" data-page="1">1</button>`;
         if (startPage > 2) {
             paginationHTML += `<span class="page-ellipsis">...</span>`;
         }
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
         paginationHTML += `
             <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
@@ -587,23 +674,23 @@ function renderPagination(totalPages) {
             </button>
         `;
     }
-    
+
     if (endPage < totalPages) {
         if (endPage < totalPages - 1) {
             paginationHTML += `<span class="page-ellipsis">...</span>`;
         }
         paginationHTML += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
     }
-    
+
     // 下一页按钮
     paginationHTML += `
         <button class="page-btn ${currentPage === totalPages ? 'disabled' : ''}" data-page="${currentPage + 1}">
             <i class="ri-arrow-right-s-line"></i>
         </button>
     `;
-    
+
     pagination.innerHTML = paginationHTML;
-    
+
     // 绑定分页事件
     const pageButtons = pagination.querySelectorAll('.page-btn:not(.disabled)');
     pageButtons.forEach(btn => {
@@ -662,7 +749,7 @@ function fallbackCopyToClipboard(text) {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
         document.execCommand('copy');
         showNotification('已复制到剪贴板', 'success');
@@ -670,7 +757,7 @@ function fallbackCopyToClipboard(text) {
         console.error('复制失败:', err);
         showNotification('复制失败，请手动复制', 'error');
     }
-    
+
     document.body.removeChild(textArea);
 }
 
@@ -758,7 +845,7 @@ function formatDate(dateString) {
         const now = new Date();
         const diffTime = Math.abs(now - date);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 1) {
             return '昨天';
         } else if (diffDays < 7) {
@@ -781,11 +868,11 @@ function formatFileSize(bytes) {
     } else {
         // 降级方案
         if (bytes === 0) return '0 B';
-        
+
         const k = 1024;
         const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
-        
+
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 }
@@ -809,4 +896,4 @@ function debounce(func, wait) {
             timeout = setTimeout(later, wait);
         };
     }
-} 
+}

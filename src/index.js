@@ -4,6 +4,7 @@ import { authenticatedUpload } from './functions/upload';
 import { fileHandler } from './functions/file/[id]';
 import { register, login, getCurrentUser, updateUserAvatar, getUserProfile } from './functions/user/auth';
 import { getUserImages, deleteUserImage, updateImageInfo, searchUserImages } from './functions/user/images';
+import { getUserFavorites, addToFavorites, removeFromFavorites, checkFavoriteStatus, batchFavoriteOperation } from './functions/user/favorites';
 import { authMiddleware } from './functions/utils/auth';
 
 const app = new Hono();
@@ -29,6 +30,13 @@ app.get('/api/images', authMiddleware, getUserImages);
 app.get('/api/images/search', authMiddleware, searchUserImages);
 app.delete('/api/images/:id', authMiddleware, deleteUserImage);
 app.put('/api/images/:id', authMiddleware, updateImageInfo);
+
+// 用户收藏相关API
+app.get('/api/favorites', authMiddleware, getUserFavorites);
+app.post('/api/favorites/:id', authMiddleware, addToFavorites);
+app.delete('/api/favorites/:id', authMiddleware, removeFromFavorites);
+app.get('/api/favorites/:id/status', authMiddleware, checkFavoriteStatus);
+app.post('/api/favorites/batch', authMiddleware, batchFavoriteOperation);
 
 // 静态文件服务放在最后，避免覆盖 API 路由
 app.use('/*', serveStatic({ root: './' }));

@@ -129,19 +129,37 @@ function saveCustomOrder() {
     localStorage.setItem('customImageOrder', JSON.stringify(customOrder));
 }
 
-// 从本地存储加载收藏的图片
-function loadFavorites() {
-    const savedFavorites = localStorage.getItem('favoriteImages');
-    if (savedFavorites) {
-        const favoritesArray = JSON.parse(savedFavorites);
-        favoriteImages = new Set(favoritesArray);
+// 从API加载收藏的图片
+async function loadFavorites() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        console.log('加载收藏图片状态...');
+
+        const response = await fetch('/api/favorites', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const favoriteIds = data.images.map(img => img.id);
+            favoriteImages = new Set(favoriteIds);
+            console.log('收藏图片加载完成:', favoriteIds.length, '张');
+        } else {
+            console.warn('加载收藏图片失败:', response.status);
+        }
+    } catch (error) {
+        console.error('加载收藏图片错误:', error);
     }
 }
 
-// 保存收藏的图片到本地存储
+// 保存收藏状态到服务器（已通过API实时同步，此函数保留兼容性）
 function saveFavorites() {
-    const favoritesArray = Array.from(favoriteImages);
-    localStorage.setItem('favoriteImages', JSON.stringify(favoritesArray));
+    // 收藏状态已通过API实时同步，无需本地存储
+    console.log('收藏状态已同步到服务器');
 }
 
 // 初始化收藏功能
@@ -551,35 +569,83 @@ function initImageCardEvents() {
 }
 
 // 切换收藏状态
-function toggleFavorite(imageId, button) {
+async function toggleFavorite(imageId, button) {
     const isFavorite = favoriteImages.has(imageId);
 
-    if (isFavorite) {
-        // 取消收藏
-        favoriteImages.delete(imageId);
-        button.classList.remove('active');
-        button.title = '收藏图片';
-        button.querySelector('svg').setAttribute('fill', 'none');
-
-        // 触发美化通知
-        if (window.beautyEffects) {
-            window.beautyEffects.showNotification('已取消收藏', 'warning', 2000);
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
         }
-    } else {
-        // 添加收藏
-        favoriteImages.add(imageId);
-        button.classList.add('active');
-        button.title = '取消收藏';
-        button.querySelector('svg').setAttribute('fill', 'currentColor');
+
+        console.log(`${isFavorite ? '取消' : '添加'}收藏:`, imageId);
+
+        // 先更新UI，提供即时反馈
+        if (isFavorite) {
+            favoriteImages.delete(imageId);
+            button.classList.remove('active');
+            button.title = '收藏图片';
+            button.querySelector('svg').setAttribute('fill', 'none');
+        } else {
+            favoriteImages.add(imageId);
+            button.classList.add('active');
+            button.title = '取消收藏';
+            button.querySelector('svg').setAttribute('fill', 'currentColor');
+        }
+
+        // 调用API
+        const response = await fetch(`/api/favorites/${imageId}`, {
+            method: isFavorite ? 'DELETE' : 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            // API调用失败，回滚UI状态
+            if (isFavorite) {
+                favoriteImages.add(imageId);
+                button.classList.add('active');
+                button.title = '取消收藏';
+                button.querySelector('svg').setAttribute('fill', 'currentColor');
+            } else {
+                favoriteImages.delete(imageId);
+                button.classList.remove('active');
+                button.title = '收藏图片';
+                button.querySelector('svg').setAttribute('fill', 'none');
+            }
+
+            if (response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const errorData = await response.json();
+            throw new Error(errorData.error || '操作失败');
+        }
 
         // 触发美化通知
         if (window.beautyEffects) {
-            window.beautyEffects.showNotification('已添加到收藏', 'success', 2000);
+            window.beautyEffects.showNotification(
+                isFavorite ? '已取消收藏' : '已添加到收藏',
+                isFavorite ? 'warning' : 'success',
+                2000
+            );
+        }
+
+        console.log(`${isFavorite ? '取消' : '添加'}收藏成功:`, imageId);
+
+    } catch (error) {
+        console.error('收藏操作失败:', error);
+
+        // 显示错误通知
+        if (window.beautyEffects) {
+            window.beautyEffects.showNotification('操作失败: ' + error.message, 'error', 3000);
+        } else {
+            alert('操作失败: ' + error.message);
         }
     }
-
-    // 保存到本地存储
-    saveFavorites();
 
     // 更新菜单徽章
     updateMenuBadges();
