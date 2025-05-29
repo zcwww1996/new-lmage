@@ -8,9 +8,6 @@ import { authMiddleware } from './functions/utils/auth';
 
 const app = new Hono();
 
-// 静态文件服务
-app.get('/*', serveStatic({ root: './' }));
-
 // 上传接口
 app.post('/upload', authenticatedUpload);
 
@@ -32,5 +29,8 @@ app.get('/api/images', authMiddleware, getUserImages);
 app.get('/api/images/search', authMiddleware, searchUserImages);
 app.delete('/api/images/:id', authMiddleware, deleteUserImage);
 app.put('/api/images/:id', authMiddleware, updateImageInfo);
+
+// 静态文件服务放在最后，避免覆盖 API 路由
+app.use('/*', serveStatic({ root: './' }));
 
 export default app;
