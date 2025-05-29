@@ -26,25 +26,17 @@ function initProfile() {
 // 加载用户资料信息
 async function loadUserProfile() {
     try {
-        console.log('开始加载用户资料...');
-        console.log('Token存在:', !!localStorage.getItem('token'));
-
         const response = await fetch('/api/auth/profile', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
-        console.log('API响应状态:', response.status);
-
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('API错误响应:', errorData);
-            throw new Error(errorData.error || '获取用户资料失败');
+            throw new Error('获取用户资料失败');
         }
 
         const data = await response.json();
-        console.log('用户资料数据:', data);
         const user = data.user;
 
         // 更新用户信息显示
@@ -58,72 +50,45 @@ async function loadUserProfile() {
 
 // 更新用户资料显示
 function updateUserProfileDisplay(user) {
-    console.log('开始更新用户资料显示:', user);
-
     // 更新用户名
     const usernameElement = document.getElementById('profileUsername');
-    console.log('用户名元素:', usernameElement);
     if (usernameElement) {
         usernameElement.textContent = user.username || '-';
-        console.log('已更新用户名:', user.username);
-    } else {
-        console.error('未找到用户名元素 #profileUsername');
     }
 
     // 更新邮箱
     const emailElement = document.getElementById('profileEmail');
-    console.log('邮箱元素:', emailElement);
     if (emailElement) {
         emailElement.textContent = user.email || '-';
-        console.log('已更新邮箱:', user.email);
-    } else {
-        console.error('未找到邮箱元素 #profileEmail');
     }
 
     // 更新注册时间
     const regTimeElement = document.getElementById('profileRegTime');
-    console.log('注册时间元素:', regTimeElement);
     if (regTimeElement) {
         if (user.createdAt) {
             const regDate = new Date(user.createdAt);
-            const regTime = regDate.toLocaleDateString('zh-CN', {
+            regTimeElement.textContent = regDate.toLocaleDateString('zh-CN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
-            regTimeElement.textContent = regTime;
-            console.log('已更新注册时间:', regTime);
         } else {
             regTimeElement.textContent = '-';
-            console.log('注册时间为空，设置为 -');
         }
-    } else {
-        console.error('未找到注册时间元素 #profileRegTime');
     }
 
     // 更新统计信息
-    console.log('用户统计信息:', user.stats);
     if (user.stats) {
         const imageCountElement = document.getElementById('profileImageCount');
-        console.log('图片数量元素:', imageCountElement);
         if (imageCountElement) {
             imageCountElement.textContent = user.stats.totalImages || '0';
-            console.log('已更新图片数量:', user.stats.totalImages);
-        } else {
-            console.error('未找到图片数量元素 #profileImageCount');
         }
 
         const storageUsedElement = document.getElementById('profileStorageUsed');
-        console.log('存储使用元素:', storageUsedElement);
         if (storageUsedElement) {
             const sizeInMB = (user.stats.totalSize / (1024 * 1024)).toFixed(2);
             storageUsedElement.textContent = `${sizeInMB} MB`;
-            console.log('已更新存储使用:', sizeInMB, 'MB');
-        } else {
-            console.error('未找到存储使用元素 #profileStorageUsed');
         }
-    } else {
-        console.warn('用户统计信息不存在');
     }
 
     // 更新头像显示
@@ -424,6 +389,13 @@ function showNotification(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', () => {
     // 检查是否在用户资料页面
     if (window.location.pathname === '/profile.html') {
+        // 立即显示页面内容（解决fade-in-element问题）
+        setTimeout(() => {
+            document.querySelectorAll('.fade-in-element').forEach(el => {
+                el.classList.add('visible');
+            });
+        }, 100);
+
         initProfile();
     }
 });

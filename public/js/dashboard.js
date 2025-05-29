@@ -326,7 +326,7 @@ function groupImagesByDate(images) {
 // 创建图片卡片
 function createImageCard(image) {
     const card = document.createElement('div');
-    card.className = 'image-card';
+    card.className = 'image-card-enhanced';
     card.dataset.id = image.id;
 
     // 如果图片被选中，添加选中样式
@@ -366,8 +366,9 @@ function createImageCard(image) {
             <label for="check-${image.id}" class="image-checkbox-label"></label>
         </div>
         ` : ''}
-        <div class="image-preview" data-id="${image.id}" data-url="${image.url}">
+        <div class="image-preview-enhanced" data-id="${image.id}" data-url="${image.url}">
             <img src="${image.url}" alt="${image.fileName}" loading="lazy">
+            <div class="image-overlay"></div>
             <div class="image-zoom-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -488,7 +489,7 @@ function initImageCardEvents() {
     });
 
     // 添加图片预览点击事件
-    document.querySelectorAll('.image-preview').forEach(preview => {
+    document.querySelectorAll('.image-preview-enhanced').forEach(preview => {
         preview.addEventListener('click', (e) => {
             // 如果点击的是收藏按钮，不打开查看器
             if (e.target.closest('.favorite-btn')) {
@@ -510,17 +511,14 @@ function initImageCardEvents() {
             }, 300);
         });
 
-        // 添加鼠标悬停效果（如果有overlay元素的话）
-        const overlay = preview.querySelector('.image-overlay');
-        if (overlay) {
-            preview.addEventListener('mouseenter', () => {
-                overlay.style.opacity = '1';
-            });
+        // 添加鼠标悬停效果
+        preview.addEventListener('mouseenter', () => {
+            preview.querySelector('.image-overlay').style.opacity = '1';
+        });
 
-            preview.addEventListener('mouseleave', () => {
-                overlay.style.opacity = '0';
-            });
-        }
+        preview.addEventListener('mouseleave', () => {
+            preview.querySelector('.image-overlay').style.opacity = '0';
+        });
     });
 
     // 添加标签点击事件
@@ -534,7 +532,7 @@ function initImageCardEvents() {
 
     // 添加图片卡片选择事件
     if (isSelectionMode) {
-        document.querySelectorAll('.image-card').forEach(card => {
+        document.querySelectorAll('.image-card-enhanced').forEach(card => {
             card.addEventListener('click', () => {
                 const imageId = card.dataset.id;
                 toggleImageSelection(imageId, card);
@@ -545,7 +543,7 @@ function initImageCardEvents() {
             checkbox.addEventListener('change', (e) => {
                 e.stopPropagation(); // 防止触发卡片点击事件
                 const imageId = checkbox.id.replace('check-', '');
-                const card = document.querySelector(`.image-card[data-id="${imageId}"]`);
+                const card = document.querySelector(`.image-card-enhanced[data-id="${imageId}"]`);
                 toggleImageSelection(imageId, card, checkbox.checked);
             });
         });
@@ -699,25 +697,11 @@ function collectAllTags(images) {
 
 // 更新统计信息
 function updateStatistics(data) {
-    // 计算统计信息（如果API没有提供的话）
-    const files = data.files || [];
-    const totalImages = data.totalImages || files.length;
-    const totalSize = data.totalSize || files.reduce((sum, file) => sum + (file.fileSize || 0), 0);
-    const now = Date.now();
-    const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-    const recentUploads = data.recentUploads || files.filter(file => file.uploadTime > sevenDaysAgo).length;
-    const avgFileSize = data.averageFileSize || (files.length > 0 ? totalSize / files.length : 0);
-
     // 更新状态卡片
-    const totalImagesEl = document.getElementById('totalImages');
-    const totalSizeEl = document.getElementById('totalSize');
-    const recentUploadsEl = document.getElementById('recentUploads');
-    const avgFileSizeEl = document.getElementById('avgFileSize');
-
-    if (totalImagesEl) totalImagesEl.textContent = totalImages;
-    if (totalSizeEl) totalSizeEl.textContent = formatFileSize(totalSize);
-    if (recentUploadsEl) recentUploadsEl.textContent = recentUploads;
-    if (avgFileSizeEl) avgFileSizeEl.textContent = formatFileSize(avgFileSize);
+    document.getElementById('totalImages').textContent = data.totalImages;
+    document.getElementById('totalSize').textContent = formatFileSize(data.totalSize);
+    document.getElementById('recentUploads').textContent = data.recentUploads;
+    document.getElementById('avgFileSize').textContent = formatFileSize(data.averageFileSize);
 
     // 更新图表数据 - 延迟初始化以确保DOM已加载
     setTimeout(() => {
