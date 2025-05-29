@@ -29,6 +29,9 @@ const TAG_COLORS = [
  * 初始化标签管理页面
  */
 function initTagsPage() {
+    // 检查并显示测试模式横幅
+    checkTestMode();
+
     // 加载标签数据
     loadTags();
 
@@ -40,37 +43,63 @@ function initTagsPage() {
 }
 
 /**
+ * 检查测试模式并显示横幅
+ */
+function checkTestMode() {
+    const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
+    const testBanner = document.getElementById('testModeBanner');
+
+    if (isTestMode && testBanner) {
+        testBanner.style.display = 'block';
+    }
+}
+
+/**
  * 加载标签数据
  */
 async function loadTags() {
     try {
         showLoading();
 
-        // 调用真实API
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login.html';
-            return;
-        }
+        // 检查是否为测试模式
+        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
 
-        const response = await fetch('/api/tags', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+        if (isTestMode) {
+            // 测试模式：使用本地存储的模拟数据
+            const savedTags = localStorage.getItem('testTags');
+            if (savedTags) {
+                tags = JSON.parse(savedTags);
+            } else {
+                tags = generateTestTags();
+                localStorage.setItem('testTags', JSON.stringify(tags));
             }
-        });
-
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token');
+        } else {
+            // 生产模式：调用真实API
+            const token = localStorage.getItem('token');
+            if (!token) {
                 window.location.href = '/login.html';
                 return;
             }
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
 
-        const data = await response.json();
-        tags = data.tags || [];
+            const response = await fetch('/api/tags', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            tags = data.tags || [];
+        }
 
         filteredTags = [...tags];
 
@@ -91,7 +120,71 @@ async function loadTags() {
     }
 }
 
-// 模拟数据生成函数已移除，现在使用真实API
+/**
+ * 生成测试标签数据
+ */
+function generateTestTags() {
+    const testTags = [];
+    const tagNames = [
+        '风景', '美食', '动物', '建筑', '人物', '艺术', '自然', '生活',
+        '旅行', '摄影', '城市', '可爱', '创意', '复古', '现代', '简约'
+    ];
+
+    const descriptions = [
+        '用于分类风景类型的图片',
+        '包含各种美食图片',
+        '动物和宠物相关的图片',
+        '建筑物和城市景观',
+        '人物肖像和生活照',
+        '艺术作品和创意图片',
+        '自然风光和景色',
+        '日常生活场景',
+        '旅行和探索主题',
+        '摄影作品集合',
+        '城市风貌和街景',
+        '可爱和萌系图片',
+        '创意设计和灵感',
+        '复古风格图片',
+        '现代简约风格',
+        '简约设计风格'
+    ];
+
+    for (let i = 0; i < tagNames.length; i++) {
+        const imageCount = Math.floor(Math.random() * 50) + 1;
+        const createdDate = new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000);
+
+        testTags.push({
+            id: `tag_${i + 1}`,
+            name: tagNames[i],
+            description: descriptions[i] || '',
+            color: TAG_COLORS[i % TAG_COLORS.length],
+            imageCount: imageCount,
+            createdAt: createdDate.toISOString(),
+            updatedAt: createdDate.toISOString(),
+            images: generateTagImages(imageCount, i + 1)
+        });
+    }
+
+    return testTags;
+}
+
+/**
+ * 生成标签关联的图片
+ */
+function generateTagImages(count, tagIndex) {
+    const images = [];
+    const maxDisplay = Math.min(count, 5);
+
+    for (let i = 0; i < maxDisplay; i++) {
+        images.push({
+            id: `img_${tagIndex}_${i + 1}`,
+            thumbnailUrl: `https://picsum.photos/100/100?random=${tagIndex * 10 + i}`,
+            name: `图片_${i + 1}.jpg`
+        });
+    }
+
+    return images;
+}
 
 /**
  * 初始化事件监听器
@@ -651,39 +744,63 @@ function handleTagFormSubmit(e) {
  */
 async function createTag(tagData) {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login.html';
-            return;
-        }
+        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
 
-        const response = await fetch('/api/tags', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(tagData)
-        });
+        if (isTestMode) {
+            // 测试模式：保存到本地存储
+            const newTag = {
+                id: `tag_${Date.now()}`,
+                ...tagData,
+                imageCount: 0,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                images: []
+            };
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token');
+            // 添加到本地数组
+            tags.unshift(newTag);
+
+            // 保存到本地存储
+            localStorage.setItem('testTags', JSON.stringify(tags));
+
+            applyFiltersAndSort();
+            showNotification('标签创建成功', 'success');
+        } else {
+            // 生产模式：调用API
+            const token = localStorage.getItem('token');
+            if (!token) {
                 window.location.href = '/login.html';
                 return;
             }
-            const errorData = await response.json();
-            throw new Error(errorData.error || '创建标签失败');
+
+            const response = await fetch('/api/tags', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tagData)
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const errorData = await response.json();
+                throw new Error(errorData.error || '创建标签失败');
+            }
+
+            const data = await response.json();
+            const newTag = data.tag;
+
+            // 添加到本地数组
+            tags.unshift(newTag);
+            applyFiltersAndSort();
+
+            showNotification('标签创建成功', 'success');
         }
-
-        const data = await response.json();
-        const newTag = data.tag;
-
-        // 添加到本地数组
-        tags.unshift(newTag);
-        applyFiltersAndSort();
-
-        showNotification('标签创建成功', 'success');
     } catch (error) {
         console.error('创建标签错误:', error);
         showNotification(error.message || '创建标签失败', 'error');
@@ -695,42 +812,63 @@ async function createTag(tagData) {
  */
 async function updateTag(tagId, tagData) {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login.html';
-            return;
-        }
+        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
 
-        const response = await fetch(`/api/tags/${tagId}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(tagData)
-        });
+        if (isTestMode) {
+            // 测试模式：更新本地存储
+            const tagIndex = tags.findIndex(tag => tag.id === tagId);
+            if (tagIndex !== -1) {
+                tags[tagIndex] = {
+                    ...tags[tagIndex],
+                    ...tagData,
+                    updatedAt: new Date().toISOString()
+                };
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token');
+                // 保存到本地存储
+                localStorage.setItem('testTags', JSON.stringify(tags));
+
+                applyFiltersAndSort();
+                showNotification('标签更新成功', 'success');
+            }
+        } else {
+            // 生产模式：调用API
+            const token = localStorage.getItem('token');
+            if (!token) {
                 window.location.href = '/login.html';
                 return;
             }
-            const errorData = await response.json();
-            throw new Error(errorData.error || '更新标签失败');
+
+            const response = await fetch(`/api/tags/${tagId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tagData)
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const errorData = await response.json();
+                throw new Error(errorData.error || '更新标签失败');
+            }
+
+            const data = await response.json();
+            const updatedTag = data.tag;
+
+            // 更新本地数组
+            const tagIndex = tags.findIndex(tag => tag.id === tagId);
+            if (tagIndex !== -1) {
+                tags[tagIndex] = updatedTag;
+                applyFiltersAndSort();
+            }
+
+            showNotification('标签更新成功', 'success');
         }
-
-        const data = await response.json();
-        const updatedTag = data.tag;
-
-        // 更新本地数组
-        const tagIndex = tags.findIndex(tag => tag.id === tagId);
-        if (tagIndex !== -1) {
-            tags[tagIndex] = updatedTag;
-            applyFiltersAndSort();
-        }
-
-        showNotification('标签更新成功', 'success');
     } catch (error) {
         console.error('更新标签错误:', error);
         showNotification(error.message || '更新标签失败', 'error');
@@ -757,37 +895,54 @@ async function deleteTag(tagId) {
 
     if (confirm(message)) {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return;
-            }
+            const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
 
-            const response = await fetch(`/api/tags/${tagId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
+            if (isTestMode) {
+                // 测试模式：从本地存储删除
+                tags = tags.filter(t => t.id !== tagId);
+                selectedTags.delete(tagId);
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
+                // 保存到本地存储
+                localStorage.setItem('testTags', JSON.stringify(tags));
+
+                applyFiltersAndSort();
+                updateBatchToolbar();
+
+                showNotification('标签已删除', 'success');
+            } else {
+                // 生产模式：调用API
+                const token = localStorage.getItem('token');
+                if (!token) {
                     window.location.href = '/login.html';
                     return;
                 }
-                const errorData = await response.json();
-                throw new Error(errorData.error || '删除标签失败');
+
+                const response = await fetch(`/api/tags/${tagId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('token');
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || '删除标签失败');
+                }
+
+                // 从本地数组中移除
+                tags = tags.filter(t => t.id !== tagId);
+                selectedTags.delete(tagId);
+                applyFiltersAndSort();
+                updateBatchToolbar();
+
+                showNotification('标签已删除', 'success');
             }
-
-            // 从本地数组中移除
-            tags = tags.filter(t => t.id !== tagId);
-            selectedTags.delete(tagId);
-            applyFiltersAndSort();
-            updateBatchToolbar();
-
-            showNotification('标签已删除', 'success');
         } catch (error) {
             console.error('删除标签错误:', error);
             showNotification(error.message || '删除标签失败', 'error');

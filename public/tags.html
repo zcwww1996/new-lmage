@@ -905,6 +905,44 @@
             max-height: 100%;
         }
 
+        /* 测试模式横幅 */
+        .test-mode-banner {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .test-mode-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .test-mode-content i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .test-mode-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .test-mode-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .tags-container {
@@ -1142,6 +1180,17 @@
 
         <main>
             <div class="tags-container">
+                <!-- 测试模式提示 -->
+                <div class="test-mode-banner" id="testModeBanner" style="display: none;">
+                    <div class="test-mode-content">
+                        <i class="ri-flask-line"></i>
+                        <span>当前为测试模式，所有操作仅保存在本地浏览器中</span>
+                        <button class="test-mode-close" onclick="document.getElementById('testModeBanner').style.display='none'">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="tags-header">
                     <div>
                         <h1 class="tags-title">
