@@ -46,28 +46,45 @@ async function loadTags() {
     try {
         showLoading();
 
-        const token = localStorage.getItem('token');
-        const headers = {};
+        // 检查是否为测试模式
+        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
 
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        const response = await fetch('/api/tags', { headers });
-
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                if (window.location.protocol.startsWith('http')) {
-                    window.location.href = '/login.html';
-                }
+        if (isTestMode) {
+            // 测试模式：使用本地存储的模拟数据
+            const savedTags = localStorage.getItem('testTags');
+            if (savedTags) {
+                tags = JSON.parse(savedTags);
+            } else {
+                tags = generateTestTags();
+                localStorage.setItem('testTags', JSON.stringify(tags));
+            }
+        } else {
+            // 生产模式：调用真实API
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
                 return;
             }
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
 
-        const data = await response.json();
-        tags = data.tags || [];
+            const response = await fetch('/api/tags', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            tags = data.tags || [];
+        }
 
         filteredTags = [...tags];
 
@@ -83,7 +100,7 @@ async function loadTags() {
         hideLoading();
     } catch (error) {
         console.error('加载标签失败:', error);
-        showNotification('加载标签失败，请刷新页面重试', 'error');
+        showError('加载标签失败，请刷新页面重试');
         hideLoading();
     }
 }
@@ -230,8 +247,8 @@ function initColorPicker() {
     const colorPicker = document.getElementById('colorPicker');
     if (!colorPicker) return;
 
-    colorPicker.innerHTML = TAG_COLORS.map((color, index) => `
-        <div class="color-option ${index === 0 ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
+    colorPicker.innerHTML = TAG_COLORS.map(color => `
+        <div class="color-option" style="background-color: ${color}" data-color="${color}"></div>
     `).join('');
 
     // 绑定颜色选择事件
@@ -572,11 +589,15 @@ function openTagModal(tagId = null) {
         descInput.value = '';
         submitBtn.innerHTML = '<i class="ri-save-line"></i>保存标签';
 
-        // 清除颜色选择并默认选择第一个颜色
+        // 清除颜色选择
         const colorOptions = colorPicker.querySelectorAll('.color-option');
-        colorOptions.forEach((option, index) => {
-            option.classList.toggle('selected', index === 0);
+        colorOptions.forEach(option => {
+            option.classList.remove('selected');
         });
+        // 默认选择第一个颜色
+        if (colorOptions.length > 0) {
+            colorOptions[0].classList.add('selected');
+        }
     }
 
     modal.classList.add('active');
@@ -597,22 +618,14 @@ function closeTagModal() {
 /**
  * 处理标签表单提交
  */
-async function handleTagFormSubmit(e) {
+function handleTagFormSubmit(e) {
     e.preventDefault();
 
     const nameInput = document.getElementById('tagName');
     const descInput = document.getElementById('tagDescription');
     const selectedColor = document.querySelector('.color-option.selected');
 
-    if (!nameInput) {
-        showNotification('表单元素未找到', 'error');
-        return;
-    }
-
-    if (!selectedColor) {
-        showNotification('请选择标签颜色', 'error');
-        return;
-    }
+    if (!nameInput || !selectedColor) return;
 
     const tagData = {
         name: nameInput.value.trim(),
@@ -623,11 +636,6 @@ async function handleTagFormSubmit(e) {
     if (!tagData.name) {
         showNotification('请输入标签名称', 'error');
         nameInput.focus();
-        return;
-    }
-
-    if (!tagData.color) {
-        showNotification('请选择标签颜色', 'error');
         return;
     }
 
@@ -643,18 +651,13 @@ async function handleTagFormSubmit(e) {
         return;
     }
 
-    try {
-        if (editingTagId) {
-            await updateTag(editingTagId, tagData);
-        } else {
-            await createTag(tagData);
-        }
-
-        closeTagModal();
-    } catch (error) {
-        console.error('标签操作失败:', error);
-        showNotification('操作失败，请重试', 'error');
+    if (editingTagId) {
+        updateTag(editingTagId, tagData);
+    } else {
+        createTag(tagData);
     }
+
+    closeTagModal();
 }
 
 /**
@@ -663,24 +666,24 @@ async function handleTagFormSubmit(e) {
 async function createTag(tagData) {
     try {
         const token = localStorage.getItem('token');
-        const headers = { 'Content-Type': 'application/json' };
-
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
         }
 
         const response = await fetch('/api/tags', {
             method: 'POST',
-            headers,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(tagData)
         });
 
         if (!response.ok) {
             if (response.status === 401) {
                 localStorage.removeItem('token');
-                if (window.location.protocol.startsWith('http')) {
-                    window.location.href = '/login.html';
-                }
+                window.location.href = '/login.html';
                 return;
             }
             const errorData = await response.json();
@@ -707,24 +710,24 @@ async function createTag(tagData) {
 async function updateTag(tagId, tagData) {
     try {
         const token = localStorage.getItem('token');
-        const headers = { 'Content-Type': 'application/json' };
-
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
         }
 
         const response = await fetch(`/api/tags/${tagId}`, {
             method: 'PUT',
-            headers,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(tagData)
         });
 
         if (!response.ok) {
             if (response.status === 401) {
                 localStorage.removeItem('token');
-                if (window.location.protocol.startsWith('http')) {
-                    window.location.href = '/login.html';
-                }
+                window.location.href = '/login.html';
                 return;
             }
             const errorData = await response.json();
@@ -769,23 +772,23 @@ async function deleteTag(tagId) {
     if (confirm(message)) {
         try {
             const token = localStorage.getItem('token');
-            const headers = { 'Content-Type': 'application/json' };
-
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
             }
 
             const response = await fetch(`/api/tags/${tagId}`, {
                 method: 'DELETE',
-                headers
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('token');
-                    if (window.location.protocol.startsWith('http')) {
-                        window.location.href = '/login.html';
-                    }
+                    window.location.href = '/login.html';
                     return;
                 }
                 const errorData = await response.json();
@@ -949,75 +952,12 @@ function updateStats() {
  */
 function showNotification(message, type = 'info') {
     // 使用common.js中的函数
-    if (window.commonUtils && window.commonUtils.showNotification) {
-        window.commonUtils.showNotification(message, type);
-    } else if (window.showNotification) {
+    if (window.showNotification) {
         window.showNotification(message, type);
     } else {
-        // 降级方案：创建简单的通知
-        createSimpleNotification(message, type);
+        // 降级方案
+        console.log(`[${type.toUpperCase()}] ${message}`);
     }
-}
-
-/**
- * 创建简单通知（降级方案）
- */
-function createSimpleNotification(message, type) {
-    // 移除现有通知
-    const existingNotification = document.querySelector('.simple-notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-
-    // 创建通知元素
-    const notification = document.createElement('div');
-    notification.className = 'simple-notification';
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10000;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: slideInRight 0.3s ease;
-        max-width: 400px;
-        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
-    `;
-
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    // 添加动画样式
-    if (!document.querySelector('#simple-notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'simple-notification-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // 自动删除
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease forwards';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 300);
-        }
-    }, 3000);
 }
 
 /**
