@@ -303,9 +303,14 @@
         }
 
         .tag-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
             border-color: #8b5cf6;
+        }
+
+        .tag-card:hover .tag-color {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
         }
 
         .tag-card.selected {
@@ -340,6 +345,25 @@
             border-radius: 50%;
             border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .tag-color::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .tag-card:hover .tag-color::after {
+            opacity: 1;
         }
 
         .tag-actions {
@@ -804,6 +828,83 @@
             border-color: rgba(239, 68, 68, 0.3);
         }
 
+        /* 标签统计图表 */
+        .tags-stats-chart {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        body.dark-mode .tags-stats-chart {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        body.dark-mode .stats-chart-header {
+            border-color: var(--dark-border);
+        }
+
+        .stats-chart-header h3 {
+            margin: 0;
+            color: #8b5cf6;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stats-toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all var(--transition);
+        }
+
+        .stats-toggle-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+        }
+
+        .stats-chart-content {
+            position: relative;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #tagUsageChart {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .tags-container {
@@ -1061,15 +1162,38 @@
                     </div>
                 </div>
 
+                <!-- 标签统计图表 -->
+                <div class="tags-stats-chart" id="tagsStatsChart" style="display: none;">
+                    <div class="stats-chart-header">
+                        <h3><i class="ri-bar-chart-line"></i> 标签使用统计</h3>
+                        <button class="stats-toggle-btn" id="statsToggleBtn">
+                            <i class="ri-eye-off-line"></i>
+                        </button>
+                    </div>
+                    <div class="stats-chart-content">
+                        <canvas id="tagUsageChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
                 <div class="search-create-bar">
                     <div class="search-box">
                         <i class="ri-search-line search-icon"></i>
                         <input type="text" class="search-input" placeholder="搜索标签..." id="searchInput">
                     </div>
-                    
+
                     <button class="create-tag-btn" id="createTagBtn">
                         <i class="ri-add-line"></i>
                         <span>创建标签</span>
+                    </button>
+
+                    <button class="create-tag-btn" id="importTagsBtn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="ri-download-line"></i>
+                        <span>导入标签</span>
+                    </button>
+
+                    <button class="create-tag-btn" id="exportTagsBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <i class="ri-upload-line"></i>
+                        <span>导出标签</span>
                     </button>
                 </div>
 
@@ -1153,18 +1277,18 @@
                 <h3 class="tag-modal-title" id="tagModalTitle">创建标签</h3>
                 <button class="tag-modal-close" id="tagModalClose">&times;</button>
             </div>
-            
+
             <form id="tagForm">
                 <div class="form-group">
                     <label for="tagName" class="form-label">标签名称</label>
                     <input type="text" id="tagName" class="form-control" placeholder="输入标签名称..." required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="tagDescription" class="form-label">标签描述</label>
                     <textarea id="tagDescription" class="form-control" rows="3" placeholder="输入标签描述（可选）..."></textarea>
                 </div>
-                
+
                 <div class="form-group">
                     <label class="form-label">标签颜色</label>
                     <div class="color-picker-grid" id="colorPicker">
@@ -1172,7 +1296,7 @@
                     </div>
                 </div>
             </form>
-            
+
             <div class="tag-modal-footer">
                 <button type="button" class="modal-btn modal-btn-secondary" id="tagModalCancel">
                     <i class="ri-close-line"></i>
@@ -1212,4 +1336,4 @@
     <script src="./js/common.js"></script>
     <script src="./js/tags.js"></script>
 </body>
-</html> 
+</html>

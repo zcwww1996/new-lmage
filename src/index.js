@@ -5,6 +5,7 @@ import { fileHandler } from './functions/file/[id]';
 import { register, login, getCurrentUser, updateUserAvatar, getUserProfile } from './functions/user/auth';
 import { getUserImages, deleteUserImage, updateImageInfo, searchUserImages } from './functions/user/images';
 import { getUserFavorites, addToFavorites, removeFromFavorites, checkFavoriteStatus, batchFavoriteOperation } from './functions/user/favorites';
+import { getUserTags, createTag, updateTag, deleteTag, batchTagOperation, getTagImages } from './functions/user/tags';
 import { authMiddleware } from './functions/utils/auth';
 
 const app = new Hono();
@@ -37,6 +38,14 @@ app.post('/api/favorites/:id', authMiddleware, addToFavorites);
 app.delete('/api/favorites/:id', authMiddleware, removeFromFavorites);
 app.get('/api/favorites/:id/status', authMiddleware, checkFavoriteStatus);
 app.post('/api/favorites/batch', authMiddleware, batchFavoriteOperation);
+
+// 用户标签相关API
+app.get('/api/tags', authMiddleware, getUserTags);
+app.post('/api/tags', authMiddleware, createTag);
+app.put('/api/tags/:id', authMiddleware, updateTag);
+app.delete('/api/tags/:id', authMiddleware, deleteTag);
+app.post('/api/tags/batch', authMiddleware, batchTagOperation);
+app.get('/api/tags/:id/images', authMiddleware, getTagImages);
 
 // 静态文件服务放在最后，避免覆盖 API 路由
 app.use('/*', serveStatic({ root: './' }));
