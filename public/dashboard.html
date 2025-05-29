@@ -743,7 +743,8 @@
             z-index: 2;
         }
 
-        .image-card:hover .image-zoom-icon {
+        .image-card:hover .image-zoom-icon,
+        .image-card-enhanced:hover .image-zoom-icon {
             opacity: 1;
         }
 
@@ -768,6 +769,7 @@
         }
 
         .image-card:hover .favorite-btn,
+        .image-card-enhanced:hover .favorite-btn,
         .favorite-btn.active {
             opacity: 1;
         }
@@ -782,7 +784,8 @@
             background: rgba(0,0,0,0.7);
         }
 
-        .image-card.favorite {
+        .image-card.favorite,
+        .image-card-enhanced.favorite {
             border-color: #f59e0b;
             box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
         }
