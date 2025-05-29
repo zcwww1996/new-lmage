@@ -25,6 +25,7 @@
     <!-- 引入图标库 -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
+        /* ========== 全局样式 ========== */
         .profile-container {
             max-width: 1000px;
             margin: 2rem auto;
@@ -37,6 +38,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ========== 头部区域 ========== */
         .profile-header {
             display: flex;
             justify-content: space-between;
@@ -73,6 +75,7 @@
             border-radius: 3px;
         }
 
+        /* ========== 内容布局 ========== */
         .profile-content {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -91,6 +94,7 @@
             gap: 1.5rem;
         }
 
+        /* ========== 卡片样式 ========== */
         .profile-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -122,6 +126,7 @@
             color: var(--primary-light);
         }
 
+        /* ========== 头像区域 ========== */
         .avatar-section {
             text-align: center;
         }
@@ -209,6 +214,7 @@
             color: var(--dark-text-light);
         }
 
+        /* ========== 信息项 ========== */
         .info-item {
             display: flex;
             justify-content: space-between;
@@ -254,6 +260,7 @@
             color: white;
         }
 
+        /* ========== 统计网格 ========== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -310,6 +317,7 @@
             color: var(--dark-text-light);
         }
 
+        /* ========== 账户操作 ========== */
         .account-actions {
             display: flex;
             flex-direction: column;
@@ -355,7 +363,7 @@
             color: white;
         }
 
-        /* 响应式设计 */
+        /* ========== 响应式设计 ========== */
         @media (max-width: 768px) {
             .profile-content {
                 grid-template-columns: 1fr;

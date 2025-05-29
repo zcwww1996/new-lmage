@@ -2174,5 +2174,36 @@
     <script src="./js/menu-system.js"></script>
     <script src="./js/share.js"></script>
     <script src="./js/beauty-effects.js"></script>
+
+    <!-- 调试脚本 -->
+    <script>
+        // 调试信息
+        console.log('Dashboard页面加载完成');
+        console.log('当前路径:', window.location.pathname);
+        console.log('用户token:', localStorage.getItem('token') ? '存在' : '不存在');
+        console.log('用户信息:', localStorage.getItem('user'));
+
+        // 检查关键元素是否存在
+        setTimeout(() => {
+            const imageGrid = document.getElementById('imageGrid');
+            const emptyState = document.getElementById('emptyState');
+            console.log('imageGrid元素:', imageGrid ? '存在' : '不存在');
+            console.log('emptyState元素:', emptyState ? '存在' : '不存在');
+            console.log('imageGrid内容:', imageGrid ? imageGrid.innerHTML : 'N/A');
+
+            // 检查认证状态
+            if (typeof checkAuth === 'function') {
+                console.log('认证状态:', checkAuth() ? '已登录' : '未登录');
+            }
+
+            // 手动触发加载（如果需要）
+            if (typeof loadUserImages === 'function' && checkAuth && checkAuth()) {
+                console.log('手动触发loadUserImages...');
+                loadUserImages().catch(error => {
+                    console.error('手动加载失败:', error);
+                });
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
