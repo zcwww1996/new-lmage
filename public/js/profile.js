@@ -26,17 +26,25 @@ function initProfile() {
 // 加载用户资料信息
 async function loadUserProfile() {
     try {
+        console.log('开始加载用户资料...');
+        console.log('Token存在:', !!localStorage.getItem('token'));
+
         const response = await fetch('/api/auth/profile', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
+        console.log('API响应状态:', response.status);
+
         if (!response.ok) {
-            throw new Error('获取用户资料失败');
+            const errorData = await response.json();
+            console.error('API错误响应:', errorData);
+            throw new Error(errorData.error || '获取用户资料失败');
         }
 
         const data = await response.json();
+        console.log('用户资料数据:', data);
         const user = data.user;
 
         // 更新用户信息显示
@@ -50,45 +58,72 @@ async function loadUserProfile() {
 
 // 更新用户资料显示
 function updateUserProfileDisplay(user) {
+    console.log('开始更新用户资料显示:', user);
+
     // 更新用户名
     const usernameElement = document.getElementById('profileUsername');
+    console.log('用户名元素:', usernameElement);
     if (usernameElement) {
         usernameElement.textContent = user.username || '-';
+        console.log('已更新用户名:', user.username);
+    } else {
+        console.error('未找到用户名元素 #profileUsername');
     }
 
     // 更新邮箱
     const emailElement = document.getElementById('profileEmail');
+    console.log('邮箱元素:', emailElement);
     if (emailElement) {
         emailElement.textContent = user.email || '-';
+        console.log('已更新邮箱:', user.email);
+    } else {
+        console.error('未找到邮箱元素 #profileEmail');
     }
 
     // 更新注册时间
     const regTimeElement = document.getElementById('profileRegTime');
+    console.log('注册时间元素:', regTimeElement);
     if (regTimeElement) {
         if (user.createdAt) {
             const regDate = new Date(user.createdAt);
-            regTimeElement.textContent = regDate.toLocaleDateString('zh-CN', {
+            const regTime = regDate.toLocaleDateString('zh-CN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
             });
+            regTimeElement.textContent = regTime;
+            console.log('已更新注册时间:', regTime);
         } else {
             regTimeElement.textContent = '-';
+            console.log('注册时间为空，设置为 -');
         }
+    } else {
+        console.error('未找到注册时间元素 #profileRegTime');
     }
 
     // 更新统计信息
+    console.log('用户统计信息:', user.stats);
     if (user.stats) {
         const imageCountElement = document.getElementById('profileImageCount');
+        console.log('图片数量元素:', imageCountElement);
         if (imageCountElement) {
             imageCountElement.textContent = user.stats.totalImages || '0';
+            console.log('已更新图片数量:', user.stats.totalImages);
+        } else {
+            console.error('未找到图片数量元素 #profileImageCount');
         }
 
         const storageUsedElement = document.getElementById('profileStorageUsed');
+        console.log('存储使用元素:', storageUsedElement);
         if (storageUsedElement) {
             const sizeInMB = (user.stats.totalSize / (1024 * 1024)).toFixed(2);
             storageUsedElement.textContent = `${sizeInMB} MB`;
+            console.log('已更新存储使用:', sizeInMB, 'MB');
+        } else {
+            console.error('未找到存储使用元素 #profileStorageUsed');
         }
+    } else {
+        console.warn('用户统计信息不存在');
     }
 
     // 更新头像显示
@@ -103,7 +138,7 @@ function updateUserProfileDisplay(user) {
             avatarPreview.innerHTML = '<i class="ri-user-3-line"></i><div class="avatar-overlay">更换头像</div>';
         };
         avatarPreview.appendChild(img);
-        
+
         // 重新添加overlay
         const overlay = document.createElement('div');
         overlay.className = 'avatar-overlay';
@@ -121,7 +156,7 @@ function updateUserProfileDisplay(user) {
 // 初始化头像上传功能
 function initAvatarUpload() {
     const avatarPreview = document.getElementById('avatarPreview');
-    
+
     if (!avatarPreview) return;
 
     // 创建隐藏的文件输入元素
@@ -131,49 +166,49 @@ function initAvatarUpload() {
     avatarInput.style.display = 'none';
     avatarInput.id = 'avatarFileInput';
     document.body.appendChild(avatarInput);
-    
+
     // 头像点击事件
     avatarPreview.addEventListener('click', () => {
         avatarInput.click();
     });
-    
+
     // 文件选择事件
     avatarInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         // 验证文件类型
         if (!file.type.startsWith('image/')) {
             showNotification('请选择图片文件', 'error');
             return;
         }
-        
+
         // 验证文件大小（限制为5MB）
         if (file.size > 5 * 1024 * 1024) {
             showNotification('图片文件大小不能超过5MB', 'error');
             return;
         }
-        
+
         try {
             // 显示加载状态
             avatarPreview.innerHTML = '<i class="ri-loader-4-line rotating"></i>';
-            
+
             await uploadAvatar(file);
-            
+
             // 显示成功消息
             showNotification('头像更新成功', 'success');
-            
+
             // 重新加载用户资料
             loadUserProfile();
-            
+
         } catch (error) {
             console.error('头像上传错误:', error);
             showNotification('头像更新失败: ' + error.message, 'error');
-            
+
             // 恢复头像显示
             loadUserProfile();
         }
-        
+
         // 清空文件输入
         avatarInput.value = '';
     });
@@ -185,7 +220,7 @@ async function uploadAvatar(file) {
         // 首先上传文件到图床
         const formData = new FormData();
         formData.append('file', file);
-        
+
         const uploadResponse = await fetch('/upload', {
             method: 'POST',
             headers: {
@@ -193,20 +228,20 @@ async function uploadAvatar(file) {
             },
             body: formData
         });
-        
+
         if (!uploadResponse.ok) {
             throw new Error('图片上传失败');
         }
-        
+
         const uploadResult = await uploadResponse.json();
-        
+
         if (!uploadResult || uploadResult.length === 0 || !uploadResult[0].src) {
             throw new Error('上传结果无效');
         }
-        
+
         // 获取上传后的图片链接
         const avatarUrl = window.location.origin + uploadResult[0].src;
-        
+
         // 更新用户头像
         const updateResponse = await fetch('/api/auth/avatar', {
             method: 'PUT',
@@ -216,20 +251,20 @@ async function uploadAvatar(file) {
             },
             body: JSON.stringify({ avatarUrl })
         });
-        
+
         if (!updateResponse.ok) {
             const errorData = await updateResponse.json();
             throw new Error(errorData.error || '头像更新失败');
         }
-        
+
         const result = await updateResponse.json();
-        
+
         // 更新本地存储的用户信息
         localStorage.setItem('user', JSON.stringify(result.user));
-        
+
         // 更新全局头像显示
         updateUserAvatar();
-        
+
         return result;
     } catch (error) {
         console.error('上传头像错误:', error);
@@ -321,7 +356,7 @@ function logout() {
     // 清除本地存储
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+
     // 重定向到首页
     window.location.href = '/';
 }
@@ -332,7 +367,7 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
-    
+
     // 样式
     notification.style.cssText = `
         position: fixed;
@@ -349,7 +384,7 @@ function showNotification(message, type = 'info') {
         max-width: 300px;
         word-wrap: break-word;
     `;
-    
+
     // 根据类型设置背景色
     switch (type) {
         case 'success':
@@ -364,15 +399,15 @@ function showNotification(message, type = 'info') {
         default:
             notification.style.background = '#3b82f6';
     }
-    
+
     document.body.appendChild(notification);
-    
+
     // 显示动画
     setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateX(0)';
     }, 100);
-    
+
     // 3秒后自动隐藏
     setTimeout(() => {
         notification.style.opacity = '0';
@@ -400,9 +435,9 @@ style.textContent = `
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
     }
-    
+
     .rotating {
         animation: rotate 1s linear infinite;
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);
