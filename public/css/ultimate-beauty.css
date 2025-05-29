@@ -112,6 +112,15 @@ body.dark-mode {
   box-shadow: var(--glow-accent);
 }
 
+.btn-beauty-error {
+  background: var(--beauty-error);
+  box-shadow: 0 8px 25px rgba(255, 117, 140, 0.3);
+}
+
+.btn-beauty-error:hover {
+  box-shadow: 0 8px 25px rgba(255, 117, 140, 0.6);
+}
+
 /* 极致美化卡片系统 */
 .card-beauty {
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
