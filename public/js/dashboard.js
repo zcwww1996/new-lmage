@@ -1476,9 +1476,11 @@ function initEditModal() {
     const closeModal = document.getElementById('closeModal');
     const cancelEdit = document.getElementById('cancelEdit');
     const saveEdit = document.getElementById('saveEdit');
-    const tagInput = document.getElementById('tagInput');
-    const tagsInput = document.getElementById('tagsInput');
-    const tagsSuggestions = document.getElementById('tagsSuggestions');
+
+    // 初始化标签管理
+    if (window.imageTagsManager) {
+        window.imageTagsManager.init();
+    }
 
     // 关闭模态框
     function closeEditModal() {
@@ -1486,11 +1488,11 @@ function initEditModal() {
         setTimeout(() => {
             editModal.style.display = 'none';
             currentEditingImageId = null;
-            currentTags = [];
 
-            // 清空标签输入
-            const tagElements = tagsInput.querySelectorAll('.tag');
-            tagElements.forEach(tag => tag.remove());
+            // 清空标签状态
+            if (window.imageTagsManager) {
+                window.imageTagsManager.clear();
+            }
 
             // 清空其他字段
             document.getElementById('editFileName').value = '';
@@ -1498,9 +1500,6 @@ function initEditModal() {
             document.getElementById('editUploadTime').textContent = '-';
             document.getElementById('editFileSize').textContent = '-';
             document.getElementById('editImageLink').value = '';
-
-            // 隐藏标签建议
-            tagsSuggestions.style.display = 'none';
         }, 300);
     }
 
@@ -1580,6 +1579,9 @@ function initEditModal() {
             return;
         }
 
+        // 获取当前标签
+        const tags = window.imageTagsManager ? window.imageTagsManager.getTags() : [];
+
         try {
             const response = await fetch(`/api/images/${currentEditingImageId}`, {
                 method: 'PUT',
@@ -1589,7 +1591,7 @@ function initEditModal() {
                 },
                 body: JSON.stringify({
                     fileName,
-                    tags: currentTags
+                    tags
                 })
             });
 
@@ -1633,8 +1635,6 @@ function openEditModal(imageId) {
     const editUploadTime = document.getElementById('editUploadTime');
     const editFileSize = document.getElementById('editFileSize');
     const editImageLink = document.getElementById('editImageLink');
-    const tagsInput = document.getElementById('tagsInput');
-    const tagInput = document.getElementById('tagInput');
 
     // 查找图片
     const image = currentImages.find(img => img.id === imageId);
@@ -1661,15 +1661,10 @@ function openEditModal(imageId) {
     // 设置图片链接
     editImageLink.value = `${window.location.origin}${image.url}`;
 
-    // 清空标签
-    const tagElements = tagsInput.querySelectorAll('.tag');
-    tagElements.forEach(tag => tag.remove());
-
     // 设置标签
-    currentTags = image.tags || [];
-    currentTags.forEach(tag => {
-        addTagElement(tag);
-    });
+    if (window.imageTagsManager) {
+        window.imageTagsManager.setTags(image.tags || []);
+    }
 
     // 显示模态框
     editModal.style.display = 'flex';

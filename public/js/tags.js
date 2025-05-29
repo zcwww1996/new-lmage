@@ -29,9 +29,6 @@ const TAG_COLORS = [
  * 初始化标签管理页面
  */
 function initTagsPage() {
-    // 检查并显示测试模式横幅
-    checkTestMode();
-
     // 加载标签数据
     loadTags();
 
@@ -43,63 +40,34 @@ function initTagsPage() {
 }
 
 /**
- * 检查测试模式并显示横幅
- */
-function checkTestMode() {
-    const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
-    const testBanner = document.getElementById('testModeBanner');
-
-    if (isTestMode && testBanner) {
-        testBanner.style.display = 'block';
-    }
-}
-
-/**
  * 加载标签数据
  */
 async function loadTags() {
     try {
         showLoading();
 
-        // 检查是否为测试模式
-        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
+        const token = localStorage.getItem('token');
+        const headers = {};
 
-        if (isTestMode) {
-            // 测试模式：使用本地存储的模拟数据
-            const savedTags = localStorage.getItem('testTags');
-            if (savedTags) {
-                tags = JSON.parse(savedTags);
-            } else {
-                tags = generateTestTags();
-                localStorage.setItem('testTags', JSON.stringify(tags));
-            }
-        } else {
-            // 生产模式：调用真实API
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch('/api/tags', { headers });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                if (window.location.protocol.startsWith('http')) {
+                    window.location.href = '/login.html';
+                }
                 return;
             }
-
-            const response = await fetch('/api/tags', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login.html';
-                    return;
-                }
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            tags = data.tags || [];
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const data = await response.json();
+        tags = data.tags || [];
 
         filteredTags = [...tags];
 
@@ -115,76 +83,12 @@ async function loadTags() {
         hideLoading();
     } catch (error) {
         console.error('加载标签失败:', error);
-        showError('加载标签失败，请刷新页面重试');
+        showNotification('加载标签失败，请刷新页面重试', 'error');
         hideLoading();
     }
 }
 
-/**
- * 生成测试标签数据
- */
-function generateTestTags() {
-    const testTags = [];
-    const tagNames = [
-        '风景', '美食', '动物', '建筑', '人物', '艺术', '自然', '生活',
-        '旅行', '摄影', '城市', '可爱', '创意', '复古', '现代', '简约'
-    ];
-
-    const descriptions = [
-        '用于分类风景类型的图片',
-        '包含各种美食图片',
-        '动物和宠物相关的图片',
-        '建筑物和城市景观',
-        '人物肖像和生活照',
-        '艺术作品和创意图片',
-        '自然风光和景色',
-        '日常生活场景',
-        '旅行和探索主题',
-        '摄影作品集合',
-        '城市风貌和街景',
-        '可爱和萌系图片',
-        '创意设计和灵感',
-        '复古风格图片',
-        '现代简约风格',
-        '简约设计风格'
-    ];
-
-    for (let i = 0; i < tagNames.length; i++) {
-        const imageCount = Math.floor(Math.random() * 50) + 1;
-        const createdDate = new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000);
-
-        testTags.push({
-            id: `tag_${i + 1}`,
-            name: tagNames[i],
-            description: descriptions[i] || '',
-            color: TAG_COLORS[i % TAG_COLORS.length],
-            imageCount: imageCount,
-            createdAt: createdDate.toISOString(),
-            updatedAt: createdDate.toISOString(),
-            images: generateTagImages(imageCount, i + 1)
-        });
-    }
-
-    return testTags;
-}
-
-/**
- * 生成标签关联的图片
- */
-function generateTagImages(count, tagIndex) {
-    const images = [];
-    const maxDisplay = Math.min(count, 5);
-
-    for (let i = 0; i < maxDisplay; i++) {
-        images.push({
-            id: `img_${tagIndex}_${i + 1}`,
-            thumbnailUrl: `https://picsum.photos/100/100?random=${tagIndex * 10 + i}`,
-            name: `图片_${i + 1}.jpg`
-        });
-    }
-
-    return images;
-}
+// 模拟数据生成函数已移除，现在使用真实API
 
 /**
  * 初始化事件监听器
@@ -326,8 +230,8 @@ function initColorPicker() {
     const colorPicker = document.getElementById('colorPicker');
     if (!colorPicker) return;
 
-    colorPicker.innerHTML = TAG_COLORS.map(color => `
-        <div class="color-option" style="background-color: ${color}" data-color="${color}"></div>
+    colorPicker.innerHTML = TAG_COLORS.map((color, index) => `
+        <div class="color-option ${index === 0 ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
     `).join('');
 
     // 绑定颜色选择事件
@@ -668,15 +572,11 @@ function openTagModal(tagId = null) {
         descInput.value = '';
         submitBtn.innerHTML = '<i class="ri-save-line"></i>保存标签';
 
-        // 清除颜色选择
+        // 清除颜色选择并默认选择第一个颜色
         const colorOptions = colorPicker.querySelectorAll('.color-option');
-        colorOptions.forEach(option => {
-            option.classList.remove('selected');
+        colorOptions.forEach((option, index) => {
+            option.classList.toggle('selected', index === 0);
         });
-        // 默认选择第一个颜色
-        if (colorOptions.length > 0) {
-            colorOptions[0].classList.add('selected');
-        }
     }
 
     modal.classList.add('active');
@@ -697,14 +597,22 @@ function closeTagModal() {
 /**
  * 处理标签表单提交
  */
-function handleTagFormSubmit(e) {
+async function handleTagFormSubmit(e) {
     e.preventDefault();
 
     const nameInput = document.getElementById('tagName');
     const descInput = document.getElementById('tagDescription');
     const selectedColor = document.querySelector('.color-option.selected');
 
-    if (!nameInput || !selectedColor) return;
+    if (!nameInput) {
+        showNotification('表单元素未找到', 'error');
+        return;
+    }
+
+    if (!selectedColor) {
+        showNotification('请选择标签颜色', 'error');
+        return;
+    }
 
     const tagData = {
         name: nameInput.value.trim(),
@@ -715,6 +623,11 @@ function handleTagFormSubmit(e) {
     if (!tagData.name) {
         showNotification('请输入标签名称', 'error');
         nameInput.focus();
+        return;
+    }
+
+    if (!tagData.color) {
+        showNotification('请选择标签颜色', 'error');
         return;
     }
 
@@ -730,13 +643,18 @@ function handleTagFormSubmit(e) {
         return;
     }
 
-    if (editingTagId) {
-        updateTag(editingTagId, tagData);
-    } else {
-        createTag(tagData);
-    }
+    try {
+        if (editingTagId) {
+            await updateTag(editingTagId, tagData);
+        } else {
+            await createTag(tagData);
+        }
 
-    closeTagModal();
+        closeTagModal();
+    } catch (error) {
+        console.error('标签操作失败:', error);
+        showNotification('操作失败，请重试', 'error');
+    }
 }
 
 /**
@@ -744,63 +662,39 @@ function handleTagFormSubmit(e) {
  */
 async function createTag(tagData) {
     try {
-        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
 
-        if (isTestMode) {
-            // 测试模式：保存到本地存储
-            const newTag = {
-                id: `tag_${Date.now()}`,
-                ...tagData,
-                imageCount: 0,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                images: []
-            };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
-            // 添加到本地数组
-            tags.unshift(newTag);
+        const response = await fetch('/api/tags', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(tagData)
+        });
 
-            // 保存到本地存储
-            localStorage.setItem('testTags', JSON.stringify(tags));
-
-            applyFiltersAndSort();
-            showNotification('标签创建成功', 'success');
-        } else {
-            // 生产模式：调用API
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                if (window.location.protocol.startsWith('http')) {
+                    window.location.href = '/login.html';
+                }
                 return;
             }
-
-            const response = await fetch('/api/tags', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(tagData)
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login.html';
-                    return;
-                }
-                const errorData = await response.json();
-                throw new Error(errorData.error || '创建标签失败');
-            }
-
-            const data = await response.json();
-            const newTag = data.tag;
-
-            // 添加到本地数组
-            tags.unshift(newTag);
-            applyFiltersAndSort();
-
-            showNotification('标签创建成功', 'success');
+            const errorData = await response.json();
+            throw new Error(errorData.error || '创建标签失败');
         }
+
+        const data = await response.json();
+        const newTag = data.tag;
+
+        // 添加到本地数组
+        tags.unshift(newTag);
+        applyFiltersAndSort();
+
+        showNotification('标签创建成功', 'success');
     } catch (error) {
         console.error('创建标签错误:', error);
         showNotification(error.message || '创建标签失败', 'error');
@@ -812,63 +706,42 @@ async function createTag(tagData) {
  */
 async function updateTag(tagId, tagData) {
     try {
-        const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
+        const token = localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
 
-        if (isTestMode) {
-            // 测试模式：更新本地存储
-            const tagIndex = tags.findIndex(tag => tag.id === tagId);
-            if (tagIndex !== -1) {
-                tags[tagIndex] = {
-                    ...tags[tagIndex],
-                    ...tagData,
-                    updatedAt: new Date().toISOString()
-                };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
-                // 保存到本地存储
-                localStorage.setItem('testTags', JSON.stringify(tags));
+        const response = await fetch(`/api/tags/${tagId}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(tagData)
+        });
 
-                applyFiltersAndSort();
-                showNotification('标签更新成功', 'success');
-            }
-        } else {
-            // 生产模式：调用API
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                if (window.location.protocol.startsWith('http')) {
+                    window.location.href = '/login.html';
+                }
                 return;
             }
-
-            const response = await fetch(`/api/tags/${tagId}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(tagData)
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login.html';
-                    return;
-                }
-                const errorData = await response.json();
-                throw new Error(errorData.error || '更新标签失败');
-            }
-
-            const data = await response.json();
-            const updatedTag = data.tag;
-
-            // 更新本地数组
-            const tagIndex = tags.findIndex(tag => tag.id === tagId);
-            if (tagIndex !== -1) {
-                tags[tagIndex] = updatedTag;
-                applyFiltersAndSort();
-            }
-
-            showNotification('标签更新成功', 'success');
+            const errorData = await response.json();
+            throw new Error(errorData.error || '更新标签失败');
         }
+
+        const data = await response.json();
+        const updatedTag = data.tag;
+
+        // 更新本地数组
+        const tagIndex = tags.findIndex(tag => tag.id === tagId);
+        if (tagIndex !== -1) {
+            tags[tagIndex] = updatedTag;
+            applyFiltersAndSort();
+        }
+
+        showNotification('标签更新成功', 'success');
     } catch (error) {
         console.error('更新标签错误:', error);
         showNotification(error.message || '更新标签失败', 'error');
@@ -895,54 +768,37 @@ async function deleteTag(tagId) {
 
     if (confirm(message)) {
         try {
-            const isTestMode = window.location.search.includes('test=true') || !window.location.protocol.startsWith('http');
+            const token = localStorage.getItem('token');
+            const headers = { 'Content-Type': 'application/json' };
 
-            if (isTestMode) {
-                // 测试模式：从本地存储删除
-                tags = tags.filter(t => t.id !== tagId);
-                selectedTags.delete(tagId);
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
-                // 保存到本地存储
-                localStorage.setItem('testTags', JSON.stringify(tags));
+            const response = await fetch(`/api/tags/${tagId}`, {
+                method: 'DELETE',
+                headers
+            });
 
-                applyFiltersAndSort();
-                updateBatchToolbar();
-
-                showNotification('标签已删除', 'success');
-            } else {
-                // 生产模式：调用API
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    window.location.href = '/login.html';
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    if (window.location.protocol.startsWith('http')) {
+                        window.location.href = '/login.html';
+                    }
                     return;
                 }
-
-                const response = await fetch(`/api/tags/${tagId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('token');
-                        window.location.href = '/login.html';
-                        return;
-                    }
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || '删除标签失败');
-                }
-
-                // 从本地数组中移除
-                tags = tags.filter(t => t.id !== tagId);
-                selectedTags.delete(tagId);
-                applyFiltersAndSort();
-                updateBatchToolbar();
-
-                showNotification('标签已删除', 'success');
+                const errorData = await response.json();
+                throw new Error(errorData.error || '删除标签失败');
             }
+
+            // 从本地数组中移除
+            tags = tags.filter(t => t.id !== tagId);
+            selectedTags.delete(tagId);
+            applyFiltersAndSort();
+            updateBatchToolbar();
+
+            showNotification('标签已删除', 'success');
         } catch (error) {
             console.error('删除标签错误:', error);
             showNotification(error.message || '删除标签失败', 'error');
@@ -1093,12 +949,75 @@ function updateStats() {
  */
 function showNotification(message, type = 'info') {
     // 使用common.js中的函数
-    if (window.showNotification) {
+    if (window.commonUtils && window.commonUtils.showNotification) {
+        window.commonUtils.showNotification(message, type);
+    } else if (window.showNotification) {
         window.showNotification(message, type);
     } else {
-        // 降级方案
-        console.log(`[${type.toUpperCase()}] ${message}`);
+        // 降级方案：创建简单的通知
+        createSimpleNotification(message, type);
     }
+}
+
+/**
+ * 创建简单通知（降级方案）
+ */
+function createSimpleNotification(message, type) {
+    // 移除现有通知
+    const existingNotification = document.querySelector('.simple-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = 'simple-notification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideInRight 0.3s ease;
+        max-width: 400px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+    `;
+
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // 添加动画样式
+    if (!document.querySelector('#simple-notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'simple-notification-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // 自动删除
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease forwards';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 3000);
 }
 
 /**

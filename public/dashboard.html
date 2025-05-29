@@ -1332,6 +1332,117 @@
             color: var(--dark-text);
         }
 
+        /* 快速标签选择器样式 */
+        .tags-management-container {
+            position: relative;
+        }
+
+        .quick-tags-selector {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        body.dark-mode .quick-tags-selector {
+            background: var(--dark-card-bg);
+            border-color: var(--dark-border);
+        }
+
+        .quick-tags-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .quick-tags-header {
+            color: var(--dark-text);
+        }
+
+        .refresh-tags-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-tags-btn:hover {
+            background: rgba(var(--primary-light-rgb), 0.1);
+            transform: rotate(180deg);
+        }
+
+        .quick-tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .quick-tag-option {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        body.dark-mode .quick-tag-option {
+            background: var(--dark-bg);
+            border-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .quick-tag-option:hover {
+            border-color: var(--primary-color);
+            background: rgba(var(--primary-light-rgb), 0.1);
+        }
+
+        .quick-tag-option.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .quick-tag-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .quick-tag-name {
+            flex: 1;
+        }
+
+        .quick-tag-count {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.1rem 0.3rem;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+        }
+
         .modal-footer {
             display: flex;
             justify-content: flex-end;
@@ -2038,6 +2149,37 @@
                             </button>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="tagsInput">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                            标签管理
+                        </label>
+                        <div class="tags-management-container">
+                            <!-- 已选标签显示区域 -->
+                            <div id="tagsInput" class="tags-input">
+                                <input type="text" id="tagInput" class="tag-input" placeholder="输入标签名称或从下方选择">
+                            </div>
+
+                            <!-- 快速标签选择器 -->
+                            <div class="quick-tags-selector">
+                                <div class="quick-tags-header">
+                                    <span>快速选择标签：</span>
+                                    <button type="button" class="refresh-tags-btn" id="refreshTagsBtn" title="刷新标签列表">
+                                        <i class="ri-refresh-line"></i>
+                                    </button>
+                                </div>
+                                <div id="quickTagsList" class="quick-tags-list">
+                                    <!-- 标签选项将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+
+                            <!-- 标签建议 -->
+                            <div id="tagsSuggestions" class="tags-suggestions"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2173,6 +2315,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="./js/app.js"></script>
     <script src="./js/auth.js"></script>
+    <script src="./js/image-tags.js"></script>
     <script src="./js/dashboard.js"></script>
     <script src="./js/menu-system.js"></script>
     <script src="./js/share.js"></script>
