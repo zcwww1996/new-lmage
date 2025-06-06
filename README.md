@@ -32,6 +32,12 @@
 </p>
 
 <p align="center">
+  <a href="https://dartnode.com" title="Powered by DartNode - Free VPS for Open Source">
+    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png" alt="Powered by DartNode">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://telegram.org/">
     <img src="https://img.shields.io/badge/Powered%20by-Telegram-26a5e4?style=for-the-badge&logo=telegram&logoColor=white&labelColor=2d3748" alt="Powered by Telegram">
   </a>
